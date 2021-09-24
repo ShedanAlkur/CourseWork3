@@ -15,7 +15,7 @@ namespace CourseWork3
         /// <summary>
         /// Словарь поддерживаемых бинарных операторов.
         /// </summary>
-        static private readonly Dictionary<string, Func<Expression, Expression, BinaryExpression>> operatorsDic
+        static private readonly Dictionary<string, Func<Expression, Expression, BinaryExpression>> operators
             = new Dictionary<string, Func<Expression, Expression, BinaryExpression>>()
             { 
                 ["+"] = Expression.Add,
@@ -24,8 +24,15 @@ namespace CourseWork3
                 ["/"] = Expression.Divide,
                 ["^"] = Expression.Power,
             };
-        static private readonly string[] operators = operatorsDic.Keys.ToArray();
-        static private bool IsOperator(string value) => operatorsDic.ContainsKey(value);
+
+        /// <summary>
+        /// Является ли токен бинарным оператором.
+        /// </summary>
+        static private bool IsOperator(string token) => operators.ContainsKey(token);
+
+        /// <summary>
+        /// Словарь приоритетов бинарных операторов.
+        /// </summary>
         static private Dictionary<string, byte> PriorityOfOperators
             = new Dictionary<string, byte>()
             {
@@ -43,7 +50,7 @@ namespace CourseWork3
         /// <summary>
         /// Словарь поддерживаемых функций одной переменной.
         /// </summary>
-        static private readonly Dictionary<string, Func<Expression, Expression>> functionsDic
+        static private readonly Dictionary<string, Func<Expression, Expression>> functions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
                 ["sqrt"] = GetExpressionFromMethod("Sqrt", typeof(Math)),
@@ -54,24 +61,37 @@ namespace CourseWork3
                 ["abs"] = GetExpressionFromMethod("Abs", typeof(MyActionBuilder)),
                 ["minus"] = GetExpressionFromMethod("Minus", typeof(MyActionBuilder)),
             };
-        static private readonly string[] functions = functionsDic.Keys.ToArray();
-        static private bool IsFunction(string value) => functionsDic.ContainsKey(value);
+
+        /// <summary>
+        /// Является ли токен бинарным оператором.
+        /// </summary>
+        static private bool IsFunction(string token) => functions.ContainsKey(token);
 
         /// <summary>
         /// Словарь поддерживаемых математический констант.
         /// </summary>
-        static private  readonly Dictionary<string, Expression> constantsDic
+        static private  readonly Dictionary<string, Expression> constants
             = new Dictionary<string, Expression>()
             {
                 ["pi"] = Expression.Constant(Math.PI, typeof(double)),
                 ["e"] = Expression.Constant(Math.E, typeof(double)),
             };
-        static private readonly string[] constants = constantsDic.Keys.ToArray();
-        static private bool IsConst(string value) => constantsDic.ContainsKey(value);
+        /// <summary>
+        /// Является ли токен математической константой.
+        /// </summary>
+        static private bool IsConst(string token) => constants.ContainsKey(token);
 
-
+        /// <summary>
+        /// Создает экземпляр параметра ParameterExpression.
+        /// </summary>
+        /// <param name="name">Имя параметра.</param>
         static private ParameterExpression CreateParameter(string name) =>
             Expression.Parameter(typeof(double), name);
+
+        /// <summary>
+        /// Создает экземпляр константы Expression.
+        /// </summary>
+        /// <param name="value">Значение константы.</param>
         static private Expression CreateConstant(double value) =>
             Expression.Constant(value, typeof(double));
 
@@ -100,26 +120,48 @@ namespace CourseWork3
             // Создание шаблона регулярного выражения для разбиения входного арифметического выражения на токены.
             splitToTokensPattern += @"\d+(?:[\.]\d+)?";
             splitToTokensPattern += @"|,";
-            foreach (var op in operators) splitToTokensPattern += @"|\" + op;
+            foreach (var op in operators.Keys) splitToTokensPattern += @"|\" + op;
             splitToTokensPattern += @"|\(";
             splitToTokensPattern += @"|\)";
             splitToTokensPattern += @"|[A-z1-9_]+";
         }
 
+        /// <summary>
+        /// Проверяет условие того, что последующий токен вычитания - унарный минус.
+        /// </summary>
+        /// <param name="value">Проверяемый токен.</param>
+        /// <returns>Последующий токен вычитания должен быть унарным минусом.</returns>
+        static private bool ConditionForMinus(string value)
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("("));
         #endregion
 
+        /// <summary>
+        /// Словарь используемых параметров в арифметическом выражении.
+        /// </summary>
         private Dictionary<string, ParameterExpression> parameters =
             new Dictionary<string, ParameterExpression>();
 
-        private List<string> output = new List<string>();
+        public Delegate ResultDelegate { private set; get; }
 
-        static private bool ConditionForMinus(string value)
-            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("("));
+        /// <summary>
+        /// Массив имен используемых параметров в арифметическом выражении.
+        /// </summary>
+        public string[] Parameters { get => parameters.Keys.ToArray(); }
 
+        /// <summary>
+        /// Является ли токен числом, константой или параметром.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         static private bool IsNumberOrParam(string value)
             => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("(") || value.Equals(")"));
 
-        static public string[] SplitToTokens(string input) 
+        /// <summary>
+        /// Разделяет входное арифметическое выражение на токены.
+        /// </summary>
+        /// <param name="input">Входная строка арифметического выражения.</param>
+        /// <returns>Токены исходного арифметического выражения.</returns>
+        public string[] SplitToTokens(string input) 
         {
             string[] tokens = Regex.Matches(input.ToLower(), splitToTokensPattern)
                 .Cast<Match>()
@@ -132,11 +174,17 @@ namespace CourseWork3
             return tokens;
         }
 
+        /// <summary>
+        /// Преобразует последовательность токенов инфиксного арифметического выражения в последовательность постфиксного (обратная польская нотация).
+        /// </summary>
+        /// <param name="tokens">Последовательность токенов инфиксного арифметического выражения.</param>
+        /// <returns>Последовательность токенов постфиксного арифметического выражения.</returns>
         public string[] ConvertToRPN(string[] tokens)
         {
             // https://ru.wikipedia.org/wiki/алгоритм_сортировочной_станции
 
             Stack<string> stack = new Stack<string>();
+            List<string> output = new List<string>();
 
             for (int i = 0; i < tokens.Length; i++) // Пока не все токены обработаны
             {
@@ -195,31 +243,73 @@ namespace CourseWork3
             return output.ToArray();
         }
 
-        public Expression BuildExpression(string[] RPN)
+        /// <summary>
+        /// Строит операционное дерево Expression на основе постфиксного арифметического выражения.
+        /// </summary>
+        /// <param name="tokens">Последовательность токенов постфиксного арифметического выражения.</param>
+        /// <returns>Операционное дерево Expression</returns>
+        public Expression BuildExpression(string[] tokens)
         {
-            throw new NotImplementedException();
+            Stack<Expression> stack = new Stack<Expression>();
+
+            for (int i = 0; i < tokens.Length; i++) // Пока не все токены обработаны
+            {
+                if (IsOperator(tokens[i])) // Если токен - бинарный оператор, то соответствующая операция выполняется над двумя значениями, взятыми из вершины стека. Результат операции помещается в стек.
+                {
+                    var exp2 = stack.Pop();
+                    var exp1 = stack.Pop();
+                    stack.Push(operators[tokens[i]](exp1, exp2));
+                }
+                else if (IsFunction(tokens[i])) // Если токен - унарная функция, то соответствующая операция выполняется над одним значением, взятым из вершины стека. Результат операции помещается в стек. 
+                  stack.Push(functions[tokens[i]](stack.Pop()));
+                else // Если токен - операнд, то он помещается на вершину стека.
+                {
+                    if (double.TryParse(tokens[i], out double value)) // Если операнд - число
+                        stack.Push(CreateConstant(value));
+                    else if (IsConst(tokens[i])) // Если операнд - математическая константа
+                        stack.Push(constants[tokens[i]]);
+                    else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр
+                        stack.Push(parameters[tokens[i]]);
+                    else // Если операнд - несохраненный параметр
+                    {
+                        parameters.Add(tokens[i], CreateParameter(tokens[i]));
+                        stack.Push(parameters[tokens[i]]);
+                    }
+                }
+            }
+            if (stack.Count > 1) // На всякий случай
+                throw new NotImplementedException();
+
+            return stack.Pop();
         }
 
-
-
-        public Delegate CompileString(string expression, string[] paramsName = null)
+        /// <summary>
+        /// Преобразует инфиксное арифметическое выражение в делегат.
+        /// </summary>
+        /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
+        /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
+        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
+        public Delegate CompileString(string infixExpression, string[] paramsName = null)
         {
             this.Clear();
 
             if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param, CreateParameter(param));
+                    parameters.Add(param.ToLower(), CreateParameter(param.ToLower()));
 
-            string[] tokens = SplitToTokens(expression);
-            string[] RPN = ConvertToRPN(tokens);
-            Expression resExpression = BuildExpression(tokens);
-            return Expression.Lambda(resExpression, parameters.Values).Compile();
+            string[] infixTokens = SplitToTokens(infixExpression);
+            string[] postfixTokens = ConvertToRPN(infixTokens);
+            Expression resExpression = BuildExpression(postfixTokens);
+            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
+            return ResultDelegate;
         }
 
+        /// <summary>
+        /// Удаляет все результаты расчетов из экземпляра класса.
+        /// </summary>
         public void Clear()
         {
             parameters.Clear();
-            //stack.Clear();
-            output.Clear();
+            ResultDelegate = null;
         }
     }
 }

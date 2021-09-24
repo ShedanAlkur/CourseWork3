@@ -10,17 +10,18 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            //List<ParameterExpression> expParams = new List<ParameterExpression>();
-            //MyActionBuilder actionBuilder = new MyActionBuilder();
-            //Expression test = Expression.Constant(-2.0, typeof(double));
-            //Console.WriteLine(Expression.Lambda(test, expParams).Compile().DynamicInvoke());
-
-            var tokens = MyActionBuilder.SplitToTokens("(A - B) - 5-sin cos (5 *(3 - 1)) ");
-            //foreach (var token in tokens) Console.WriteLine(token);
             MyActionBuilder actionBuilder = new MyActionBuilder();
+            var tokens = actionBuilder.SplitToTokens("(10 * 3 - sin(pi / 2))^2 ");
             var RPN = actionBuilder.ConvertToRPN(tokens);
-
             Console.WriteLine(string.Join(" ", RPN));
+            Console.WriteLine(actionBuilder.CompileString("(10 * 3 -  ((()))  SIN(pi / 2))^2 ").DynamicInvoke()); // 841
+
+            Console.WriteLine(actionBuilder.CompileString("10 * B + A", new string[] { "A", "B", "C" }).DynamicInvoke(9, 6, 777)); // 69
+            Console.WriteLine(actionBuilder.CompileString("10 * B + A").DynamicInvoke(9, 6)); // 96
+
+            actionBuilder.CompileString("A + pi * c");
+            Console.WriteLine(string.Join(" ", actionBuilder.Parameters)); // [a, c]
+
 
             Console.Read();
         }
