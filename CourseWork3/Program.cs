@@ -8,18 +8,20 @@ namespace CourseWork3
 {
     class Program
     {
-        static double sqr(double value) => value * value;
-
         static void Main(string[] args)
         {
-            List<ParameterExpression> expParams = new List<ParameterExpression>();
+            //List<ParameterExpression> expParams = new List<ParameterExpression>();
+            //MyActionBuilder actionBuilder = new MyActionBuilder();
+            //Expression test = Expression.Constant(-2.0, typeof(double));
+            //Console.WriteLine(Expression.Lambda(test, expParams).Compile().DynamicInvoke());
 
-            Expression test = MyActionBuilder.functions["sin"](
-                MyActionBuilder.operators["/"](
-                    MyActionBuilder.Constants["pi"], 
-                    Expression.Constant(-2.0, typeof(double))));
+            var tokens = MyActionBuilder.SplitToTokens("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3");
+            //foreach (var token in tokens) Console.WriteLine(token);
+            MyActionBuilder actionBuilder = new MyActionBuilder();
+            var RPN = actionBuilder.ConvertToRPN(tokens);
 
-            Console.WriteLine(Expression.Lambda(test, expParams).Compile().DynamicInvoke());
+            Console.WriteLine(string.Join(" ", RPN));
+
             Console.Read();
         }
 
