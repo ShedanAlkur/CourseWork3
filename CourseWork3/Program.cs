@@ -15,7 +15,7 @@ namespace CourseWork3
             //Expression test = Expression.Constant(-2.0, typeof(double));
             //Console.WriteLine(Expression.Lambda(test, expParams).Compile().DynamicInvoke());
 
-            var tokens = MyActionBuilder.SplitToTokens("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3");
+            var tokens = MyActionBuilder.SplitToTokens("(A - B) - 5-sin cos (5 *(3 - 1)) ");
             //foreach (var token in tokens) Console.WriteLine(token);
             MyActionBuilder actionBuilder = new MyActionBuilder();
             var RPN = actionBuilder.ConvertToRPN(tokens);

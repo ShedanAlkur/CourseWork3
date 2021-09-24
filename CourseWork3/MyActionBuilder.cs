@@ -113,9 +113,15 @@ namespace CourseWork3
 
         private List<string> output = new List<string>();
 
+        static private bool ConditionForMinus(string value)
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("("));
+
+        static private bool IsNumberOrParam(string value)
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("(") || value.Equals(")"));
+
         static public string[] SplitToTokens(string input) 
         {
-            string[] tokens = Regex.Matches(input, splitToTokensPattern)
+            string[] tokens = Regex.Matches(input.ToLower(), splitToTokensPattern)
                 .Cast<Match>()
                 .Select(match => match.Value)
                 .ToArray();
@@ -148,7 +154,9 @@ namespace CourseWork3
                 }
                 else if (IsOperator(tokens[i])) // Если токен - оператор op1, то
                 {
-                    while (stack.Count != 0 && !IsLowerPriprity(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токер оператора op2, чей приоритет выше или равен приоритету op1
+                    if (tokens[i].Equals("-") && (i == 0 || !ConditionForMinus(tokens[i - 1]))) // Если токен - оператор вычитания, и токен является первым входным токеном или предыдущий токен не был числом или переменной, то
+                    { stack.Push("minus"); continue; } // Положить в стек функцию унарного минуса minus, установить флаг унарного минуса в True.
+                    while (stack.Count != 0 && !IsFunction(stack.Peek()) && !IsLowerPriprity(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токер оператора op2, чей приоритет выше или равен приоритету op1
                     {
                         output.Add(stack.Pop()); // Переложить оператор op2 из стека в выходную очередь.
                     }
@@ -165,11 +173,15 @@ namespace CourseWork3
                             throw new ArgumentException("В выражении пропущена скобка.");
                     }
                     stack.Pop(); // Выкинуть открывающую скобку из стека, но не добравлять в очередь вывода.
-                    if (IsFunction(stack.Peek())) // Если токен на вершине стека - функция, переложить её в выходную очередь.
+                    while (stack.Count > 0 && IsFunction(stack.Peek())) // Пока токен на вершине стека - функция, переложить её в выходную очередь.
                     { output.Add(stack.Pop()); }
                 }
                 else // Если токен - число или переменная, то добавить его в очередь вывода .
-                { output.Add(tokens[i]); }
+                { 
+                    output.Add(tokens[i]);
+                    while (stack.Count > 0 && IsFunction(stack.Peek())) // Пока токен на вершине стека - функция, переложить её в выходную очередь.
+                    { output.Add(stack.Pop()); }
+                }
             }
             // Если больше не осталось токено на входе
             while (stack.Count > 0) // Пока есть токены операторы в стеке
