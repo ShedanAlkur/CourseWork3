@@ -44,7 +44,14 @@ namespace CourseWork3
                 ["/"] = 2,
                 ["^"] = 3
             };
-        static private bool IsLowerPriprity(string op1, string op2)
+
+        /// <summary>
+        /// Является ли приоритет первого бинарного оператора ниже, чем приоритет второго.
+        /// </summary>
+        /// <param name="op1">Первый бинарный оператор.</param>
+        /// <param name="op2">Второй бинарный оператор.</param>
+        /// <returns></returns>
+        static private bool IsLowerPriority(string op1, string op2)
             => PriorityOfOperators[op1] < PriorityOfOperators[op2];
 
         /// <summary>
@@ -53,13 +60,14 @@ namespace CourseWork3
         static private readonly Dictionary<string, Func<Expression, Expression>> functions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
-                ["sqrt"] = GetExpressionFromMethod("Sqrt", typeof(Math)),
-                ["sqr"] = GetExpressionFromMethod("Sqr", typeof(MyActionBuilder)),
-                ["sin"] = GetExpressionFromMethod("Sin", typeof(Math)),
-                ["cos"] = GetExpressionFromMethod("Cos", typeof(Math)),
-                ["tg"] = GetExpressionFromMethod("Tan", typeof(Math)),
-                ["abs"] = GetExpressionFromMethod("Abs", typeof(MyActionBuilder)),
-                ["minus"] = GetExpressionFromMethod("Minus", typeof(MyActionBuilder)),
+                ["sqrt"] = GetExpressionFromFunc("Sqrt", typeof(Math)),
+                ["sqr"] = GetExpressionFromFunc("Sqr", typeof(MyActionBuilder)),
+                ["sin"] = GetExpressionFromFunc("Sin", typeof(Math)),
+                ["cos"] = GetExpressionFromFunc("Cos", typeof(Math)),
+                ["tg"] = GetExpressionFromFunc("Tan", typeof(Math)),
+                ["abs"] = GetExpressionFromFunc("Abs", typeof(MyActionBuilder)),
+                ["minus"] = GetExpressionFromFunc("Minus", typeof(MyActionBuilder)),
+                ["round"] = GetExpressionFromFunc("Round", typeof(MyActionBuilder)),
             };
 
         /// <summary>
@@ -68,16 +76,19 @@ namespace CourseWork3
         static private bool IsFunction(string token) => functions.ContainsKey(token);
 
         /// <summary>
-        /// Словарь поддерживаемых математический констант.
+        /// Словарь используемых ключевых слов, возвращающих числовое значение.
         /// </summary>
         static private  readonly Dictionary<string, Expression> constants
             = new Dictionary<string, Expression>()
             {
-                ["pi"] = Expression.Constant(Math.PI, typeof(double)),
-                ["e"] = Expression.Constant(Math.E, typeof(double)),
-            };
+                ["pi"] = CreateConstant(Math.PI),
+                ["e"] = CreateConstant(Math.E),
+                ["random"] = Expression.Call(
+                typeof(MyActionBuilder).GetMethod("Random",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)),
+    };
         /// <summary>
-        /// Является ли токен математической константой.
+        /// Является ли токен ключевым слоо, возвращающим числовое значение.
         /// </summary>
         static private bool IsConst(string token) => constants.ContainsKey(token);
 
@@ -96,12 +107,12 @@ namespace CourseWork3
             Expression.Constant(value, typeof(double));
 
         /// <summary>
-        /// Метод создает из метода одной переменной заданного класса делегат, который принимает и возвращает Expression.
+        /// Метод создает из функции одной переменной func<double, double> заданного класса делегат, который принимает и возвращает Expression.
         /// </summary>
         /// <param name="method">Имя метода.</param>
         /// <param name="containingClass">Класс, содержащий метод. Вариант использования: typeof(Math) </param>
         /// <returns>Полученный из метода делегат.</returns>
-        static private Func<Expression, Expression> GetExpressionFromMethod(string method, Type containingClass)
+        static private Func<Expression, Expression> GetExpressionFromFunc(string method, Type containingClass)
         {
             return (Expression value) =>  Expression.Call(
                 containingClass.GetMethod(method,
@@ -109,9 +120,15 @@ namespace CourseWork3
                 , value);
         }
 
+
+
+        static private Random rnd = new Random();
+
         static private double Abs(double value) => Math.Abs(value);
         static private double Sqr(double value) => value * value;
         static private double Minus(double value) => -value;
+        static private double Round(double value) => Math.Round(value);
+        static private double Random() => rnd.NextDouble();
 
         static private string splitToTokensPattern = @"";
 
@@ -204,7 +221,7 @@ namespace CourseWork3
                 {
                     if (tokens[i].Equals("-") && (i == 0 || !ConditionForMinus(tokens[i - 1]))) // Если токен - оператор вычитания, и токен является первым входным токеном или предыдущий токен не был числом или переменной, то
                     { stack.Push("minus"); continue; } // Положить в стек функцию унарного минуса minus, установить флаг унарного минуса в True.
-                    while (stack.Count != 0 && !IsFunction(stack.Peek()) && !IsLowerPriprity(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токер оператора op2, чей приоритет выше или равен приоритету op1
+                    while (stack.Count != 0 && !IsFunction(stack.Peek()) && !IsLowerPriority(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токер оператора op2, чей приоритет выше или равен приоритету op1
                     {
                         output.Add(stack.Pop()); // Переложить оператор op2 из стека в выходную очередь.
                     }
