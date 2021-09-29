@@ -11,12 +11,28 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            RandomDelegateTest();
 
+            RandomDelegateTest();
 
             Console.Read();
         }
 
+        static void InfiniteInput()
+        {
+            while (true)
+            {
+                MyActionBuilder actionBuilder = new MyActionBuilder();
+                try
+                {
+                    Console.WriteLine(actionBuilder.CompileString(Console.ReadLine()).DynamicInvoke());
+                    Console.WriteLine();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
 
         static void MyActionBuilderTest()
         {
@@ -38,25 +54,36 @@ namespace CourseWork3
             MyActionBuilder actionBuilder = new MyActionBuilder();
             Stopwatch sw = new Stopwatch();
             Random rnd = new Random();
-            actionBuilder.CompileString("round (random * 100)");
+            actionBuilder.CompileString("round (random * 100) * i");
             var del = actionBuilder.ResultDelegate;
             double numberOfTests = 1000000;
 
-             double www() => Math.Round(rnd.NextDouble() * 100);
+             double www(double i) => Math.Round(rnd.NextDouble() * 100) * i;
 
             sw.Restart();
             for (int i = 0; i < numberOfTests; i++)
-                www();
+                www(i);
             sw.Stop();
             Console.WriteLine($"Среднее время вызова функции - {sw.ElapsedTicks / numberOfTests} тиков");
 
             sw.Restart();
             for (int i = 0; i < numberOfTests; i++)
-                del.DynamicInvoke();
+                del.DynamicInvoke(i);
             sw.Stop();
-            Console.WriteLine($"Среднее время вызова делегата - {sw.ElapsedTicks / numberOfTests} тиков");
+            Console.WriteLine($"Среднее время вызова delegate.DynamicInvoke - {sw.ElapsedTicks / numberOfTests} тиков");
 
-            Console.WriteLine(del.DynamicInvoke());
+            Func<double, double> delToFunc = (Func<double, double>)actionBuilder.ResultDelegate;
+            sw.Restart();
+            for (int i = 0; i < numberOfTests; i++)
+                delToFunc.DynamicInvoke(i);
+            sw.Stop();
+            Console.WriteLine($"Среднее время вызова delegate->func.DynamicInvoke - {sw.ElapsedTicks / numberOfTests} тиков");
+
+            sw.Restart();
+            for (int i = 0; i < numberOfTests; i++)
+                delToFunc.Invoke(i);
+            sw.Stop();
+            Console.WriteLine($"Среднее время вызова delegate->func.Invoke - {sw.ElapsedTicks / numberOfTests} тиков");
         }
 
     }
