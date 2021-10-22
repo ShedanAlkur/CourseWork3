@@ -4,6 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using CourseWork3.Game;
+using CourseWork3.GraphicsOpenGL;
+using CourseWork3.Patterns;
+using CourseWork3.Game;
+using OpenTK;
 
 namespace CourseWork3
 {
@@ -11,10 +16,11 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-
-            RandomDelegateTest();
-
-            Console.Read();
+            using (GameWindow window = new GameWindow(800, 600))
+            {
+                Game.GameMain game = new Game.GameMain(window);
+                window.Run();
+            }
         }
 
         static void InfiniteInput()

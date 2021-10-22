@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,5 +28,13 @@ namespace CourseWork3
         {
             return a.Contains(b); // just for illustration
         }
+    }
+
+    public static class Vector2Ext
+    {
+        public static Vector2 ByAngle(float angle)
+            => new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+        public static float GetAngle(this Vector2 vector)
+            => MathF.Atan2(vector.X, vector.Y);
     }
 }
