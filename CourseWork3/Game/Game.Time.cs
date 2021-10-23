@@ -8,7 +8,23 @@ namespace CourseWork3.Game
     {
         public class GameTime
         {
+            private float deltaTimeOfUpdate;
+            public float DeltaTimeOfUpdate
+            {
+                get => deltaTimeOfUpdate;
+                set
+                {
+                    deltaTimeOfUpdate = value;
+                    TotalElapsedSeconds += value;
+                }
+            }
+            public float DeltaTimeOfRender;
+            public float TotalElapsedSeconds { get; private set; }
 
+            public GameTime()
+            {
+
+            }
         }
     }
 }

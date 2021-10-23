@@ -49,7 +49,8 @@ namespace CourseWork3.GraphicsOpenGL
             GL.AlphaFunc(AlphaFunction.Greater, 0.5f);
 
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.Zero);
+            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.EnableClientState(ArrayCap.TextureCoordArray);
@@ -63,14 +64,19 @@ namespace CourseWork3.GraphicsOpenGL
             GL.Ortho(-width / 2.0, width / 2.0, height / 2.0, -height / 2.0, 0.0, 1.0);
         }
 
-        public void ApplyViewTransofrm(Vector2 position, float scale, float rotation)
+        public void ApplyViewTransofrm(Vector2 position, Vector2 scale, float rotation)
         {
             GL.MatrixMode(MatrixMode.Modelview);
             Matrix4 transform = Matrix4.Identity;
             transform *= Matrix4.CreateTranslation(-position.X, +position.Y, 0f);
             transform *= Matrix4.CreateRotationZ(-rotation);
-            transform *= Matrix4.CreateScale(scale, scale, 1.0f);
+            transform *= Matrix4.CreateScale(scale.X, scale.Y, 1.0f);
             GL.LoadMatrix(ref transform);
+        }
+
+        public void ApplyViewTransofrm(Vector2 position, float scale, float rotation)
+        {
+            ApplyViewTransofrm(position, new Vector2(scale), rotation);
         }
 
         public void BeginDraw(Color color)
@@ -88,12 +94,29 @@ namespace CourseWork3.GraphicsOpenGL
             GL.PushMatrix();
             texture.Bind();
 
-            GL.Translate(position.X, -position.Y, layer / -10f);
+            GL.Translate(position.X, -position.Y, layer / -255f);
             if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
             if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
-            // TODO: добавить работу с цветом
 
             GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.PopMatrix();
+        }
+        public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, Color color, byte layer = 0)
+        {
+            GL.PushMatrix();
+            texture.Bind();
+
+            GL.Translate(position.X, -position.Y, (layer + 0.5) / -255f);
+            if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
+            if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
+
+            GL.BlendColor(color);
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.Translate(0, 0, 0.5f / 255f);
+            GL.BlendFunc(BlendingFactor.ConstantColor, BlendingFactor.SrcColor);
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.Zero);
+
             GL.PopMatrix();
         }
 
