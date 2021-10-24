@@ -8,28 +8,33 @@ using System.IO;
 
 namespace CourseWork3.Game
 {
-    partial class GameMain
+    static partial class GameMain
     {
-        GameWindow window;
-        public GameInput Input { get; private set; }
-        public GraphicsOpenGL.Graphics Graphics { get; private set; }
-        public World World { get; private set; }
-        private GameCamera camera;
 
-        Texture2D tex;
-        Vector2 projSize;
+        private static GameWindow window;
+        public static GraphicsOpenGL.Graphics Graphics;
+        public static GameTextureCollection TextureCollection;
+        public static World World;
+        public static GameInput Input;
+        public static GameCamera Camera;
+        public static GameStats Stats;
+        public static GameTime Time;
 
-        FrameBuffer worldFrameBuffer;
-        Vector2 worldSize;
+        static Texture2D tex;
+        static Vector2 projSize;
 
-        int defaultWidth;
-        int defaultHeight;
-        float windowScaleParam;
+        static FrameBuffer worldFrameBuffer;
+        static Vector2 worldSize;
 
-        public GameMain(GameWindow window)
-        {
-            this.window = window;
-            window.VSync = VSyncMode.On;
+        static int defaultWidth;
+        static int defaultHeight;
+        static float windowScale;
+
+        static bool isLoaded;
+
+        public static void Init(GameWindow window)
+        { 
+            GameMain.window = window;
 
             window.Load += Window_Load;
             window.UpdateFrame += Window_UpdateFrame;
@@ -38,79 +43,99 @@ namespace CourseWork3.Game
             window.FocusedChanged += Window_FocusedChanged;
             window.Closing += Window_Closing;
 
-            Graphics = new GraphicsOpenGL.Graphics();
-            camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);
-            //pause = true;
-            //IsRunning = true;
-
-            windowScaleParam = 1.0f;
+            windowScale = 1.0f;
             defaultWidth = window.Width;
             defaultHeight = window.Height;
-
         }
 
-        private void Window_Load(object sender, EventArgs e)
+        private static void Window_Load(object sender, EventArgs e)
         {
+            Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
-            Graphics.LoadQuadVBO();
-            tex = new Texture2D(@"content\projectile.png");
-            projSize = new Vector2(50, 50);
-            worldSize = new Vector2(480 / 2, 620 / 2);
+
+            TextureCollection = new GameTextureCollection();
+            tex = new Texture2D(@"content\projectileDirected.png");
+            TextureCollection.Add("projectile", tex);
+
+            int value = 480;
+            worldSize = new Vector2(value, (int)(1.2f * value));
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
+            World = World.Instance;
 
-            //tex = new Texture2D(@"content1\projectile.png");
+            Input = new GameInput(window);
+            Camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);
+            Stats = new GameStats();
+            Time = new GameTime();
+
+            projSize = new Vector2(50, 50);
+
+            isLoaded = true;
         }
 
-        private void Window_UpdateFrame(object sender, EventArgs e)
+        private static void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
-            //window.Title = "UPS: " + (1 / obj.Time).ToString("0000");
+            if (!isLoaded) return;
+            Time.DeltaTimeOfUpdate = (float)e.Time;
+            Input.Update();
+            World.Update((float)e.Time);
+
+            window.Title = "UPS: " + (1 / Time.DeltaTimeOfUpdate).ToString("0000") + " FPS: " + (1 / Time.DeltaTimeOfRender).ToString("0000");
         }
 
-        private void Window_RenderFrame(object sender, EventArgs e)
+        private static void Window_RenderFrame(object sender, FrameEventArgs e)
         {
-            //window.Title += " FPS: " + (1 / obj.Time).ToString("0000");
+            if (!isLoaded) return;
+            Time.DeltaTimeOfRender = (float)e.Time;
 
             int width = window.Width;
             int height = window.Height;
 
-
             // Рисуем мини-сцену
             worldFrameBuffer.Bind();
-            Graphics.ApplyProjection((int)(worldSize.X * windowScaleParam), (int)(worldSize.Y * windowScaleParam));
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(windowScaleParam, -windowScaleParam), 0);
+            Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            Graphics.ApplyProjection((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(windowScale, -windowScale), 0);
             Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
             Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
-            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 0);
+            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
+            World.Render();
 
             // Рисуем большую сцену
+            // Вариант 1
+            //FrameBuffer.Unbind();
+            //Graphics.ApplyViewport(
+            //    (int)(width - defaultWidth * windowScale) / 2,
+            //    (int)(height - defaultHeight * windowScale) / 2,
+            //    (int)(defaultWidth * windowScale), (int)(defaultHeight * windowScale));
+            //Graphics.ApplyProjection(defaultWidth, defaultHeight);
+            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
+            // Вариант 2
             FrameBuffer.Unbind();
+            Graphics.ApplyViewport(width, height);
             Graphics.ApplyProjection(width, height);
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), windowScaleParam, 0);
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), windowScale, 0);
 
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
-
-            Graphics.Draw(tex, new Vector2(15, 0), new Vector2(projSize.X, projSize.Y), 0, Color.Red, 0);
-            Graphics.Draw(tex, new Vector2(-15, 0), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 0);
-            Graphics.Draw(tex, new Vector2(0, 25), new Vector2(projSize.X, projSize.Y), 0, Color.Green, 0);
-
-            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-worldSize.X, 0),
+            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
                 new Vector2(worldSize.X, worldSize.Y), 0, 0);
+            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), 0, 100);
 
             window.SwapBuffers();
         }
 
-        private void Window_Resize(object sender, EventArgs e)
+        private static void Window_Resize(object sender, EventArgs e)
         {
-            windowScaleParam = MathF.Min((float)window.Width / defaultWidth, (float)window.Height / defaultHeight);
-            worldFrameBuffer.Resize((int)(worldSize.X * windowScaleParam), (int)(worldSize.Y * windowScaleParam));
+            
+            windowScale = MathF.Min((float)window.Width / defaultWidth, (float)window.Height / defaultHeight);
+            worldFrameBuffer.Resize((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
         }
 
-        private void Window_FocusedChanged(object sender, EventArgs e)
+        private static void Window_FocusedChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private static void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }

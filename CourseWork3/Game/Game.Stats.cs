@@ -8,24 +8,15 @@ namespace CourseWork3.Game
     {
         public class GameStats
         {
-            private static GameStats instance;
+            public int MaxRecord;
+            public int CurrentRecord;
+            public int LifeCount;
+            public int BombCount;
 
-            public static GameStats Instance
-            {
-                get
-                {
-                    if (instance == null)
-                        instance = new GameStats();
-                    return instance;
-                }
-            }
-
-            private GameStats()
+            public GameStats()
             {
 
             }
-
-
         }
     }
 }

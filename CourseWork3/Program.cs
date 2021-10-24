@@ -18,8 +18,9 @@ namespace CourseWork3
         {
             using (GameWindow window = new GameWindow(800, 600))
             {
-                Game.GameMain game = new Game.GameMain(window);
-                window.Run();
+                window.VSync = VSyncMode.On;
+                GameMain.Init(window);
+                window.Run(200, 60);
             }
         }
 

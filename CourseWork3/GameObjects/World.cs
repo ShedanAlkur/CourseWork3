@@ -20,9 +20,14 @@ namespace CourseWork3.Game
             }
         }
 
-        protected World()
-        {
+        protected World(LevelPattern pattern = null)
+        {           
+            if (pattern == null) this.pattern = new LevelPattern();
+            else this.pattern = pattern;
+
             gameObjects = new List<GameObject>();
+            Player = new Player();
+            this.Add(Player);
         }
 
         public Player Player { get; protected set; }
@@ -31,11 +36,18 @@ namespace CourseWork3.Game
         public float CurrentDelaytime;
         public float MaxDelaytime;
 
+        public void Add(GameObject gameObject)
+        {
+            gameObjects.Add(gameObject);
+        }
+
         public void Update(float elapsedTime)
         {
             CurrentDelaytime += elapsedTime;
             if (CurrentDelaytime >= MaxDelaytime)
                 pattern.Invoke(ref CurrentIndex);
+
+            DoCollision();
 
             int i = 0;
             while (i < gameObjects.Count)

@@ -16,6 +16,8 @@ namespace CourseWork3.Game
         public bool SyncProj;
         public Pattern<Projectile> ProjPattern;
 
+        public float CurrentSpawnDelay;
+
         public Generator(Pattern<Generator<T>> pattern, GameObject owner) : base(pattern)
         {
             this.Owner = owner;
@@ -28,9 +30,22 @@ namespace CourseWork3.Game
 
         public override void Update(float elapsedTime)
         {
-            // TODO: Добавить стрельбу
-
+            if (Owner.Terminated) this.Terminated = true;
             base.Update(elapsedTime);
+            this.Position = Owner.Position;
+
+            CurrentSpawnDelay += elapsedTime;
+
+            while (CurrentSpawnDelay >= SpawnDelay)
+            {
+                CurrentSpawnDelay -= SpawnDelay;
+
+                float angleDelay = Sector / SpawnCount;
+                for (float spawnAngle = Angle - Sector / 2; spawnAngle <= Angle + Sector / 2; spawnAngle+=angleDelay)
+                {
+                    // TODO: spawn projectiles
+                }
+            }
         }
     }
 }

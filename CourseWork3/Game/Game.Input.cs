@@ -24,7 +24,7 @@ namespace CourseWork3.Game
                 }
             }
 
-            public void Initialize(GameWindow game)
+            public GameInput(GameWindow game)
             {
                 KeysDown = new List<Key>();
                 KeysDownLast = new List<Key>();

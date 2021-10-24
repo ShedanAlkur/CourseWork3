@@ -11,7 +11,7 @@ namespace CourseWork3.Game
         {
             Dictionary<string, Texture2D> Textures;
 
-            private GameTextureCollection()
+            public GameTextureCollection()
             {
                 Textures = new Dictionary<string, Texture2D>();
             }
@@ -24,6 +24,14 @@ namespace CourseWork3.Game
             public void Remove(string name)
             {
                 Textures.Remove(name);
+            }
+
+            public Texture2D this[string name]
+            {
+                get
+                {
+                    return Textures[name];
+                }
             }
         }
     }

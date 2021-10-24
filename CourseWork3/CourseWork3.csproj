@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <Compile Remove="GameMain.FramebufferHelper.cs" />
-    <Compile Remove="Game\Game.TextureCollection.cs" />
-    <Compile Remove="Game\Game.Time.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,11 +18,6 @@
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
     </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Game\Game.TextureCollection.cs" />
-    <None Include="Game\Game.Time.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +48,12 @@
 
   <ItemGroup>
     <None Update="Content\Projectile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\ProjectileDirected.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\ProjectileRed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

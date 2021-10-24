@@ -11,7 +11,7 @@ namespace CourseWork3.GraphicsOpenGL
     partial class Graphics
     {
         public int quadVBO;
-        public void LoadQuadVBO()
+        private void LoadQuadVBO()
         {
             float[] quadAttrib = new float[]
             {
@@ -39,6 +39,21 @@ namespace CourseWork3.GraphicsOpenGL
             GL.DeleteVertexArray(vao);
         }
 
+        protected static Graphics instance;
+        public static Graphics Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new Graphics();
+                return instance;
+            }
+        }
+        private Graphics()
+        {
+
+        }
+
         public void Init()
         {
             GL.Enable(EnableCap.Texture2D);
@@ -54,11 +69,21 @@ namespace CourseWork3.GraphicsOpenGL
 
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.EnableClientState(ArrayCap.TextureCoordArray);
+
+            LoadQuadVBO();
+        }
+
+        public void ApplyViewport(int x, int y, int width, int height)
+        {
+            GL.Viewport(x, y, width, height);
+        }
+        public void ApplyViewport(int width, int height)
+        {
+            GL.Viewport(0, 0, width, height);
         }
 
         public void ApplyProjection(int width, int height)
         {
-            GL.Viewport(0, 0, width, height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(-width / 2.0, width / 2.0, height / 2.0, -height / 2.0, 0.0, 1.0);

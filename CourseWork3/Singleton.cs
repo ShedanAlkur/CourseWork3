@@ -4,15 +4,18 @@ using System.Text;
 
 namespace CourseWork3
 {
-    public abstract class Singleton<T> where T: class, new()
+    public abstract class Singleton<T> where T: Singleton<T>, new()
     {
-        private static T instance;
+        protected static T instance;
 
-        public static T Instance { get
+        public static T Instance
+        { 
+            get
             {
                 if (instance == null)
                     instance = new T();
                 return instance;
-            } }
+            }
+        }
     }
 }

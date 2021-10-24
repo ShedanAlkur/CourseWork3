@@ -1,6 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
+using CourseWork3.GraphicsOpenGL;
+using System.IO;
 
 namespace CourseWork3.Game
 {
@@ -27,4 +31,5 @@ namespace CourseWork3.Game
             }
         }
     }
+
 }

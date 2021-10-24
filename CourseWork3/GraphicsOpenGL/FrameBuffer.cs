@@ -21,6 +21,7 @@ namespace CourseWork3.GraphicsOpenGL
             this.width = width;
             this.height = height;
 
+            Console.WriteLine("Создаем текстуру фреймбуфера");
             this.Texture = new Texture2D(width, height);
             FramebufferID = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FramebufferID);
@@ -44,11 +45,8 @@ namespace CourseWork3.GraphicsOpenGL
             this.width = width;
             this.height = height;
 
-            this.Texture = new Texture2D(width, height);
-            this.Bind();
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
-                TextureTarget.Texture2D, Texture.ID, 0);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            Console.WriteLine("Создаем текстуру фреймбуфера");
+            Texture.Resize(width, height);
 
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RenderbufferID);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8,
@@ -74,6 +72,7 @@ namespace CourseWork3.GraphicsOpenGL
                 Texture.Dispose();
                 GL.DeleteFramebuffer(FramebufferID);
                 GL.DeleteRenderbuffer(RenderbufferID);
+                Console.WriteLine($"Буферы {FramebufferID} и {RenderbufferID} выгружены");
                 disposed = true;
             }
         }

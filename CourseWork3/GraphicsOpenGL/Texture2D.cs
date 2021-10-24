@@ -24,7 +24,6 @@ namespace CourseWork3.GraphicsOpenGL
 
         public Texture2D(Stream stream)
         {
-
             Bitmap bmp = new Bitmap(stream);
             this.Width = bmp.Width;
             this.Height = bmp.Height;
@@ -69,6 +68,8 @@ namespace CourseWork3.GraphicsOpenGL
                 (int)TextureMagFilter.Linear);
 
             Texture2D.Unbind();
+
+            Console.WriteLine($"Сгенерирована текстура {ID}");
         }
 
         public Texture2D(string path)
@@ -101,6 +102,16 @@ namespace CourseWork3.GraphicsOpenGL
 
                 Texture2D.Unbind();
             }
+            Console.WriteLine($"Сгенерирована текстура {ID}");
+        }
+
+        public void Resize(int width, int height)
+        {
+            Bind();
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb,
+                width, height,
+                 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, new byte[0]);
+            Unbind();
         }
 
         public void Bind()
@@ -116,14 +127,25 @@ namespace CourseWork3.GraphicsOpenGL
         bool disposed = false;
         public void Dispose()
         {
-            if (!disposed)
+            try
             {
-                GL.DeleteTexture(ID);
-                disposed = true;
+                if (!disposed)
+                {
+                    Console.WriteLine($"Попытка выгрузить текстуру {ID}");
+                    // TODO: разобраться с ошибкой при удалении текстуры
+                    //GL.DeleteTexture(ID);
+                    disposed = true;
+                    Console.WriteLine();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Не удалось выгрузить текстуру {ID}");
             }
         }
         ~Texture2D()
         {
+            GC.SuppressFinalize(this);
             Dispose();
         }
     }
