@@ -45,7 +45,6 @@ namespace CourseWork3.GraphicsOpenGL
             this.width = width;
             this.height = height;
 
-            Console.WriteLine("Создаем текстуру фреймбуфера");
             Texture.Resize(width, height);
 
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RenderbufferID);

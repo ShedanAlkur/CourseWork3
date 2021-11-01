@@ -29,12 +29,15 @@ namespace CourseWork3.Game
         static int defaultWidth;
         static int defaultHeight;
         static float windowScale;
+        static int windowXOffset;
+        static int windowYOffset;
 
         static bool isLoaded;
 
         public static void Init(GameWindow window)
         { 
             GameMain.window = window;
+            window.VSync = VSyncMode.On;
 
             window.Load += Window_Load;
             window.UpdateFrame += Window_UpdateFrame;
@@ -46,6 +49,8 @@ namespace CourseWork3.Game
             windowScale = 1.0f;
             defaultWidth = window.Width;
             defaultHeight = window.Height;
+
+            window.Run(200, 60);
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -56,11 +61,16 @@ namespace CourseWork3.Game
             TextureCollection = new GameTextureCollection();
             tex = new Texture2D(@"content\projectileDirected.png");
             TextureCollection.Add("projectile", tex);
+            TextureCollection.Add("item", new Texture2D(@"content\Item.png"));
 
             int value = 480;
             worldSize = new Vector2(value, (int)(1.2f * value));
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
             World = World.Instance;
+            for (int i = -100; i <= 100; i+=20)
+            {
+            }
+                World.Add(new Item(new Vector2(0, 0)));
 
             Input = new GameInput(window);
             Camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);
@@ -90,31 +100,24 @@ namespace CourseWork3.Game
             int width = window.Width;
             int height = window.Height;
 
+
             // Рисуем мини-сцену
             worldFrameBuffer.Bind();
             Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            Graphics.ApplyProjection((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(windowScale, -windowScale), 0);
+            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
             Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
             Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
             Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
             World.Render();
 
             // Рисуем большую сцену
-            // Вариант 1
-            //FrameBuffer.Unbind();
-            //Graphics.ApplyViewport(
-            //    (int)(width - defaultWidth * windowScale) / 2,
-            //    (int)(height - defaultHeight * windowScale) / 2,
-            //    (int)(defaultWidth * windowScale), (int)(defaultHeight * windowScale));
-            //Graphics.ApplyProjection(defaultWidth, defaultHeight);
-            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
-            // Вариант 2
             FrameBuffer.Unbind();
-            Graphics.ApplyViewport(width, height);
-            Graphics.ApplyProjection(width, height);
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), windowScale, 0);
-
+            Graphics.ApplyViewport(windowXOffset, windowYOffset,
+                (int)(defaultWidth * windowScale),
+                (int)(defaultHeight * windowScale));
+            Graphics.ApplyProjection(defaultWidth, defaultHeight);
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
             Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
                 new Vector2(worldSize.X, worldSize.Y), 0, 0);
@@ -127,6 +130,8 @@ namespace CourseWork3.Game
         {
             
             windowScale = MathF.Min((float)window.Width / defaultWidth, (float)window.Height / defaultHeight);
+            windowXOffset = (int)(window.Width - defaultWidth * windowScale) / 2;
+            windowYOffset = (int)(window.Height - defaultHeight * windowScale) / 2;
             worldFrameBuffer.Resize((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
         }
 

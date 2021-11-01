@@ -24,19 +24,21 @@ namespace CourseWork3.GraphicsOpenGL
 
             quadVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, quadVBO);
+            GL.VertexPointer(2, VertexPointerType.Float, 4 * sizeof(float), 0);
+            GL.TexCoordPointer(2, TexCoordPointerType.Float, 4 * sizeof(float), 2 * sizeof(float));
             GL.BufferData(BufferTarget.ArrayBuffer, quadAttrib.Length * sizeof(float),
                 quadAttrib, BufferUsageHint.StaticDraw);
 
-            int vao = GL.GenVertexArray();
-            GL.BindVertexArray(vao);
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 2 * sizeof(float));
+            //int vao = GL.GenVertexArray();
+            //GL.BindVertexArray(vao);
+            //GL.EnableVertexAttribArray(0);
+            //GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            //GL.EnableVertexAttribArray(1);
+            //GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 2 * sizeof(float));
 
-            GL.BindVertexArray(0);
+            //GL.BindVertexArray(0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.DeleteVertexArray(vao);
+            //GL.DeleteVertexArray(vao);
         }
 
         protected static Graphics instance;
@@ -71,6 +73,7 @@ namespace CourseWork3.GraphicsOpenGL
             GL.EnableClientState(ArrayCap.TextureCoordArray);
 
             LoadQuadVBO();
+
         }
 
         public void ApplyViewport(int x, int y, int width, int height)
@@ -110,8 +113,6 @@ namespace CourseWork3.GraphicsOpenGL
             GL.ClearColor(color);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.BindBuffer(BufferTarget.ArrayBuffer, quadVBO);
-            GL.VertexPointer(2, VertexPointerType.Float, 4 * sizeof(float), 0);
-            GL.TexCoordPointer(2, TexCoordPointerType.Float, 4 * sizeof(float), 2 * sizeof(float));
         }
 
         public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, byte layer = 0)
