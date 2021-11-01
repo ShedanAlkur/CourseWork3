@@ -14,17 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="MSScriptControl.dll">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>0e59f1d2-1fbe-11d0-8ff2-00a0d10038bc</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="OpenTK" Version="3.3.2" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
