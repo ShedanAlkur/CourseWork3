@@ -23,17 +23,18 @@ namespace CourseWork3.Game
 
         public override void Update(float elapsedTime)
         {
-            //if (GameMain.Input.KeyDown(Key.Left))
-            //    Velocity.X = -velocityScalar;
-            //else if (GameMain.Input.KeyDown(Key.Right))
-            //    Velocity.X = velocityScalar;
-            //else Velocity.X = 0;
+            Vector2 velocity = Vector2.Zero;
+            if (GameMain.Input.KeyDown(Key.Left))
+                velocity.X = -velocityScalar;
+            else if (GameMain.Input.KeyDown(Key.Right))
+                velocity.X = velocityScalar;
 
-            //if (GameMain.Input.KeyDown(Key.Down))
-            //    Velocity.Y = -velocityScalar;
-            //else if (GameMain.Input.KeyDown(Key.Up))
-            //    Velocity.Y = velocityScalar;
-            //else Velocity.Y = 0;
+            if (GameMain.Input.KeyDown(Key.Down))
+                velocity.Y = -velocityScalar;
+            else if (GameMain.Input.KeyDown(Key.Up))
+                velocity.Y = velocityScalar;
+
+            this.Velocity = velocity;
 
             base.Update(elapsedTime);
         }
