@@ -32,5 +32,55 @@ namespace CourseWork3
             return a.Contains(b); // just for illustration
         }
     
+
+        public static void ExpFieldTest()
+        {
+            var obj = new TestClass();
+            Console.WriteLine($"obj.Field = {obj.Field}");
+
+            var act = CreateSetter<TestClass, int>("Field");
+            act(obj, 71);
+            Console.WriteLine($"obj.Field = {obj.Field}");
+
+            var act2 = CreateInrementor<TestClass, int>("Field");
+            act2(obj, 69);
+
+            Console.WriteLine($"obj.Field = {obj.Field}");
+
+        }
+
+        public static Action<O, P> CreateSetter<O, P>(string propertyOrFieldName)
+        {
+            var item = Expression.Parameter(typeof(O), "item");
+            var value = Expression.Parameter(typeof(P), "value");
+            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
+            var assign = Expression.Assign(propertyOrField, value);
+
+            var expr = Expression.Block(assign, Expression.Empty());
+
+            return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
+        }
+
+        public static Action<O, P> CreateInrementor<O, P>(string propertyOrFieldName)
+        {
+            var item = Expression.Parameter(typeof(O), "item");
+            var value = Expression.Parameter(typeof(P), "value");
+            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
+
+            var assign = Expression.AddAssign(propertyOrField, value);
+
+            var expr = Expression.Block(assign, Expression.Empty());
+
+            return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
+        }
+
+
+    }
+
+
+    class TestClass
+    {
+        public int Field;
+        public int Property { get; set; }                
     }
 }
