@@ -9,6 +9,7 @@ using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
 using CourseWork3.Game;
 using OpenTK;
+using ExpressionBuilder;
 
 namespace CourseWork3
 {
@@ -16,6 +17,9 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
+            TestSite.ExpFieldTest(); 
+            return;
+
             using (GameWindow window = new GameWindow(800, 600))
             {
                 GameMain.Init(window);
@@ -26,7 +30,7 @@ namespace CourseWork3
         {
             while (true)
             {
-                MyActionBuilder actionBuilder = new MyActionBuilder();
+                var actionBuilder = new MathExpressionBuilder();
                 try
                 {
                     Console.WriteLine(actionBuilder.CompileString(Console.ReadLine()).DynamicInvoke());
@@ -41,7 +45,7 @@ namespace CourseWork3
 
         static void MyActionBuilderTest()
         {
-            MyActionBuilder actionBuilder = new MyActionBuilder();
+            var actionBuilder = new MathExpressionBuilder();
             var tokens = actionBuilder.SplitToTokens("(10 * 3 - sin(pi / 2))^2 ");
             var RPN = actionBuilder.ConvertToRPN(tokens);
             Console.WriteLine(string.Join(" ", RPN));
@@ -56,7 +60,7 @@ namespace CourseWork3
 
         static void RandomDelegateTest()
         {
-            MyActionBuilder actionBuilder = new MyActionBuilder();
+            var actionBuilder = new MathExpressionBuilder();
             Stopwatch sw = new Stopwatch();
             Random rnd = new Random();
             actionBuilder.CompileString("round (random * 100) * i");

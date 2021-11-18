@@ -67,7 +67,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Parser\" />
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExpressionHelper\ExpressionBuilder.csproj" />
   </ItemGroup>
 
 </Project>

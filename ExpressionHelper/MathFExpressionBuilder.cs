@@ -6,23 +6,23 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CourseWork3
+namespace ExpressionBuilder
 {
-    class MathExpressionBuilder
+    public class MathFExpressionBuilder
     {
         #region Статические атрибуты
 
         /// <summary>
         /// Словарь поддерживаемых бинарных операторов.
         /// </summary>
-        static private readonly Dictionary<string, Func<Expression, Expression, BinaryExpression>> operators
-            = new Dictionary<string, Func<Expression, Expression, BinaryExpression>>()
+        static private readonly Dictionary<string, Func<Expression, Expression, Expression>> operators
+            = new Dictionary<string, Func<Expression, Expression, Expression>>()
             { 
                 ["+"] = Expression.Add,
                 ["-"] = Expression.Subtract,
                 ["*"] = Expression.Multiply,
                 ["/"] = Expression.Divide,
-                ["^"] = Expression.Power,
+                ["^"] = ExpressionHelper.CreateExpressionFromBinaryFunc(typeof(MathF), "Pow"),
             };
 
         /// <summary>
@@ -60,14 +60,14 @@ namespace CourseWork3
         static private readonly Dictionary<string, Func<Expression, Expression>> functions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
-                ["sqrt"] = GetExpressionFromFunc("Sqrt", typeof(Math)),
-                ["sqr"] = GetExpressionFromFunc("Sqr", typeof(MathExpressionBuilder)),
-                ["sin"] = GetExpressionFromFunc("Sin", typeof(Math)),
-                ["cos"] = GetExpressionFromFunc("Cos", typeof(Math)),
-                ["tg"] = GetExpressionFromFunc("Tan", typeof(Math)),
-                ["abs"] = GetExpressionFromFunc("Abs", typeof(MathExpressionBuilder)),
-                ["minus"] = GetExpressionFromFunc("Minus", typeof(MathExpressionBuilder)),
-                ["round"] = GetExpressionFromFunc("Round", typeof(MathExpressionBuilder)),
+                ["sqrt"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), "Sqrt"),
+                ["sqr"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), "Sqr"),
+                ["sin"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), "Sin"),
+                ["cos"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), "Cos"),
+                ["tg"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), "Tan"),
+                ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), "Abs"),
+                ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), "Minus"),
+                ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), "Round"),
             };
 
         /// <summary>
@@ -81,10 +81,10 @@ namespace CourseWork3
         static private  readonly Dictionary<string, Expression> constants
             = new Dictionary<string, Expression>()
             {
-                ["pi"] = CreateConstant(Math.PI),
-                ["e"] = CreateConstant(Math.E),
+                ["pi"] = ExpressionHelper.CreateConstant<float>(MathF.PI),
+                ["e"] = ExpressionHelper.CreateConstant<float>(MathF.E),
                 ["random"] = Expression.Call(
-                typeof(MathExpressionBuilder).GetMethod("Random",
+                typeof(MathFExpressionBuilder).GetMethod("Random",
                 BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)),
     };
         /// <summary>
@@ -92,51 +92,22 @@ namespace CourseWork3
         /// </summary>
         static private bool IsConst(string token) => constants.ContainsKey(token);
 
-        /// <summary>
-        /// Создает экземпляр параметра ParameterExpression.
-        /// </summary>
-        /// <param name="name">Имя параметра.</param>
-        static private ParameterExpression CreateParameter(string name) =>
-            Expression.Parameter(typeof(double), name);
-
-        /// <summary>
-        /// Создает экземпляр константы Expression.
-        /// </summary>
-        /// <param name="value">Значение константы.</param>
-        static private Expression CreateConstant(double value) =>
-            Expression.Constant(value, typeof(double));
-
-        /// <summary>
-        /// Метод создает из функции одной переменной func<double, double> заданного класса делегат, который принимает и возвращает Expression.
-        /// </summary>
-        /// <param name="method">Имя метода.</param>
-        /// <param name="containingClass">Класс, содержащий метод. Вариант использования: typeof(Math) </param>
-        /// <returns>Полученный из метода делегат.</returns>
-        static private Func<Expression, Expression> GetExpressionFromFunc(string method, Type containingClass)
-        {
-            return (Expression value) =>  Expression.Call(
-                containingClass.GetMethod(method,
-                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
-                , value);
-        }
-
-
 
         static private Random rnd = new Random();
 
-        static private double Abs(double value) => Math.Abs(value);
-        static private double Sqr(double value) => value * value;
-        static private double Minus(double value) => -value;
-        static private double Round(double value) => Math.Round(value);
-        static private double Random() => rnd.NextDouble();
+        static private float Abs(float value) => MathF.Abs(value);
+        static private float Sqr(float value) => value * value;
+        static private float Minus(float value) => -value;
+        static private float Round(float value) => MathF.Round(value);
+        static private float Random() => (float)rnd.NextDouble();
 
         static private string splitToTokensPattern = @"";
 
-        static MathExpressionBuilder()
+        static MathFExpressionBuilder()
         {
             // Создание шаблона регулярного выражения для разбиения входного арифметического выражения на токены.
-            splitToTokensPattern += @"\d+(?:[\.]\d+)?";
-            splitToTokensPattern += @"|,";
+            splitToTokensPattern += @"\d+(?:[\,]\d+)?";
+            splitToTokensPattern += @"|;";
             foreach (var op in operators.Keys) splitToTokensPattern += @"|\" + op;
             splitToTokensPattern += @"|\(";
             splitToTokensPattern += @"|\)";
@@ -171,7 +142,7 @@ namespace CourseWork3
         /// <param name="value"></param>
         /// <returns></returns>
         static private bool IsNumberOrParam(string value)
-            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("(") || value.Equals(")"));
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(";") || value.Equals("(") || value.Equals(")"));
 
         /// <summary>
         /// Разделяет входное арифметическое выражение на токены.
@@ -208,7 +179,7 @@ namespace CourseWork3
                 
                 if (IsFunction(tokens[i])) // Если токен - функция, то поместить его в стек.
                 { stack.Push(tokens[i]); }
-                else if (tokens[i].Equals(",")) // Если токен - разделитель аргументов функции, то
+                else if (tokens[i].Equals(";")) // Если токен - разделитель аргументов функции, то
                 {
                     while (!stack.Peek().Equals("(")) // Пока токен на вершине стека не открывающая скобка
                     {
@@ -281,15 +252,15 @@ namespace CourseWork3
                   stack.Push(functions[tokens[i]](stack.Pop()));
                 else // Если токен - операнд, то он помещается на вершину стека.
                 {
-                    if (double.TryParse(tokens[i], out double value)) // Если операнд - число
-                        stack.Push(CreateConstant(value));
+                    if (float.TryParse(tokens[i], out float value)) // Если операнд - число
+                        stack.Push(ExpressionHelper.CreateConstant<float>(value));
                     else if (IsConst(tokens[i])) // Если операнд - математическая константа
                         stack.Push(constants[tokens[i]]);
                     else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр
                         stack.Push(parameters[tokens[i]]);
                     else // Если операнд - несохраненный параметр
                     {
-                        parameters.Add(tokens[i], CreateParameter(tokens[i]));
+                        parameters.Add(tokens[i], ExpressionHelper.CreateParameter<float>(tokens[i]));
                         stack.Push(parameters[tokens[i]]);
                     }
                 }
@@ -311,7 +282,7 @@ namespace CourseWork3
             this.Clear();
 
             if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), CreateParameter(param.ToLower()));
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             string[] infixTokens = SplitToTokens(infixExpression);
             string[] postfixTokens = ConvertToRPN(infixTokens);
@@ -331,7 +302,7 @@ namespace CourseWork3
             this.Clear();
 
             if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), CreateParameter(param.ToLower()));
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);

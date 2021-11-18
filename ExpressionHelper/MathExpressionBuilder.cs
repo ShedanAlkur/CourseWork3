@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CourseWork3
+namespace ExpressionBuilder
 {
-    class MyActionBuilder
+    public class MathExpressionBuilder
     {
         #region Статические атрибуты
 
@@ -60,14 +60,14 @@ namespace CourseWork3
         static private readonly Dictionary<string, Func<Expression, Expression>> functions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
-                ["sqrt"] = GetExpressionFromFunc("Sqrt", typeof(Math)),
-                ["sqr"] = GetExpressionFromFunc("Sqr", typeof(MyActionBuilder)),
-                ["sin"] = GetExpressionFromFunc("Sin", typeof(Math)),
-                ["cos"] = GetExpressionFromFunc("Cos", typeof(Math)),
-                ["tg"] = GetExpressionFromFunc("Tan", typeof(Math)),
-                ["abs"] = GetExpressionFromFunc("Abs", typeof(MyActionBuilder)),
-                ["minus"] = GetExpressionFromFunc("Minus", typeof(MyActionBuilder)),
-                ["round"] = GetExpressionFromFunc("Round", typeof(MyActionBuilder)),
+                ["sqrt"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Sqrt"),
+                ["sqr"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Sqr"),
+                ["sin"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Sin"),
+                ["cos"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Cos"),
+                ["tg"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Tan"),
+                ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Abs"),
+                ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Minus"),
+                ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Round")
             };
 
         /// <summary>
@@ -81,30 +81,16 @@ namespace CourseWork3
         static private  readonly Dictionary<string, Expression> constants
             = new Dictionary<string, Expression>()
             {
-                ["pi"] = CreateConstant(Math.PI),
-                ["e"] = CreateConstant(Math.E),
+                ["pi"] = ExpressionHelper.CreateConstant<double>(Math.PI),
+                ["e"] = ExpressionHelper.CreateConstant<double>(Math.E),
                 ["random"] = Expression.Call(
-                typeof(MyActionBuilder).GetMethod("Random",
+                typeof(MathExpressionBuilder).GetMethod("Random",
                 BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)),
     };
         /// <summary>
         /// Является ли токен ключевым слоо, возвращающим числовое значение.
         /// </summary>
         static private bool IsConst(string token) => constants.ContainsKey(token);
-
-        /// <summary>
-        /// Создает экземпляр параметра ParameterExpression.
-        /// </summary>
-        /// <param name="name">Имя параметра.</param>
-        static private ParameterExpression CreateParameter(string name) =>
-            Expression.Parameter(typeof(double), name);
-
-        /// <summary>
-        /// Создает экземпляр константы Expression.
-        /// </summary>
-        /// <param name="value">Значение константы.</param>
-        static private Expression CreateConstant(double value) =>
-            Expression.Constant(value, typeof(double));
 
         /// <summary>
         /// Метод создает из функции одной переменной func<double, double> заданного класса делегат, который принимает и возвращает Expression.
@@ -132,11 +118,11 @@ namespace CourseWork3
 
         static private string splitToTokensPattern = @"";
 
-        static MyActionBuilder()
+        static MathExpressionBuilder()
         {
             // Создание шаблона регулярного выражения для разбиения входного арифметического выражения на токены.
-            splitToTokensPattern += @"\d+(?:[\.]\d+)?";
-            splitToTokensPattern += @"|,";
+            splitToTokensPattern += @"\d+(?:[\,]\d+)?";
+            splitToTokensPattern += @"|;";
             foreach (var op in operators.Keys) splitToTokensPattern += @"|\" + op;
             splitToTokensPattern += @"|\(";
             splitToTokensPattern += @"|\)";
@@ -171,7 +157,7 @@ namespace CourseWork3
         /// <param name="value"></param>
         /// <returns></returns>
         static private bool IsNumberOrParam(string value)
-            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("(") || value.Equals(")"));
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(";") || value.Equals("(") || value.Equals(")"));
 
         /// <summary>
         /// Разделяет входное арифметическое выражение на токены.
@@ -208,7 +194,7 @@ namespace CourseWork3
                 
                 if (IsFunction(tokens[i])) // Если токен - функция, то поместить его в стек.
                 { stack.Push(tokens[i]); }
-                else if (tokens[i].Equals(",")) // Если токен - разделитель аргументов функции, то
+                else if (tokens[i].Equals(";")) // Если токен - разделитель аргументов функции, то
                 {
                     while (!stack.Peek().Equals("(")) // Пока токен на вершине стека не открывающая скобка
                     {
@@ -282,14 +268,14 @@ namespace CourseWork3
                 else // Если токен - операнд, то он помещается на вершину стека.
                 {
                     if (double.TryParse(tokens[i], out double value)) // Если операнд - число
-                        stack.Push(CreateConstant(value));
+                        stack.Push(ExpressionHelper.CreateConstant<double>(value));
                     else if (IsConst(tokens[i])) // Если операнд - математическая константа
                         stack.Push(constants[tokens[i]]);
                     else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр
                         stack.Push(parameters[tokens[i]]);
                     else // Если операнд - несохраненный параметр
                     {
-                        parameters.Add(tokens[i], CreateParameter(tokens[i]));
+                        parameters.Add(tokens[i], ExpressionHelper.CreateParameter<double>(tokens[i]));
                         stack.Push(parameters[tokens[i]]);
                     }
                 }
@@ -306,14 +292,33 @@ namespace CourseWork3
         /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
         /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
         /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
-        public Delegate CompileString(string infixExpression, string[] paramsName = null)
+        public Delegate CompileString(string infixExpression, params string[] paramsName)
         {
             this.Clear();
 
             if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), CreateParameter(param.ToLower()));
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<double>(param.ToLower()));
 
             string[] infixTokens = SplitToTokens(infixExpression);
+            string[] postfixTokens = ConvertToRPN(infixTokens);
+            Expression resExpression = BuildExpression(postfixTokens);
+            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
+            return ResultDelegate;
+        }
+
+        /// <summary>
+        /// Преобразует набор токенов инфиксного арифметическое выражение в делегат.
+        /// </summary>
+        /// <param name="infixTokens">Набор токенов арифметического выражения в инфиксной форме.</param>
+        /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
+        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
+        public Delegate CompileString(string[] infixTokens, params string[] paramsName)
+        {
+            this.Clear();
+
+            if (paramsName != null) foreach (string param in paramsName)
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<double>(param.ToLower()));
+
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);
             ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();

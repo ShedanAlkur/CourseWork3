@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseWork3", "CourseWork3\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK3Test", "OpenTK3Test\OpenTK3Test.csproj", "{73C06EB8-1012-4826-89BC-DDF365A1B251}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK4Test", "OpenTK4Test\OpenTK4Test.csproj", "{15BA1B85-8A4D-4243-9B82-48BA698C5D19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTK4Test", "OpenTK4Test\OpenTK4Test.csproj", "{15BA1B85-8A4D-4243-9B82-48BA698C5D19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionBuilder", "ExpressionHelper\ExpressionBuilder.csproj", "{904E6F89-A692-4D19-929A-E2F93C2EA5A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{15BA1B85-8A4D-4243-9B82-48BA698C5D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BA1B85-8A4D-4243-9B82-48BA698C5D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BA1B85-8A4D-4243-9B82-48BA698C5D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{904E6F89-A692-4D19-929A-E2F93C2EA5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{904E6F89-A692-4D19-929A-E2F93C2EA5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{904E6F89-A692-4D19-929A-E2F93C2EA5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{904E6F89-A692-4D19-929A-E2F93C2EA5A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
