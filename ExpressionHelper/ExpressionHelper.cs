@@ -43,6 +43,18 @@ namespace ExpressionBuilder
             return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
         }
 
+        public static Delegate CreateSetter(string propertyOrFieldName, Type typeOfObject, Type typeOfField)
+        {
+            var item = Expression.Parameter(typeOfObject, "item");
+            var value = Expression.Parameter(typeOfField, "value");
+            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
+            var assign = Expression.Assign(propertyOrField, value);
+
+            var expr = Expression.Block(assign, Expression.Empty());
+
+            return Expression.Lambda(expr, item, value).Compile();
+        }
+
         /// <summary>
         /// Создает инкриментор для поля или свойства заданного класса.
         /// </summary>

@@ -67,7 +67,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Parser\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

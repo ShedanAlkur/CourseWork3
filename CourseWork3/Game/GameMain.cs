@@ -101,27 +101,44 @@ namespace CourseWork3.Game
             int height = window.Height;
 
 
-            // Рисуем мини-сцену
-            worldFrameBuffer.Bind();
-            Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
-            Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
-            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
-            World.Render();
+            //// Рисуем мини-сцену
+            //worldFrameBuffer.Bind();
+            //Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            //Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
+            //Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
+            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
+            //Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
+            //World.Render();
 
-            // Рисуем большую сцену
-            FrameBuffer.Unbind();
+            //// Рисуем большую сцену
+            //FrameBuffer.Unbind();
+            //Graphics.ApplyViewport(windowXOffset, windowYOffset,
+            //    (int)(defaultWidth * windowScale),
+            //    (int)(defaultHeight * windowScale));
+            //Graphics.ApplyProjection(defaultWidth, defaultHeight);
+            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
+            //Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
+            //Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
+            //    new Vector2(worldSize.X, worldSize.Y), 0, 0);
+            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
+
+
             Graphics.ApplyViewport(windowXOffset, windowYOffset,
                 (int)(defaultWidth * windowScale),
                 (int)(defaultHeight * windowScale));
             Graphics.ApplyProjection(defaultWidth, defaultHeight);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
-            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
-                new Vector2(worldSize.X, worldSize.Y), 0, 0);
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), 0, 100);
+            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
+
+            Graphics.ApplyViewport(windowXOffset + 150, windowYOffset + 100, (int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            //GL.Clear(ClearBufferMask.ColorBufferBit);
+            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, 1), 0);
+            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
+            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
+            World.Render();
 
             window.SwapBuffers();
         }
