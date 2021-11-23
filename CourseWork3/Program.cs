@@ -17,7 +17,7 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            TestSite.ExpFieldTest(); 
+            TestSite.ExpFieldTest();
             return;
 
             using (GameWindow window = new GameWindow(800, 600))

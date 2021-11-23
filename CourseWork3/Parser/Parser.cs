@@ -22,11 +22,9 @@ namespace CourseWork3.Parser
 
                 foreach(var field in fields)
                 {
-                    var attribs = field.GetCustomAttributes(typeof(FieldOrPropertyPatternAttribute), false);
-                    if (attribs.Length > 0) continue;
+                    var attribs = field.GetCustomAttributes(typeof(FieldOrPropertyPatternAttribute), true);
+                    if (attribs.Length == 0) continue;
                     var name = field.Name;
-                    
-
                     var attrib = (FieldOrPropertyPatternAttribute)attribs[0];
                     if (attrib.Type.HasFlag(FieldOrPropertyPatternType.StructSetter))
                     {
