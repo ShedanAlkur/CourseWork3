@@ -8,7 +8,7 @@ namespace CourseWork3
 {
     class TestSite
     {
-
+        #region like-expression methods
         public static Expression Like(Expression lhs, Expression rhs)
         {
             MethodInfo? method = typeof(TestSite).GetMethod("Like123",
@@ -31,49 +31,20 @@ namespace CourseWork3
         {
             return a.Contains(b); // just for illustration
         }
-    
+        #endregion
 
         public static void ExpFieldTest()
         {
-            var obj = new TestClass();
-            Console.WriteLine($"obj.Field = {obj.Field}");
+            var setter1 = ExpressionBuilder.ExpressionHelper.CreateSetter<TestClass, int>("Property");
+            var setter2 = ExpressionBuilder.ExpressionHelper.CreateSetterByType("Property", typeof(TestClass), typeof(int));
 
-            var act = CreateSetter<TestClass, int>("Field");
-            act(obj, 71);
-            Console.WriteLine($"obj.Field = {obj.Field}");
-
-            var act2 = CreateInrementor<TestClass, int>("Field");
-            act2(obj, 69);
-
-            Console.WriteLine($"obj.Field = {obj.Field}");
-
+            var test = new TestClass();
+            Console.WriteLine($"{nameof(test.Property)} = {test.Property}");
+            setter1(test, 69);
+            Console.WriteLine($"{nameof(test.Property)} = {test.Property}");
+            ((Action<TestClass, int>)setter2)(test, 70);
+            Console.WriteLine($"{nameof(test.Property)} = {test.Property}");
         }
-
-        public static Action<O, P> CreateSetter<O, P>(string propertyOrFieldName)
-        {
-            var item = Expression.Parameter(typeof(O), "item");
-            var value = Expression.Parameter(typeof(P), "value");
-            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
-            var assign = Expression.Assign(propertyOrField, value);
-
-            var expr = Expression.Block(assign, Expression.Empty());
-
-            return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
-        }
-
-        public static Action<O, P> CreateInrementor<O, P>(string propertyOrFieldName)
-        {
-            var item = Expression.Parameter(typeof(O), "item");
-            var value = Expression.Parameter(typeof(P), "value");
-            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
-
-            var assign = Expression.AddAssign(propertyOrField, value);
-
-            var expr = Expression.Block(assign, Expression.Empty());
-
-            return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
-        }
-
 
     }
 

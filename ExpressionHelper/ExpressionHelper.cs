@@ -43,16 +43,18 @@ namespace ExpressionBuilder
             return (Action<O, P>)Expression.Lambda(expr, item, value).Compile();
         }
 
-        public static Delegate CreateSetter(string propertyOrFieldName, Type typeOfObject, Type typeOfField)
+        public static Delegate CreateSetterByType(string propertyOrFieldName, Type typeOfObject, Type typeOfField)
         {
-            var item = Expression.Parameter(typeOfObject, "item");
-            var value = Expression.Parameter(typeOfField, "value");
-            var propertyOrField = Expression.PropertyOrField(item, propertyOrFieldName);
-            var assign = Expression.Assign(propertyOrField, value);
+            // создаем обобщенный метод-сеттер
+            var method = typeof(ExpressionHelper).GetMethod(nameof(ExpressionHelper.CreateSetter));
+            var genericCreateSetter = method.MakeGenericMethod(typeOfObject, typeOfField);
+            var genericSetter = genericCreateSetter.Invoke(null, new object?[]{ propertyOrFieldName });
 
-            var expr = Expression.Block(assign, Expression.Empty());
+            // создамем обобщенный тип для action<,>
+            var actionType = typeof(Action<,>).MakeGenericType(typeOfObject, typeOfField);
 
-            return Expression.Lambda(expr, item, value).Compile();
+            var actionObject = Convert.ChangeType(genericSetter, actionType);
+            return (Delegate)actionObject;
         }
 
         /// <summary>
