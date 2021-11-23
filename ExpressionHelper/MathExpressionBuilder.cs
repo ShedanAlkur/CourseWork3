@@ -60,14 +60,14 @@ namespace ExpressionBuilder
         static private readonly Dictionary<string, Func<Expression, Expression>> functions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
-                ["sqrt"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Sqrt"),
-                ["sqr"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Sqr"),
-                ["sin"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Sin"),
-                ["cos"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Cos"),
-                ["tg"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), "Tan"),
-                ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Abs"),
-                ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Minus"),
-                ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), "Round")
+                ["sqrt"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), nameof(Math.Sqrt)),
+                ["sqr"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), nameof(MathExpressionBuilder.Sqr)),
+                ["sin"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), nameof(Math.Sin)),
+                ["cos"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), nameof(Math.Cos)),
+                ["tg"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(Math), nameof(Math.Tan)),
+                ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), nameof(MathExpressionBuilder.Abs)),
+                ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), nameof(MathExpressionBuilder.Minus)),
+                ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathExpressionBuilder), nameof(MathExpressionBuilder.Round))
             };
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace ExpressionBuilder
                 ["pi"] = ExpressionHelper.CreateConstant<double>(Math.PI),
                 ["e"] = ExpressionHelper.CreateConstant<double>(Math.E),
                 ["random"] = Expression.Call(
-                typeof(MathExpressionBuilder).GetMethod("Random",
+                typeof(MathExpressionBuilder).GetMethod(nameof(MathExpressionBuilder.Random),
                 BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)),
     };
         /// <summary>
