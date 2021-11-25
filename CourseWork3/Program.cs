@@ -17,13 +17,72 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            TestSite.ExpFieldTest();
+            ControlledObjectSetterTest();
             return;
 
             using (GameWindow window = new GameWindow(800, 600))
             {
                 GameMain.Init(window);
             }
+        }
+
+        static void ControlledObjectSetterTest()
+        {
+            // на релизе вариант со словарями быстрее в 2 раз
+            var sw = new Stopwatch();
+            var countOfTests = 1000000;
+
+            sw.Reset();
+            sw.Start();
+            var pattern = new Pattern<Projectile>(new ICommand<Projectile>[0]);
+            var proj = new Projectile(pattern);
+            Action<Projectile, object> act1 = (Projectile obj, object value) => obj.Velocity = (Vector2)value;
+            for (int i = 0; i < countOfTests; i++)
+            {
+                act1(proj, Vector2.Zero);
+            };
+            sw.Stop();
+            System.Console.WriteLine($"set-position time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
+
+            sw.Reset();
+            sw.Start();
+            Action<Projectile, Vector2> act2 = ExpressionHelper.CreateSetter<Projectile, Vector2>("Velocity");
+            for (int i = 0; i < countOfTests; i++)
+            {
+                act2(proj, Vector2.Zero);
+            }
+            sw.Stop();
+            System.Console.WriteLine($"set-velocity time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
+        }
+
+        static void ControlledObjectConstructTest()
+        {
+            // на релизе вариант со словарями медленнее в 9 раз
+            var sw = new Stopwatch();
+            var countOfTests = 100000;
+
+            sw.Reset();
+            sw.Start();
+            var temp = new Pattern<Projectile>(new ICommand<Projectile>[0]);
+            for (int i = 0; i < countOfTests; i++)
+            {
+                new ControlledObject<Projectile>(temp);          
+            };
+            sw.Stop();
+            System.Console.WriteLine($"{nameof(ControlledObject<Projectile>)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
+
+            sw.Reset();
+            sw.Start();
+            for (int i = 0; i < countOfTests; i++)
+            {
+                new ControlledObject2<Projectile>(temp);
+            }
+            sw.Stop();
+            System.Console.WriteLine($"{nameof(ControlledObject<Projectile>)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
         }
 
         static void InfiniteInput()

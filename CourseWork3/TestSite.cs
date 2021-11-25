@@ -46,6 +46,13 @@ namespace CourseWork3
             Console.WriteLine($"{nameof(test.Property)} = {test.Property}");
         }
 
+
+        public static void TestTest()
+        {
+            object obj1 = 1;
+            object obj2 = 3;
+        }
+
     }
 
 
