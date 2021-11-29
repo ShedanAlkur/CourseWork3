@@ -10,8 +10,17 @@ namespace CourseWork3.Parser
     {
         public void ParseFile(string path)
         {
-            string[] tokens = Lexer.SplitToTokensFromFile(path);
+            var tokens = Lexer.SplitToTokensFromFile(path);
+        }
+
+        public void Parse(string[] tokens)
+        {
             int pointer = 0;
+            while (pointer < tokens.Length)
+                if (tokens[pointer] == Keywords.ProjectileBlockBegin) ParseProjectile(tokens, ref pointer);
+                else if (tokens[pointer] == Keywords.GeneratorBlockBegin) ParseGenerator(tokens, ref pointer);
+                else if (tokens[pointer] == Keywords.EOF) return;
+                else throw new NotImplementedException();
         }
 
         private void ParseProjectile(string[] tokens, ref int pointer)

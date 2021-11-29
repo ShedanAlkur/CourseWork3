@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CourseWork3.Parser
+﻿namespace CourseWork3.Parser
 {
     class Keywords
     {
-        internal static string TokenEOL = "EOL";
-        internal static string TokenEOF = "EOF";
+        internal static string EOL = "EOL";
+        internal static string EOF = "EOF";
 
         internal static string SpriteBlockBegin = "sprite";
         internal static string ProjectileBlockBegin = "projectile";

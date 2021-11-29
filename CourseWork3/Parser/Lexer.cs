@@ -36,9 +36,9 @@ namespace CourseWork3.Parser
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     tokens.AddRange(SplitToTokens(line));
-                    tokens.Add(Keywords.TokenEOL);
+                    tokens.Add(Keywords.EOL);
                 }
-                tokens.Add(Keywords.TokenEOF);
+                tokens.Add(Keywords.EOF);
             }
 
             return tokens.ToArray();
