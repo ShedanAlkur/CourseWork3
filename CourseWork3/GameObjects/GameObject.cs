@@ -18,10 +18,33 @@ namespace CourseWork3.Game
             set
             {
                 velocity = value;
+                velocityScalar = velocity.LengthFast;
                 velocityAngle = velocity.GetAngle() + MathHelper.PiOver2;
             }
         }
+
+        private float velocityScalar;
+        public float VelocityScalar 
+        {
+            get => velocityScalar;
+            set
+            { 
+                velocityScalar = value;
+                velocity = Vector2Ext.ByAngle(velocityAngle) * velocityScalar;
+            }
+        }
+
         private float velocityAngle;
+        public float VelocityAngle 
+        {
+            get => velocityAngle;
+            set
+            { 
+                velocityAngle = value;
+                velocity = Vector2Ext.ByAngle(velocityAngle) * velocityScalar;
+            } 
+        }
+
 
         public float AccelerationScalar;
 

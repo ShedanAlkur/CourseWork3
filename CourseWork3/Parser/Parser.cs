@@ -8,38 +8,19 @@ namespace CourseWork3.Parser
 {
     class Parser
     {
-        List<Type> parsedTypes = new List<Type>()
+        public void ParseFile(string path)
+        {
+            string[] tokens = Lexer.SplitToTokensFromFile(path);
+            int pointer = 0;
+        }
+
+        private void ParseProjectile(string[] tokens, ref int pointer)
         {
 
-        };
-
-        public void Init()
+        }
+        private void ParseGenerator(string[] tokens, ref int pointer)
         {
-            foreach (var type in parsedTypes)
-            {
-                var fields = type.GetFields(System.Reflection.BindingFlags.Public);
-                var props = type.GetProperties(System.Reflection.BindingFlags.Public);
 
-                foreach(var field in fields)
-                {
-                    var attribs = field.GetCustomAttributes(typeof(FieldOrPropertyPatternAttribute), true);
-                    if (attribs.Length == 0) continue;
-                    var name = field.Name;
-                    var attrib = (FieldOrPropertyPatternAttribute)attribs[0];
-                    if (attrib.Type.HasFlag(FieldOrPropertyPatternType.StructSetter))
-                    {
-                        // создаем обобщенный метод
-                        var method = typeof(ExpressionBuilder.ExpressionHelper).GetMethod(nameof(ExpressionBuilder.ExpressionHelper.CreateSetter));
-                        var genericMethod = method.MakeGenericMethod(type, field.FieldType);
-
-                        // создамем обобщенный тип для action<,>
-                        var actionType = typeof(Action<>).MakeGenericType(type, field.FieldType);
-
-
-                        var setter = (Action<object, object>)genericMethod.CreateDelegate(actionType);
-                    }
-                }
-            }
         }
     }
 }

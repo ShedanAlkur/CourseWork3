@@ -10,6 +10,7 @@ using CourseWork3.Patterns;
 using CourseWork3.Game;
 using OpenTK;
 using ExpressionBuilder;
+using CourseWork3.Parser;
 
 namespace CourseWork3
 {
@@ -17,13 +18,18 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            ControlledObjectSetterTest();
+            LexerTest();
             return;
 
             using (GameWindow window = new GameWindow(800, 600))
             {
                 GameMain.Init(window);
             }
+        }
+
+        static void LexerTest()
+        {
+            Lexer.SplitToTokensFromFile(@"Content\fileForParser.txt");
         }
 
         static void ControlledObjectSetterTest()

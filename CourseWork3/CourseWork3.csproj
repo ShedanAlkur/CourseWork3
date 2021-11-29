@@ -43,6 +43,9 @@
     <None Update="Content\DoubleCircle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Content\fileForParser.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Content\Item.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
