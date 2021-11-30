@@ -277,7 +277,7 @@ namespace ExpressionBuilder
         /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
         /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
         /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
-        public Delegate CompileString(string infixExpression, string[] paramsName = null)
+        public Delegate CompileString(string infixExpression, params string[] paramsName)
         {
             this.Clear();
 
@@ -297,7 +297,7 @@ namespace ExpressionBuilder
         /// <param name="infixTokens">Набор токенов арифметического выражения в инфиксной форме.</param>
         /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
         /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
-        public Delegate CompileString(string[] infixTokens, string[] paramsName = null)
+        public Delegate CompileTokens(string[] infixTokens, params string[] paramsName)
         {
             this.Clear();
 

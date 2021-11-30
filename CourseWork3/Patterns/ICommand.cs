@@ -7,6 +7,6 @@ namespace CourseWork3.Patterns
 {
     interface ICommand<T> where T: ControlledObject<T>
     {
-        abstract public void Invoke(ControlledObject<T> gameObject);
+        abstract public void Invoke(T gameObject);
     }
 }

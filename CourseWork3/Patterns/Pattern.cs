@@ -17,7 +17,7 @@ namespace CourseWork3.Patterns
             this.repeatIndex = repeatIndex;
         }
 
-        public void Invoke(ControlledObject<T> gameObject)
+        public void Invoke(T gameObject)
         {
             // Применяем очередность команд, пока не дойдем до команды выполнения runtime
             do
