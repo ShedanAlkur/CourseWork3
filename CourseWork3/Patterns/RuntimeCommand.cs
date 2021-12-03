@@ -14,7 +14,7 @@ namespace CourseWork3.Patterns
             this.maxRunTime = maxRunTime;
         }
 
-        public void Invoke(ControlledObject<T> gameObject)
+        public void Invoke(T gameObject)
         {
             gameObject.CurrentRuntime = 0;
             gameObject.MaxRuntime = this.maxRunTime;

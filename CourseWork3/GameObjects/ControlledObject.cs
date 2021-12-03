@@ -55,7 +55,7 @@ namespace CourseWork3.Game
         {
             CurrentRuntime += elapsedTime;
             if (CurrentRuntime >= MaxRuntime)
-                Pattern.Invoke(this);
+                Pattern.Invoke((T)this);
 
             base.Update(elapsedTime);
         }

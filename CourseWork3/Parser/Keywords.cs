@@ -4,22 +4,33 @@ namespace CourseWork3.Parser
 {
     class Keywords
     {
-        internal static string EOL = "EOL";
-        internal static string EOF = "EOF";
+        internal const string EOL = "EOL";
+        internal const string EOF = "EOF";
+        internal const string ParameterSeparator = ",";
 
-        internal static string SpriteBlockBegin = "sprite";
-        internal static string ProjectileBlockBegin = "projectile";
-        internal static string GeneratorBlockBegin = "generator";
+        internal const string For = "For";
 
-        internal static string EndOfBlock = "end";
+        internal const string Sprite = "sprite";
+        internal const string Projectile = "projectile";
+        internal const string Generator = "generator";
+        internal const string Enemy = "enemy";
+        internal const string Level = "level";
+        internal const string End = "end";
 
-        internal static string Runtime;
-        internal static string Repeat_start;
-        internal static string Delay;
+        internal const string Runtime = "runtime";
+        internal const string RepeatStart = "repeatstart";
+        internal const string Pause = "pause";
 
+        internal const string Set = "set";
+        internal const string Increase = "inc";
+        internal const string Clear = "clear";
 
-        internal static string Velocity_to_Point = "velocityToPoint".ToLower();
-        internal static string Point_rotation = "pointRotation".ToLower();
+        private readonly static string[] PropertiesMethods = { Set, Increase, Clear };
+        internal static bool IsPropMethod(string method) => PropertiesMethods.Contains(method);
+
+        internal readonly string VelocityToPoint = "velocitytopoint".ToLower();
+        internal readonly string velocityToPlayer = "velocityToPlayer".ToLower();
+        internal readonly string PointRotation = "pointRotation".ToLower();
 
         internal static string ProjParamName = "genTime".ToLower();
 
@@ -29,10 +40,8 @@ namespace CourseWork3.Parser
             => controlledObjectProperties.Contains(property);
 
         internal static bool isProjectileProperty(string property) => throw new System.NotImplementedException();
-        internal static bool isGeneratorProperty
+        internal static bool isGeneratorProperty(string property) => throw new System.NotImplementedException();
 
 
-        internal static string[] PropertiesMethods = {"set", "inc", "clear"};
-        internal static bool IsPropMethod(string method) => PropertiesMethods.Contains(method);
     }
 }

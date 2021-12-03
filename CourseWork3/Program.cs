@@ -18,7 +18,7 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            LexerTest();
+            TestSite.TestTest();
             return;
 
             using (GameWindow window = new GameWindow(800, 600))

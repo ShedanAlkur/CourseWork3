@@ -10,7 +10,7 @@ namespace CourseWork3.Patterns
         string command;
         object value;
 
-        public void Invoke(ControlledObject<T> gameObject)
+        public void Invoke(T gameObject)
         {
 
             throw new NotImplementedException();

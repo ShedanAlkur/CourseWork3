@@ -310,6 +310,20 @@ namespace ExpressionBuilder
             return ResultDelegate;
         }
 
+
+        public Delegate CompileTokens(string[] infixTokens, ParameterExpression[] parameterExpressions)
+        {
+            this.Clear();
+
+            if (parameterExpressions != null) foreach (var param in parameterExpressions)
+                    parameters.Add(param.Name.ToLower(), param);
+
+            string[] postfixTokens = ConvertToRPN(infixTokens);
+            Expression resExpression = BuildExpression(postfixTokens);
+            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
+            return ResultDelegate;
+        }
+
         /// <summary>
         /// Удаляет все результаты расчетов из экземпляра класса.
         /// </summary>

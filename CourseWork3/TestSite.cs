@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CourseWork3.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -49,8 +50,10 @@ namespace CourseWork3
 
         public static void TestTest()
         {
-            object obj1 = 1;
-            object obj2 = 3;
+            var item = Expression.Parameter(typeof(Projectile), "item");
+            var field = Expression.PropertyOrField(item, nameof(Projectile.CurrentRuntime));
+            var res = ("123",field);
+            Console.WriteLine();
         }
 
     }
