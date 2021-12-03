@@ -124,17 +124,23 @@ namespace ExpressionBuilder
         #endregion
 
         /// <summary>
-        /// Словарь используемых параметров в арифметическом выражении.
+        /// Словарь используемых в арифметическом выражении параметров.
         /// </summary>
         private Dictionary<string, ParameterExpression> parameters =
             new Dictionary<string, ParameterExpression>();
+
+        /// <summary>
+        /// Словарь используемых в арифметическом выражении параметров, которые особым образом извлекаются из входных параметров итогового делегата.
+        /// </summary>
+        private Dictionary<string, Expression> nestedParameters =
+            new Dictionary<string, Expression>();
 
         public Delegate ResultDelegate { private set; get; }
 
         /// <summary>
         /// Массив имен используемых параметров в арифметическом выражении.
         /// </summary>
-        public string[] Parameters { get => parameters.Keys.ToArray(); }
+        public string[] Parameters { get => nestedParameters.Keys.Concat(parameters.Keys).ToArray(); }
 
         /// <summary>
         /// Является ли токен числом, константой или параметром.
@@ -256,9 +262,11 @@ namespace ExpressionBuilder
                         stack.Push(ExpressionHelper.CreateConstant<float>(value));
                     else if (IsConst(tokens[i])) // Если операнд - математическая константа
                         stack.Push(constants[tokens[i]]);
-                    else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр
+                    else if (nestedParameters.ContainsKey(tokens[i])) // если операнд - вложенный параметр
+                        stack.Push(nestedParameters[tokens[i]]);
+                    else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр (нормальный)
                         stack.Push(parameters[tokens[i]]);
-                    else // Если операнд - несохраненный параметр
+                    else // Если операнд - несохраненный параметр (нормальный)
                     {
                         parameters.Add(tokens[i], ExpressionHelper.CreateParameter<float>(tokens[i]));
                         stack.Push(parameters[tokens[i]]);
@@ -311,16 +319,25 @@ namespace ExpressionBuilder
         }
 
 
-        public Delegate CompileTokens(string[] infixTokens, ParameterExpression[] parameterExpressions)
+        public Delegate CompileTokens(string[] infixTokens, NestedExpressionParameter[] nestedExpressionParameter, params string[] paramsName)
         {
             this.Clear();
 
-            if (parameterExpressions != null) foreach (var param in parameterExpressions)
-                    parameters.Add(param.Name.ToLower(), param);
+            if (paramsName != null) foreach (string param in paramsName)
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
+
+            var externalNestedParams = new List<ParameterExpression>();
+            foreach (var param in nestedExpressionParameter)
+                {
+                nestedParameters.Add(param.internalParamName.ToLower(), param.internalParam);
+                externalNestedParams.Add(param.externalParam);
+                }
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);
-            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
+            List<ParameterExpression> generalParams = new List<ParameterExpression>(externalNestedParams);
+            generalParams.AddRange(parameters.Values);
+            ResultDelegate = Expression.Lambda(resExpression, generalParams).Compile();
             return ResultDelegate;
         }
 
@@ -330,6 +347,7 @@ namespace ExpressionBuilder
         public void Clear()
         {
             parameters.Clear();
+            nestedParameters.Clear();
             ResultDelegate = null;
         }
     }

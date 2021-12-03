@@ -23,23 +23,23 @@ namespace CourseWork3.Game
         {
             ParserMethods = new Dictionary<string, Action<T, object>>
             {
-                [$"set-position".ToLower()] = (T obj, object value) => obj.Position = (Vector2)value,
-                [$"inc-position".ToLower()] = (T obj, object value) => obj.Position += (Vector2)value,
+                [$"setPositionX".ToLower()] = (T obj, object value) => obj.Position.X = (float)value,
+                [$"incPositionX".ToLower()] = (T obj, object value) => obj.Position.X += (float)value,
 
-                [$"set-velocity".ToLower()] = (T obj, object value) => obj.Position = (Vector2)value,
-                [$"inc-velocity".ToLower()] = (T obj, object value) => obj.Position += (Vector2)value,
+                [$"setPositionY".ToLower()] = (T obj, object value) => obj.Position.Y = (float)value,
+                [$"incPositionY".ToLower()] = (T obj, object value) => obj.Position.Y += (float)value,
 
-                [$"set-velocityScalar".ToLower()] = (T obj, object value) => obj.VelocityScalar = (float)value,
-                [$"inc-velocityScalar".ToLower()] = (T obj, object value) => obj.VelocityScalar += (float)value,
+                [$"setVelocity".ToLower()] = (T obj, object value) => obj.VelocityScalar = (float)value,
+                [$"incVelocity".ToLower()] = (T obj, object value) => obj.VelocityScalar += (float)value,
 
-                [$"set-velocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle = (float)value,
-                [$"inc-velocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle += (float)value,
+                [$"setVelocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle = (float)value,
+                [$"incVelocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle += (float)value,
 
-                [$"set-accelerationScalar".ToLower()] = (T obj, object value) => obj.AccelerationScalar = (float)value,
-                [$"inc-accelerationScalar".ToLower()] = (T obj, object value) => obj.AccelerationScalar += (float)value,
+                [$"setAcceleration".ToLower()] = (T obj, object value) => obj.AccelerationScalar = (float)value,
+                [$"incAcceleration".ToLower()] = (T obj, object value) => obj.AccelerationScalar += (float)value,
 
-                [$"set-accelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle = (float)value,
-                [$"inc-accelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle += (float)value,
+                [$"setAccelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle = (float)value,
+                [$"setAccelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle += (float)value,
             };
         }
 

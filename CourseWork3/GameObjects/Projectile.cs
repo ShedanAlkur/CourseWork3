@@ -21,7 +21,7 @@ namespace CourseWork3.Game
         {
             ParserMethods = new Dictionary<string, Action<Projectile, object>>
             {
-                [$"set-color".ToLower()] = (Projectile obj, object value) => obj.Color = (Color)value,
+                [$"setColor".ToLower()] = (Projectile obj, object value) => obj.Color = (Color)value,
             };
         }
 

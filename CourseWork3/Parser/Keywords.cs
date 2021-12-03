@@ -34,8 +34,8 @@ namespace CourseWork3.Parser
 
         internal static string ProjParamName = "genTime".ToLower();
 
-        internal static string[] controlledObjectProperties = { "position", "velocity", "velocityScalar".ToLower(),
-        "velocityAngle".ToLower(), "accelerationScalar".ToLower(), "accelerationAngle".ToLower() };
+        internal static string[] controlledObjectProperties = { "positionx", "positiony", "velocity", "velocityAngle".ToLower(),
+        "acceleration".ToLower(), "accelerationAngle".ToLower(),  };
         internal static bool isControlledObjectProperty(string property) 
             => controlledObjectProperties.Contains(property);
 

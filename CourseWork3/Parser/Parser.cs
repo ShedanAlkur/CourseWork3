@@ -11,13 +11,23 @@ namespace CourseWork3.Parser
     {
         private ExpressionBuilder.MathFExpressionBuilder MathExpressionBuilder = new ExpressionBuilder.MathFExpressionBuilder();
 
+        private static ExpressionBuilder.NestedExpressionParameter[] nestedParametersForProjectile;
+
         private static string[] paramsName = { "gen_time" }; 
+
+        static Parser()
+        {
+            var externalParam = System.Linq.Expressions.Expression.Parameter(typeof(Projectile));
+            var internalParam = System.Linq.Expressions.Expression.PropertyOrField(externalParam, nameof(Projectile.CurrentRuntime));
+            var internalParamName = Keywords.Runtime;
+            var param = new ExpressionBuilder.NestedExpressionParameter(externalParam, internalParam, internalParamName);
+            nestedParametersForProjectile = new ExpressionBuilder.NestedExpressionParameter[] { param };
+        }
 
         public void ParseFile(string path)
         {
             Parse(Lexer.SplitToTokensFromFile(path));
         }
-
         public void Parse(string[] tokens)
         {
             int pointer = 0;
@@ -29,7 +39,6 @@ namespace CourseWork3.Parser
                 else if (tokens[pointer] == Keywords.Level) ParseLevel(tokens, ref pointer);
                 else throw new NotImplementedException();
         }
-
         private void ParseSprite(string[] tokens, ref int pointer)
         {
 
@@ -42,16 +51,17 @@ namespace CourseWork3.Parser
 
             while (tokens[pointer] != Keywords.End)
             {
-                if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commandCount;
+                if ((tokens[pointer] == Keywords.EOL)) pointer++;
+                else if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commandCount;
                 else if (tokens[pointer] == Keywords.Runtime)
                     commands.Add(new RuntimeCommand<Projectile>(float.Parse(tokens[++pointer])));
                 else if (tokens[pointer] == Keywords.Pause)
                 {
-                    // Обработка команды delay
+                    commands.Add(new PauseCommand<Projectile>(ParseFloatFromMathExpression(tokens, ref pointer)));
                 }
                 else if (tokens[pointer] == Keywords.Runtime)
                 {
-                    // Обработка команды Runtime
+                    commands.Add(new RuntimeCommand<Projectile>(ParseFloatFromMathExpression(tokens, ref pointer)));
                 }
                 else if (Keywords.IsPropMethod(tokens[pointer]))
                 {
@@ -62,6 +72,17 @@ namespace CourseWork3.Parser
                     else if (Keywords.isProjectileProperty(tokens[pointer]))
                         action = Projectile.ParserMethods[commandName];
                     else throw new NotImplementedException();
+
+                    if (IsPredeterminedNumber(tokens, ref pointer))
+                    {
+                        commands.Add(new PropertyChangerCommand<Projectile>(action,
+                            ParseFloatFromMathExpression(tokens, ref pointer)));
+                    }
+                    else
+                    {
+                        commands.Add(new BasedOnObjectPropertyChangerCommand<Projectile>(action,
+                            ParseMathExpressionForProjectile(tokens, ref pointer)));
+                    }
                 }
                 pointer++;
             }
@@ -103,7 +124,19 @@ namespace CourseWork3.Parser
 
         }
 
-        private float ParseMathExpression(string[] tokens, ref int pointer)
+        private bool IsPredeterminedNumber(string[] tokens, ref int pointer)
+        {
+            int localPointer = pointer;
+            List<string> mathExpressionTokens = new List<string>();
+            while (tokens[localPointer] != Keywords.EOL && tokens[localPointer] != Keywords.ParameterSeparator)
+            {
+                mathExpressionTokens.Add(tokens[localPointer++]);
+            }
+            MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray());
+            if (MathExpressionBuilder.Parameters.Length == 0) return true;
+            else return false;
+        }
+        private float ParseFloatFromMathExpression(string[] tokens, ref int pointer)
         {
             List<string> mathExpressionTokens = new List<string>();
             while (tokens[pointer] != Keywords.EOL && tokens[pointer] != Keywords.ParameterSeparator)

@@ -5,12 +5,12 @@ using System.Text;
 
 namespace CourseWork3.Patterns
 {
-    class PropertyChangerCommand<T> : ICommand<T> where T : ControlledObject<T>
+    class BasedOnObjectPropertyChangerCommand<T> : ICommand<T> where T : ControlledObject<T>
     {
         Action<T, object> command;
-        object value;
+        Func<T, float> value;
 
-        public PropertyChangerCommand(Action<T, object> command, object value)
+        public BasedOnObjectPropertyChangerCommand(Action<T, object> command, Func<T, float> value)
         {
             this.command = command;
             this.value = value;
@@ -18,7 +18,7 @@ namespace CourseWork3.Patterns
 
         public void Invoke(T gameObject)
         {
-            command(gameObject, value);
+            command(gameObject, value(gameObject));
         }
     }
 }
