@@ -14,6 +14,9 @@ namespace CourseWork3.Game
         private static GameWindow window;
         public static GraphicsOpenGL.Graphics Graphics;
         public static GameTextureCollection TextureCollection;
+        public static PatternCollection<Projectile> ProjeciltePatternCollection;
+        public static PatternCollection<Generator<EnemyProjectile>> GeneratorPatternCollection;
+        public static PatternCollection<Enemy> EnemyPatternCollection;
         public static World World;
         public static GameInput Input;
         public static GameCamera Camera;
@@ -63,6 +66,10 @@ namespace CourseWork3.Game
         {
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
+
+            ProjeciltePatternCollection = new PatternCollection<Projectile>();
+            GeneratorPatternCollection = new PatternCollection<Generator<EnemyProjectile>>();
+            EnemyPatternCollection = new PatternCollection<Enemy>();
 
             TextureCollection = new GameTextureCollection();
             tex = new Texture2D(@"content\projectileDirected.png");

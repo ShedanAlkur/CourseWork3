@@ -3,43 +3,51 @@ using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CourseWork3.Parser;
 
 namespace CourseWork3.Game
 {
     class ControlledObject<T> : GameObject where T : ControlledObject<T>
     {
-        public static Dictionary<string, Action<T, object>> ParserMethods = new Dictionary<string, Action<T, object>>
-        {
-            
-        };
+        public static Dictionary<string, Dictionary<string, Action<T, object>>> ParserActionByTwoCommand;
+        public static Dictionary<string, Action<T, object>> ParserActionByOneCommand;
 
         public readonly Pattern<T> Pattern;
 
         public int CurrentIndex;
         public float CurrentRuntime;
         public float MaxRuntime;
+        public float CurrentPauseTime;
 
         static ControlledObject()
         {
-            ParserMethods = new Dictionary<string, Action<T, object>>
+            ParserActionByTwoCommand = new Dictionary<string, Dictionary<string, Action<T, object>>>
             {
-                [$"setPositionX".ToLower()] = (T obj, object value) => obj.Position.X = (float)value,
-                [$"incPositionX".ToLower()] = (T obj, object value) => obj.Position.X += (float)value,
+                [Keywords.Set] = new Dictionary<string, Action<T, object>>
+                {
+                    [Keywords.PositionX] = (T obj, object value) => obj.Position.X = (float)value,
+                    [Keywords.PositionY] = (T obj, object value) => obj.Position.Y = (float)value,
+                    [Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar = (float)value,
+                    [Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle = (float)value,
+                    [Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar = (float)value,
+                    [Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle = (float)value,
+                },
+                [Keywords.Increase] = new Dictionary<string, Action<T, object>>
+                {
+                    [Keywords.PositionX] = (T obj, object value) => obj.Position.X += (float)value,
+                    [Keywords.PositionY] = (T obj, object value) => obj.Position.Y += (float)value,
+                    [Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar += (float)value,
+                    [Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle += (float)value,
+                    [Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar += (float)value,
+                    [Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle += (float)value,
+                },
+            };
 
-                [$"setPositionY".ToLower()] = (T obj, object value) => obj.Position.Y = (float)value,
-                [$"incPositionY".ToLower()] = (T obj, object value) => obj.Position.Y += (float)value,
+            ParserActionByOneCommand = new Dictionary<string, Action<T, object>>
+            {
+                [Keywords.Pause] = (T obj, object value) => { obj.CurrentPauseTime = (float)value; },
+                [Keywords.Runtime] = (T obj, object value) => { obj.CurrentRuntime = 0; obj.MaxRuntime = (float)value; }
 
-                [$"setVelocity".ToLower()] = (T obj, object value) => obj.VelocityScalar = (float)value,
-                [$"incVelocity".ToLower()] = (T obj, object value) => obj.VelocityScalar += (float)value,
-
-                [$"setVelocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle = (float)value,
-                [$"incVelocityAngle".ToLower()] = (T obj, object value) => obj.VelocityAngle += (float)value,
-
-                [$"setAcceleration".ToLower()] = (T obj, object value) => obj.AccelerationScalar = (float)value,
-                [$"incAcceleration".ToLower()] = (T obj, object value) => obj.AccelerationScalar += (float)value,
-
-                [$"setAccelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle = (float)value,
-                [$"setAccelerationAngle".ToLower()] = (T obj, object value) => obj.AccelerationAngle += (float)value,
             };
         }
 
@@ -53,6 +61,17 @@ namespace CourseWork3.Game
 
         public override void Update(float elapsedTime)
         {
+            if (CurrentPauseTime > 0)
+            {
+                CurrentPauseTime -= elapsedTime;
+                if (CurrentPauseTime > 0) return;
+                else 
+                { 
+                    elapsedTime = -CurrentPauseTime;
+                    CurrentPauseTime = 0;
+                }
+            }
+
             CurrentRuntime += elapsedTime;
             if (CurrentRuntime >= MaxRuntime)
                 Pattern.Invoke((T)this);

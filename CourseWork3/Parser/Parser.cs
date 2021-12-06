@@ -13,7 +13,7 @@ namespace CourseWork3.Parser
 
         private static ExpressionBuilder.NestedExpressionParameter[] nestedParametersForProjectile;
 
-        private static string[] paramsName = { "gen_time" }; 
+        private static string[] paramsName = { Keywords.ProjParamName }; 
 
         static Parser()
         {
@@ -53,36 +53,7 @@ namespace CourseWork3.Parser
             {
                 if ((tokens[pointer] == Keywords.EOL)) pointer++;
                 else if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commandCount;
-                else if (tokens[pointer] == Keywords.Runtime)
-                    commands.Add(new RuntimeCommand<Projectile>(float.Parse(tokens[++pointer])));
-                else if (tokens[pointer] == Keywords.Pause)
-                {
-                    commands.Add(new PauseCommand<Projectile>(ParseFloatFromMathExpression(tokens, ref pointer)));
-                }
-                else if (tokens[pointer] == Keywords.Runtime)
-                {
-                    commands.Add(new RuntimeCommand<Projectile>(ParseFloatFromMathExpression(tokens, ref pointer)));
-                }
                 else if (Keywords.IsPropMethod(tokens[pointer]))
-                {
-                    string commandName = tokens[pointer] + tokens[++pointer];
-                    Action<Projectile, object> action;
-                    if (Keywords.isControlledObjectProperty(tokens[pointer]))
-                        action = ControlledObject<Projectile>.ParserMethods[commandName];
-                    else if (Keywords.isProjectileProperty(tokens[pointer]))
-                        action = Projectile.ParserMethods[commandName];
-                    else throw new NotImplementedException();
-
-                    if (IsPredeterminedNumber(tokens, ref pointer))
-                    {
-                        commands.Add(new PropertyChangerCommand<Projectile>(action,
-                            ParseFloatFromMathExpression(tokens, ref pointer)));
-                    }
-                    else
-                    {
-                        commands.Add(new BasedOnObjectPropertyChangerCommand<Projectile>(action,
-                            ParseMathExpressionForProjectile(tokens, ref pointer)));
-                    }
                 }
                 pointer++;
             }
@@ -93,49 +64,14 @@ namespace CourseWork3.Parser
             int commandCount = 0;
             List<ICommand<Generator<Projectile>>> commands = new List<ICommand<Generator<Projectile>>>();
 
-            while (tokens[pointer] != Keywords.End)
-            {
-                if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commandCount;
-                else if (tokens[pointer] == Keywords.Runtime)
-                    commands.Add(new RuntimeCommand<Generator<Projectile>>(float.Parse(tokens[++pointer])));
-                else if (tokens[pointer] == Keywords.Pause)
-                {
-                    // Обработка команды delay
-                }
-                else if (tokens[pointer] == Keywords.Runtime)
-                {
-                    // Обработка команды Runtime
-                }
-                else if (Keywords.IsPropMethod(tokens[pointer]))
-                {
-                    string commandName = tokens[pointer] + tokens[++pointer];
-                    Action<Generator<Projectile>, object> action;
-                    if (Keywords.isControlledObjectProperty(tokens[pointer]))
-                        action = ControlledObject<Generator<Projectile>>.ParserMethods[commandName];
-                    else if (Keywords.isProjectileProperty(tokens[pointer]))
-                        action = Generator<Projectile>.ParserMethods[commandName];
-                    else throw new NotImplementedException();
-                }
-                pointer++;
-            }
+
         }
         private void ParseLevel(string[] tokens, ref int pointer)
         {
 
         }
 
-        private bool IsPredeterminedNumber(string[] tokens, ref int pointer)
-        {
-            int localPointer = pointer;
-            List<string> mathExpressionTokens = new List<string>();
-            while (tokens[localPointer] != Keywords.EOL && tokens[localPointer] != Keywords.ParameterSeparator)
-            {
-                mathExpressionTokens.Add(tokens[localPointer++]);
-            }
-            MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray());
-            if (MathExpressionBuilder.Parameters.Length == 0) return true;
-            else return false;
-        }
+
         private float ParseFloatFromMathExpression(string[] tokens, ref int pointer)
         {
             List<string> mathExpressionTokens = new List<string>();
@@ -145,10 +81,14 @@ namespace CourseWork3.Parser
             }
             return ((Func<float>)MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray()))();
         }
-        private Func<Projectile, float> ParseMathExpressionForProjectile(string[] tokens, ref int pointer)
+        private Func<Projectile, float> ParseProjFuncMathExpression(string[] tokens, ref int pointer)
         {
             throw new NotImplementedException();
         }
+        private string ParseString(string[] tokens, ref int pointer)
+    {
+
+    }
 
     }
 }
