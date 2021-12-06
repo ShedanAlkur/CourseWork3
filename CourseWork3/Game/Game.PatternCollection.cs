@@ -10,10 +10,11 @@ namespace CourseWork3.Game
     {
         public class PatternCollection<T> where T : ControlledObject<T>
         {
-            private Dictionary<string, Pattern<T>> patterns;
+            private Dictionary<string, Pattern<T>> patterns = new Dictionary<string, Pattern<T>>();
             public bool TryAdd(string name, Pattern<T> pattern) => patterns.TryAdd(name, pattern);
             public bool TryGet(string name, out Pattern<T> pattern) => patterns.TryGetValue(name, out pattern);
             public void Remove(string name) => patterns.Remove(name);
+            public Pattern<T> this[string name] => patterns[name];
         }
     }
 }

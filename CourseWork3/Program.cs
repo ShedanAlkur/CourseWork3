@@ -18,7 +18,7 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            TestSite.TestTest();
+            TestSite.ParserTest();
             //TestSite.MyActionBuilderTest();
             //TestSite.RandomDelegateTest();
             return;

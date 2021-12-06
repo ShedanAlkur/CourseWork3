@@ -10,7 +10,7 @@ namespace CourseWork3.Game
 {
     class Generator<T> : ControlledObject<Generator<T>> where T: Projectile
     {
-        public static Dictionary<string, Dictionary<string, Action<Generator<T>, object>>> ParserActionByTwoCommand;
+        public static new Dictionary<string, Action<Generator<T>, object>> ActionsForParser;
 
         public GameObject Owner;
         public float Sector;
@@ -24,35 +24,25 @@ namespace CourseWork3.Game
 
         static Generator()
         {
-            ParserActionByTwoCommand = new Dictionary<string, Dictionary<string, Action<Generator<T>, object>>>
+            ActionsForParser = new Dictionary<string, Action<Generator<T>, object>>
             {
-                [Keywords.Set] = new Dictionary<string, Action<Generator<T>, object>>
-                {
-                    [Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
-                    [Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
-                    [Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
-                    [Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
-                    [Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
-                    [Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
-                },
-                [Keywords.Increase] = new Dictionary<string, Action<Generator<T>, object>>
-                {
-                    [Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
-                    [Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
-                    [Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
-                    [Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
-                    [Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
-                    [Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
-                },
-                [Keywords.Clear] = new Dictionary<string, Action<Generator<T>, object>>
-                {
-                    [Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
-                    [Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = null,
-                },
+                [Keywords.Set + Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
+                [Keywords.Set + Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
+                [Keywords.Set + Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
+                [Keywords.Set + Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
+                [Keywords.Set + Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
+                [Keywords.Set + Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
+
+                [Keywords.Increase + Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
+                [Keywords.Increase + Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
+                [Keywords.Increase + Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
+                [Keywords.Increase + Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
+
+                [Keywords.Clear + Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
+                [Keywords.Clear + Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = null,
             };
-            ControlledObject<Generator<T>>.ParserActionByTwoCommand.ToList().ForEach(firstCommand =>
-                firstCommand.Value.ToList().ForEach(secondCommand =>
-                ParserActionByTwoCommand[firstCommand.Key].Add(secondCommand.Key, secondCommand.Value)));
+            ControlledObject<Generator<T>>.ActionsForParser.ToList().ForEach(x =>
+                ActionsForParser.Add(x.Key, x.Value));
         }
 
         public Generator(Pattern<Generator<T>> pattern, GameObject owner) : base(pattern)

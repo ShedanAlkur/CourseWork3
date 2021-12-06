@@ -1,16 +1,26 @@
-SPRITE "arrow" // начало блока описания спрайта, имя спрайта
-	path "sprites/arrow.png" // путь к файлу спрайта
-SPRITE_END // конец блока
+PROJECTILE "Meilin Knifes Red"
+	set color "blue"
+	randomColor
+	set velocity 100
+	inc velocityAngle 175
+	set acceleration -genTime * 10 * random
+	inc accelerationAngle 175
+	velocityToPoint 0, 100
+	velocityToPlayer
+	pointRotation 0, 0
+	runtime 100
+	repeatStart
+	pause 200
+END
 
-SPRITE "enemy" 
-	path "sprites/enemy.png"
-SPRITE_END
-
-PROJ_PATTERN "awesome projectile name 1" // начало блока описания шаблона снаряда
-	set max_life_span 8000 // устанавливает максимальное время жизни снаряда - 8000мс
-	
-	velocity_to_Point 0, 100,1 // перенаправляет вектор скорости в точку (0, 100)
-	runtime 1000 // описанные выше команды будут выполняться в течение 1000мс
-	point_rotation 0, 0 // с сохранением скаляра скорости устанавливает параметры для движения по окружности вокруг точки (0, 0)
-	set acceleration_angle round (random * 100) // устанавливает угол между вектором ускорения и вектором скорости; round - округляет число; random - возвращает вещественное число от 0 до 1
-PROJ_PATTERN_END
+GENERATOR "Meilin Generator"
+	set sector 360
+	set spawnDelay 150
+	set spawnCount 24
+	set angle 360/24/2
+	set sprite "arrow"
+	repeatStart
+	set projectile "Meilin Knifes Red"
+	runtime 500
+	pause 1000
+END

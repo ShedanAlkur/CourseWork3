@@ -23,6 +23,8 @@ namespace CourseWork3.Game
         public static GameStats Stats;
         public static GameTime Time;
 
+        public static Random random;
+
         static Texture2D tex;
         static Vector2 projSize;
 
@@ -64,6 +66,7 @@ namespace CourseWork3.Game
 
         private static void Window_Load(object sender, EventArgs e)
         {
+            random = new Random();
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
 

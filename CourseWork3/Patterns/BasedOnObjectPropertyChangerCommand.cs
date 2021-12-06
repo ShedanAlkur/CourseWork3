@@ -5,20 +5,20 @@ using System.Text;
 
 namespace CourseWork3.Patterns
 {
-    class BasedOnObjectPropertyChangerCommand<T> : ICommand<T> where T : ControlledObject<T>
+    class BasedOnProjectileChangerCommand : ICommand<Projectile>
     {
-        Action<T, object> command;
-        Func<T, float> value;
+        Action<Projectile, object> action;
+        Func<Projectile, float> value;
 
-        public BasedOnObjectPropertyChangerCommand(Action<T, object> command, Func<T, float> value)
+        public BasedOnProjectileChangerCommand(Action<Projectile, object> command, Func<Projectile, float> value)
         {
-            this.command = command;
+            this.action = command;
             this.value = value;
         }
 
-        public void Invoke(T gameObject)
+        public void Invoke(Projectile gameObject)
         {
-            command(gameObject, value(gameObject));
+            action(gameObject, value(gameObject));
         }
     }
 }

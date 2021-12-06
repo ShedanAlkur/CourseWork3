@@ -20,7 +20,8 @@ namespace CourseWork3.Parser
         public static readonly string Runtime = "runtime";
         public static readonly string RepeatStart = "repeatstart";
         public static readonly string Pause = "pause";
-                
+        public static readonly string Destroy = "destroy";
+
         public static readonly string Set = "set";
         public static readonly string Increase = "inc";
         public static readonly string Clear = "clear";
@@ -46,6 +47,9 @@ namespace CourseWork3.Parser
         public static readonly string velocityToPlayer = "velocityToPlayer".ToLower();
         public static readonly string VelocityToPoint = "velocitytopoint".ToLower();
         public static readonly string PointRotation = "pointRotation".ToLower();
+        public static readonly string RandomColor = "randomColor".ToLower();
+
+        public static string ProjParamName = "genTime".ToLower();
 
         public static readonly string[] SingleFloatParamCommands =
         {
@@ -60,9 +64,6 @@ namespace CourseWork3.Parser
             VelocityToPoint, PointRotation,
         };
         public static bool IsSingleVec2ParamCommands(string command) => SingleVec2ParamCommands.Contains(command);
-
-        public static string ProjParamName = "genTime".ToLower();
-
 
     }
 }

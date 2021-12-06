@@ -31,7 +31,8 @@ namespace CourseWork3.Patterns
                 // Выполняем текущую команду
                 commands[gameObject.CurrentIndex].Invoke(gameObject);
             }
-            while (!(commands[gameObject.CurrentIndex++] is RuntimeCommand<T>));
+            while (!(commands[gameObject.CurrentIndex++] is RuntimeCommand<T> && 
+            commands[gameObject.CurrentIndex++] is ProjRuntimeCommand));
 
         }
     }

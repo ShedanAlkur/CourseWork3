@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using static CourseWork3.Game.GameMain;
 
 namespace CourseWork3
 {
@@ -112,34 +113,6 @@ namespace CourseWork3
             System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
         }
 
-        public static void ControlledObjectConstructTest()
-        {
-            // на релизе вариант со словарями медленнее в 9 раз
-            var sw = new Stopwatch();
-            var countOfTests = 100000;
-
-            sw.Reset();
-            sw.Start();
-            var temp = new Pattern<Projectile>(new ICommand<Projectile>[0]);
-            for (int i = 0; i < countOfTests; i++)
-            {
-                new ControlledObject<Projectile>(temp);
-            };
-            sw.Stop();
-            System.Console.WriteLine($"{nameof(ControlledObject<Projectile>)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
-            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
-
-            sw.Reset();
-            sw.Start();
-            for (int i = 0; i < countOfTests; i++)
-            {
-                new ControlledObject2<Projectile>(temp);
-            }
-            sw.Stop();
-            System.Console.WriteLine($"{nameof(ControlledObject<Projectile>)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
-            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests} ms");
-        }
-
         public static void InfiniteInput()
         {
             while (true)
@@ -215,6 +188,16 @@ namespace CourseWork3
             Console.WriteLine($"Среднее время вызова delegate->func() - {sw.ElapsedTicks / numberOfTests} тиков");
         }
 
+        internal static void ParserTest()
+        {
+
+            GameMain.ProjeciltePatternCollection = new PatternCollection<Projectile>();
+            GameMain.GeneratorPatternCollection = new PatternCollection<Generator<EnemyProjectile>>();
+            var parser = new Parser.Parser();
+            parser.ParseFile(@"Content\fileForParser.txt");
+            
+            throw new NotImplementedException();
+        }
     }
    
 

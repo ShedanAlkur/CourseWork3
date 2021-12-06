@@ -9,8 +9,7 @@ namespace CourseWork3.Game
 {
     class ControlledObject<T> : GameObject where T : ControlledObject<T>
     {
-        public static Dictionary<string, Dictionary<string, Action<T, object>>> ParserActionByTwoCommand;
-        public static Dictionary<string, Action<T, object>> ParserActionByOneCommand;
+        public static Dictionary<string, Action<T, object>> ActionsForParser;
 
         public readonly Pattern<T> Pattern;
 
@@ -21,34 +20,36 @@ namespace CourseWork3.Game
 
         static ControlledObject()
         {
-            ParserActionByTwoCommand = new Dictionary<string, Dictionary<string, Action<T, object>>>
+            ActionsForParser = new Dictionary<string, Action<T, object>>
             {
-                [Keywords.Set] = new Dictionary<string, Action<T, object>>
-                {
-                    [Keywords.PositionX] = (T obj, object value) => obj.Position.X = (float)value,
-                    [Keywords.PositionY] = (T obj, object value) => obj.Position.Y = (float)value,
-                    [Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar = (float)value,
-                    [Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle = (float)value,
-                    [Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar = (float)value,
-                    [Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle = (float)value,
-                },
-                [Keywords.Increase] = new Dictionary<string, Action<T, object>>
-                {
-                    [Keywords.PositionX] = (T obj, object value) => obj.Position.X += (float)value,
-                    [Keywords.PositionY] = (T obj, object value) => obj.Position.Y += (float)value,
-                    [Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar += (float)value,
-                    [Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle += (float)value,
-                    [Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar += (float)value,
-                    [Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle += (float)value,
-                },
-            };
+                [Keywords.Set + Keywords.PositionX] = (T obj, object value) => obj.Position.X = (float)value,
+                [Keywords.Set + Keywords.PositionY] = (T obj, object value) => obj.Position.Y = (float)value,
+                [Keywords.Set + Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar = (float)value,
+                [Keywords.Set + Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle = (float)value,
+                [Keywords.Set + Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar = (float)value,
+                [Keywords.Set + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle = (float)value,
 
-            ParserActionByOneCommand = new Dictionary<string, Action<T, object>>
-            {
+                [Keywords.Increase + Keywords.PositionX] = (T obj, object value) => obj.Position.X += (float)value,
+                [Keywords.Increase + Keywords.PositionY] = (T obj, object value) => obj.Position.Y += (float)value,
+                [Keywords.Increase + Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar += (float)value,
+                [Keywords.Increase + Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle += (float)value,
+                [Keywords.Increase + Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar += (float)value,
+                [Keywords.Increase + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle += (float)value,
+
                 [Keywords.Pause] = (T obj, object value) => { obj.CurrentPauseTime = (float)value; },
-                [Keywords.Runtime] = (T obj, object value) => { obj.CurrentRuntime = 0; obj.MaxRuntime = (float)value; }
+                [Keywords.Runtime] = (T obj, object value) => { obj.CurrentRuntime = 0; obj.MaxRuntime = (float)value; },
+                [Keywords.Destroy] = (T obj, object value) => { obj.Terminated = true; },
 
+                [Keywords.VelocityToPoint] = (T obj, object value) => obj.VelocityAngle = (obj.Position - (Vector2)value).GetAngle(),
+                [Keywords.velocityToPlayer] = (T obj, object value) =>
+                    obj.VelocityAngle = (obj.Position - GameMain.World.Player.Position).GetAngle(),
+                [Keywords.PointRotation] = (T obj, object value) => obj.PointRotation((Vector2)value),
             };
+        }
+
+        public void PointRotation(Vector2 center)
+        {
+            
         }
 
         public ControlledObject(Pattern<T> pattern) : base()
