@@ -5,6 +5,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using CourseWork3.GraphicsOpenGL;
 using System.IO;
+using CourseWork3.Patterns;
 
 namespace CourseWork3.Game
 {
@@ -13,10 +14,13 @@ namespace CourseWork3.Game
 
         private static GameWindow window;
         public static GraphicsOpenGL.Graphics Graphics;
-        public static GameTextureCollection TextureCollection;
-        public static PatternCollection<Projectile> ProjeciltePatternCollection;
-        public static PatternCollection<Generator<EnemyProjectile>> GeneratorPatternCollection;
-        public static PatternCollection<Enemy> EnemyPatternCollection;
+
+        public static GameCollection<Sprite> SpriteCollection;
+        public static GameCollection<Texture2D> TextureCollection;
+        public static GameCollection<Pattern<Projectile>> ProjeciltePatternCollection;
+        public static GameCollection<Pattern<Generator<EnemyProjectile>>> GeneratorPatternCollection;
+        public static GameCollection<Pattern<Enemy>> EnemyPatternCollection;
+
         public static World World;
         public static GameInput Input;
         public static GameCamera Camera;
@@ -70,11 +74,11 @@ namespace CourseWork3.Game
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
 
-            ProjeciltePatternCollection = new PatternCollection<Projectile>();
-            GeneratorPatternCollection = new PatternCollection<Generator<EnemyProjectile>>();
-            EnemyPatternCollection = new PatternCollection<Enemy>();
+            ProjeciltePatternCollection = new GameCollection<Pattern<Projectile>>();
+            GeneratorPatternCollection = new GameCollection<Pattern<Generator<EnemyProjectile>>>();
+            EnemyPatternCollection = new GameCollection<Pattern<Enemy>>();
 
-            TextureCollection = new GameTextureCollection();
+            TextureCollection = new GameCollection<Texture2D>();
             tex = new Texture2D(@"content\projectileDirected.png");
             TextureCollection.Add("projectile", tex);
             TextureCollection.Add("item", new Texture2D(@"content\Item.png"));

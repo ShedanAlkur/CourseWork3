@@ -12,6 +12,7 @@ namespace CourseWork3.Parser
             [Keywords.VelocityToPoint] = typeof(OpenTK.Vector2),
             [Keywords.PointRotation] = typeof(OpenTK.Vector2),
 
+            [Keywords.Runtime] = typeof(float),
             [Keywords.Pause] = typeof(float),
             [Keywords.PositionX] = typeof(float),
             [Keywords.PositionY] = typeof(float),
@@ -69,7 +70,7 @@ namespace CourseWork3.Parser
         }
         private void ParseSprite(string[] tokens, ref int pointer)
         {
-            while (tokens[pointer] != Keywords.End)
+            while (tokens[pointer] != Keywords.EndOfPattern)
             {
                 pointer++;
             }
@@ -84,15 +85,15 @@ namespace CourseWork3.Parser
             string patternName = ParseString(tokens, ref pointer);
             pointer++;
 
-            while (tokens[pointer] != Keywords.End)
+            while (tokens[pointer] != Keywords.EndOfPattern)
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
-                    else if (tokens[pointer] == Keywords.Runtime)
-                    {
-                        pointer++;
-                        commands.Add(new ProjRuntimeCommand(ParseProjFuncMathExpression(tokens, ref pointer)));
-                    }
+                    //else if (tokens[pointer] == Keywords.Runtime)
+                    //{
+                    //    pointer++;
+                    //    commands.Add(new ProjRuntimeCommand(ParseProjFuncMathExpression(tokens, ref pointer)));
+                    //}
                     else
                     {
                         param = null;
@@ -129,15 +130,15 @@ namespace CourseWork3.Parser
             string patternName = ParseString(tokens, ref pointer);
             pointer++;
 
-            while (tokens[pointer] != Keywords.End)
+            while (tokens[pointer] != Keywords.EndOfPattern)
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
-                    else if (tokens[pointer] == Keywords.Runtime)
-                    {
-                        pointer++;
-                        commands.Add(new RuntimeCommand<Generator<EnemyProjectile>>(ParseFloatFromMathExpression(tokens, ref pointer)()));
-                    }
+                    //else if (tokens[pointer] == Keywords.Runtime)
+                    //{
+                    //    pointer++;
+                    //    commands.Add(new RuntimeCommand<Generator<EnemyProjectile>>(ParseFloatFromMathExpression(tokens, ref pointer)()));
+                    //}
                     else
                     {
                         param = null;
@@ -159,7 +160,7 @@ namespace CourseWork3.Parser
         }
         private void ParseLevel(string[] tokens, ref int pointer)
         {
-            while (tokens[pointer] != Keywords.End)
+            while (tokens[pointer] != Keywords.EndOfPattern)
             {
                 pointer++;
             }

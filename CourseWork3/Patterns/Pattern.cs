@@ -19,6 +19,7 @@ namespace CourseWork3.Patterns
 
         public void Invoke(T gameObject)
         {
+            gameObject.IsSelectedRuntimeCommand = false;
             // Применяем очередность команд, пока не дойдем до команды выполнения runtime
             do
             { 
@@ -31,8 +32,7 @@ namespace CourseWork3.Patterns
                 // Выполняем текущую команду
                 commands[gameObject.CurrentIndex].Invoke(gameObject);
             }
-            while (!(commands[gameObject.CurrentIndex++] is RuntimeCommand<T> && 
-            commands[gameObject.CurrentIndex++] is ProjRuntimeCommand));
+            while (!gameObject.IsSelectedRuntimeCommand);
 
         }
     }

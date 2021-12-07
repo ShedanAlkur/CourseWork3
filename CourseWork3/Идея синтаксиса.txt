@@ -1,0 +1,52 @@
+SPRITE "enemy" 
+	path "sprites/enemy.png"
+	width
+	height
+END
+
+PROJECTILE "awesome projectile name 2"
+	set color "blue"
+	randomColor
+	set velocity 100
+	inc velocityAngle 175
+	set acceleration -genTime * 10 * random
+	inc accelerationAngle 175
+	velocityToPoint 0, 100
+	velocityToPlayer
+	pointRotation 0, 0
+	runtime 100
+	repeatStart
+	pause 200
+END
+
+GENERATOR "Meilin Generator"
+	set sector 360
+	set spawnDelay 150
+	set spawnCount 24
+	set angle 360/24/2
+	set sprite "arrow"
+	repeatStart
+	set projectile "Meilin Knifes Red"
+	runtime 500
+	pause 1000
+	set projectile "Meilin Knifes Blue"
+	runtime 500
+	pause 1000
+END
+
+ENEMY "awesome enemy"
+	set sprite "enemy"
+	set life 24
+	moveTo 0, 0
+	set generator "Meilin Generator" 
+	runtime 10000
+	moveTo 0, -200
+END
+
+LEVEL
+	for i from 0 to 10
+		spawn "awesome enemy", -400 + i * 20, -500
+		spawn "awesome enemy", 400 - i * 20, -500
+		pause 500
+	end
+END

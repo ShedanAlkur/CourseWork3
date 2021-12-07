@@ -18,6 +18,7 @@ namespace CourseWork3.Patterns
         {
             gameObject.CurrentRuntime = 0;
             gameObject.MaxRuntime = (float)maxRunTime(gameObject);
+            gameObject.IsSelectedRuntimeCommand = true;
         }
     }
 }

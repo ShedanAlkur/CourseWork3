@@ -17,6 +17,7 @@ namespace CourseWork3.Game
         public float CurrentRuntime;
         public float MaxRuntime;
         public float CurrentPauseTime;
+        public bool IsSelectedRuntimeCommand;
 
         static ControlledObject()
         {
@@ -37,8 +38,13 @@ namespace CourseWork3.Game
                 [Keywords.Increase + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle += (float)value,
 
                 [Keywords.Pause] = (T obj, object value) => { obj.CurrentPauseTime = (float)value; },
-                [Keywords.Runtime] = (T obj, object value) => { obj.CurrentRuntime = 0; obj.MaxRuntime = (float)value; },
                 [Keywords.Destroy] = (T obj, object value) => { obj.Terminated = true; },
+                [Keywords.Runtime] = (T obj, object value) =>
+                {
+                    obj.CurrentRuntime = 0;
+                    obj.MaxRuntime = (float)value;
+                    obj.IsSelectedRuntimeCommand = true;
+                },
 
                 [Keywords.VelocityToPoint] = (T obj, object value) => obj.VelocityAngle = (obj.Position - (Vector2)value).GetAngle(),
                 [Keywords.velocityToPlayer] = (T obj, object value) =>
