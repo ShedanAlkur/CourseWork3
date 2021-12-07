@@ -73,7 +73,6 @@ namespace CourseWork3.GraphicsOpenGL
             GL.EnableClientState(ArrayCap.TextureCoordArray);
 
             LoadQuadVBO();
-
         }
 
         public void ApplyViewport(int x, int y, int width, int height)

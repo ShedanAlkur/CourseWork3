@@ -1,7 +1,9 @@
 ﻿using CourseWork3.Game;
+using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CourseWork3.Parser
 {
@@ -68,13 +70,31 @@ namespace CourseWork3.Parser
                 pointer++;
             }
         }
+
+        #region Parse patterns
         private void ParseSprite(string[] tokens, ref int pointer)
         {
+            string path = null;
+            int columns = 1;
+            int rows = 1;
+            pointer++;
+            string name = ParseString(tokens, ref pointer);
+            pointer++;
             while (tokens[pointer] != Keywords.EndOfPattern)
             {
+                if ((tokens[pointer] != Keywords.EOL))
+                    if (tokens[pointer] == Keywords.Path)
+                    { pointer++; path = ParseString(tokens, ref pointer); }
+                    else if (tokens[pointer] == Keywords.Columns)
+                    { pointer++; columns = (int)ParseFloatFromMathExpression(tokens, ref pointer)(); }
+                    else if (tokens[pointer] == Keywords.Rows)
+                    { pointer++; rows = (int)ParseFloatFromMathExpression(tokens, ref pointer)(); }
+                    else throw new NotImplementedException();
                 pointer++;
             }
+            GameMain.SpriteCollection.Add(name, new Sprite(path, columns, rows));
         }
+
         private void ParseProjectile(string[] tokens, ref int pointer)
         {
             int? repeatIndex = null;
@@ -89,11 +109,6 @@ namespace CourseWork3.Parser
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
-                    //else if (tokens[pointer] == Keywords.Runtime)
-                    //{
-                    //    pointer++;
-                    //    commands.Add(new ProjRuntimeCommand(ParseProjFuncMathExpression(tokens, ref pointer)));
-                    //}
                     else
                     {
                         param = null;
@@ -119,7 +134,6 @@ namespace CourseWork3.Parser
                 new Pattern<Projectile>(commands.ToArray(), repeatIndex));
         }
 
-
         private void ParseGenerator(string[] tokens, ref int pointer)
         {
             int? repeatIndex = null;
@@ -134,11 +148,6 @@ namespace CourseWork3.Parser
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
-                    //else if (tokens[pointer] == Keywords.Runtime)
-                    //{
-                    //    pointer++;
-                    //    commands.Add(new RuntimeCommand<Generator<EnemyProjectile>>(ParseFloatFromMathExpression(tokens, ref pointer)()));
-                    //}
                     else
                     {
                         param = null;
@@ -158,6 +167,29 @@ namespace CourseWork3.Parser
             GameMain.GeneratorPatternCollection.TryAdd(patternName,
                 new Pattern<Generator<EnemyProjectile>>(commands.ToArray(), repeatIndex));
         }
+
+        private void ParseEnemy(string[] tokens, ref int pointer)
+        {
+            int? repeatIndex = null;
+            var commands = new List<ICommand<Enemy>>();
+            pointer++;
+            string patternName = ParseString(tokens, ref pointer);
+            pointer++;
+            while (tokens[pointer] != Keywords.EndOfPattern)
+            {
+                if ((tokens[pointer] != Keywords.EOL))
+                    if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
+                    else
+                    {
+                        // обработка команд врага
+                    }
+                pointer++;
+            }
+            pointer++;
+            GameMain.EnemyPatternCollection.TryAdd(patternName,
+                new Pattern<Enemy>(commands.ToArray(), repeatIndex));
+        }
+
         private void ParseLevel(string[] tokens, ref int pointer)
         {
             while (tokens[pointer] != Keywords.EndOfPattern)
@@ -166,7 +198,46 @@ namespace CourseWork3.Parser
             }
         }
 
+        private void ParseForLoop(string[] tokens, ref int pointer, ref Dictionary<string, float> iterators)
+        {
+            if (iterators == null) iterators = new Dictionary<string, float>();
+            string nameofIterator = tokens[++pointer];
+            iterators.TryAdd(nameofIterator, 0);
 
+            pointer++;
+            float from = ParseFloatFromMathExpression(tokens, ref pointer)();
+            pointer++;
+            float to = ParseFloatFromMathExpression(tokens, ref pointer)();
+            float incrementor = (tokens[pointer] == Keywords.ParameterSeparator) ?
+                ParseFloatFromMathExpression(tokens, ref pointer)() : 1;
+
+            int i;
+            for (iterators[nameofIterator] = from; iterators[nameofIterator] < to; iterators[nameofIterator] += incrementor)
+            {
+                while (tokens[pointer] != Keywords.EndForLoop)
+                {
+                    if (tokens[pointer] != Keywords.EOL)
+                        if (tokens[pointer] == Keywords.For) ParseForLoop(tokens, ref pointer, ref iterators);
+                        else if (tokens[pointer] == Keywords.Spawn)
+                        {
+                            pointer++;
+                            var enemyPattern = GameMain.EnemyPatternCollection[ParseString(tokens, ref pointer)];
+                            pointer++;
+                            var x = ParseForLoopMathExpression(tokens, ref pointer, iterators);
+                            pointer++;
+                            var y = ParseForLoopMathExpression(tokens, ref pointer, iterators);
+                            // создание команды спавна противника в заданных координатах
+                        } 
+                    pointer++;
+                }
+            }
+
+            iterators.Remove(nameofIterator);
+        }
+
+        #endregion
+
+        #region Parse parameters
         private Func<float> ParseFloatFromMathExpression(string[] tokens, ref int pointer)
         {
             List<string> mathExpressionTokens = new List<string>();
@@ -176,6 +247,7 @@ namespace CourseWork3.Parser
             }
             return (Func<float>)MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray());
         }
+
         private Func<Projectile, float> ParseProjFuncMathExpression(string[] tokens, ref int pointer)
         {
             List<string> mathExpressionTokens = new List<string>();
@@ -185,6 +257,18 @@ namespace CourseWork3.Parser
             }
             return (Func<Projectile, float>)MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray(), nestedParametersForProjectile);
         }
+
+        private float ParseForLoopMathExpression(string[] tokens, ref int pointer, Dictionary<string, float> iterators)
+        {
+            List<string> mathExpressionTokens = new List<string>();
+            while (tokens[pointer] != Keywords.EOL && tokens[pointer] != Keywords.ParameterSeparator)
+            {
+                mathExpressionTokens.Add(tokens[pointer++]);
+            }
+            return (float)(MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray(),
+                iterators.Keys.ToArray()).DynamicInvoke(iterators.Values.Select(x => (object?)x).ToArray()));
+        }
+
         private string ParseString(string[] tokens, ref int pointer)
         {
             if (tokens[pointer].StartsWith("\"") && tokens[pointer].EndsWith("\""))
@@ -203,5 +287,6 @@ namespace CourseWork3.Parser
             var y = ParseFloatFromMathExpression(tokens, ref pointer)();
             return new OpenTK.Vector2(x, y);
         }
+        #endregion
     }
 }

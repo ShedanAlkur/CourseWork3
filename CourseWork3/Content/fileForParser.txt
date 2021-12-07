@@ -1,3 +1,9 @@
+SPRITE "enemy" 
+	path "Content\Star.png"
+	rows 1
+	columns 1
+END
+
 PROJECTILE "Meilin Knifes Red"
 	set color "blue"
 	randomColor
@@ -23,4 +29,11 @@ GENERATOR "Meilin Generator"
 	set projectile "Meilin Knifes Red"
 	runtime 500
 	pause 1000
+END
+
+ENEMY "awesome enemy"
+	set sprite "enemy"
+	set life 24
+	set generator "Meilin Generator" 
+	runtime 10000
 END

@@ -16,6 +16,8 @@ namespace CourseWork3.Parser
         public static readonly string EndOfPattern = "end";
 
         public static readonly string Path = "path";
+        public static readonly string Rows = "rows";
+        public static readonly string Columns = "columns";
 
         public static readonly string Runtime = "runtime";
         public static readonly string RepeatStart = "repeatstart";
@@ -51,8 +53,13 @@ namespace CourseWork3.Parser
 
         public static string ProjParamName = "genTime".ToLower();
 
-        public static readonly string For = "For".ToLower();
-        public static readonly string EndOfForLoop = "end";
+        public static readonly string For = "for";
+        public static readonly string From = "from";
+        public static readonly string To = "to";
+        public static readonly string Incrementor = "inc";
+        public static readonly string EndForLoop = "end";
+
+        public static readonly string Spawn = "spawn";
 
         public static readonly string[] SingleFloatParamCommands =
         {

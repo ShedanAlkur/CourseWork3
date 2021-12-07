@@ -70,7 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Patterns\ControlledObjectPatterns\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

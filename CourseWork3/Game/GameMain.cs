@@ -74,6 +74,7 @@ namespace CourseWork3.Game
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
 
+            SpriteCollection = new GameCollection<Sprite>();
             ProjeciltePatternCollection = new GameCollection<Pattern<Projectile>>();
             GeneratorPatternCollection = new GameCollection<Pattern<Generator<EnemyProjectile>>>();
             EnemyPatternCollection = new GameCollection<Pattern<Enemy>>();

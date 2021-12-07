@@ -1,4 +1,5 @@
 ﻿using CourseWork3.Game;
+using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using ExpressionBuilder;
@@ -190,9 +191,10 @@ namespace CourseWork3
 
         internal static void ParserTest()
         {
-
+            GameMain.SpriteCollection = new GameCollection<Sprite>();
             GameMain.ProjeciltePatternCollection = new GameCollection<Pattern<Projectile>>();
             GameMain.GeneratorPatternCollection = new GameCollection<Pattern<Generator<EnemyProjectile>>>();
+            GameMain.EnemyPatternCollection = new GameCollection<Pattern<Enemy>>();
             var parser = new Parser.Parser();
             parser.ParseFile(@"Content\fileForParser.txt");
             
