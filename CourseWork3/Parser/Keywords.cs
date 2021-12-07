@@ -57,7 +57,6 @@ namespace CourseWork3.Parser
         public static readonly string From = "from";
         public static readonly string To = "to";
         public static readonly string Incrementor = "inc";
-        public static readonly string EndForLoop = "end";
 
         public static readonly string Spawn = "spawn";
 

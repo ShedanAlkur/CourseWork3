@@ -67,6 +67,9 @@
     <None Update="Content\Star.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Идея синтаксиса.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -65,6 +65,7 @@ namespace CourseWork3.Parser
                     if (tokens[pointer] == Keywords.Sprite) ParseSprite(tokens, ref pointer);
                     else if (tokens[pointer] == Keywords.Projectile) ParseProjectile(tokens, ref pointer);
                     else if (tokens[pointer] == Keywords.Generator) ParseGenerator(tokens, ref pointer);
+                    else if (tokens[pointer] == Keywords.Enemy) ParseEnemy(tokens, ref pointer);
                     else if (tokens[pointer] == Keywords.Level) ParseLevel(tokens, ref pointer);
                     else throw new NotImplementedException();
                 pointer++;
@@ -192,8 +193,28 @@ namespace CourseWork3.Parser
 
         private void ParseLevel(string[] tokens, ref int pointer)
         {
+            var iterators = new Dictionary<string, float>();
+            ParseLevel(tokens, ref pointer, ref iterators);
+        }
+
+        private void ParseLevel(string[] tokens, ref int pointer, ref Dictionary<string, float> iterators)
+        {
+            if (iterators == null) iterators = new Dictionary<string, float>();
+            pointer++;
             while (tokens[pointer] != Keywords.EndOfPattern)
             {
+                if (tokens[pointer] != Keywords.EOL)
+                    if (tokens[pointer] == Keywords.For) ParseForLoop(tokens, ref pointer, ref iterators);
+                    else if (tokens[pointer] == Keywords.Spawn)
+                    {
+                        pointer++;
+                        var enemyPattern = GameMain.EnemyPatternCollection[ParseString(tokens, ref pointer)];
+                        pointer++;
+                        var x = ParseForLoopMathExpression(tokens, ref pointer, iterators);
+                        pointer++;
+                        var y = ParseForLoopMathExpression(tokens, ref pointer, iterators);
+                        // создание команды спавна противника в заданных координатах
+                    }
                 pointer++;
             }
         }
@@ -214,21 +235,11 @@ namespace CourseWork3.Parser
             int i;
             for (iterators[nameofIterator] = from; iterators[nameofIterator] < to; iterators[nameofIterator] += incrementor)
             {
-                while (tokens[pointer] != Keywords.EndForLoop)
+                int firstCommandPointer = ++pointer;
+                while (tokens[pointer] != Keywords.EndOfPattern)
                 {
-                    if (tokens[pointer] != Keywords.EOL)
-                        if (tokens[pointer] == Keywords.For) ParseForLoop(tokens, ref pointer, ref iterators);
-                        else if (tokens[pointer] == Keywords.Spawn)
-                        {
-                            pointer++;
-                            var enemyPattern = GameMain.EnemyPatternCollection[ParseString(tokens, ref pointer)];
-                            pointer++;
-                            var x = ParseForLoopMathExpression(tokens, ref pointer, iterators);
-                            pointer++;
-                            var y = ParseForLoopMathExpression(tokens, ref pointer, iterators);
-                            // создание команды спавна противника в заданных координатах
-                        } 
-                    pointer++;
+                    pointer = firstCommandPointer;
+                    ParseLevel(tokens, ref pointer, ref iterators);
                 }
             }
 

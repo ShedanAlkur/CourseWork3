@@ -37,3 +37,11 @@ ENEMY "awesome enemy"
 	set generator "Meilin Generator" 
 	runtime 10000
 END
+
+LEVEL
+	for i 0, 10
+		spawn "awesome enemy", -400 + i * 20, -500
+		spawn "awesome enemy", 400 - i * 20, -500
+		pause 500
+	end
+END
