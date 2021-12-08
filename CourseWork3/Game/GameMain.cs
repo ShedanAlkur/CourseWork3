@@ -6,6 +6,7 @@ using OpenTK.Input;
 using CourseWork3.GraphicsOpenGL;
 using System.IO;
 using CourseWork3.Patterns;
+using System.Collections.Generic;
 
 namespace CourseWork3.Game
 {
@@ -15,11 +16,11 @@ namespace CourseWork3.Game
         private static GameWindow window;
         public static GraphicsOpenGL.Graphics Graphics;
 
-        public static GameCollection<Sprite> SpriteCollection;
-        public static GameCollection<Texture2D> TextureCollection;
-        public static GameCollection<Pattern<Projectile>> ProjeciltePatternCollection;
-        public static GameCollection<Pattern<Generator<EnemyProjectile>>> GeneratorPatternCollection;
-        public static GameCollection<Pattern<Enemy>> EnemyPatternCollection;
+        public static Dictionary<string, Sprite> SpriteCollection;
+        public static Dictionary<string, Texture2D> TextureCollection;
+        public static Dictionary<string, Pattern<Projectile>> ProjeciltePatternCollection;
+        public static Dictionary<string, Pattern<Generator<EnemyProjectile>>> GeneratorPatternCollection;
+        public static Dictionary<string, Pattern<Enemy>> EnemyPatternCollection;
 
         public static World World;
         public static GameInput Input;
@@ -74,12 +75,12 @@ namespace CourseWork3.Game
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
 
-            SpriteCollection = new GameCollection<Sprite>();
-            ProjeciltePatternCollection = new GameCollection<Pattern<Projectile>>();
-            GeneratorPatternCollection = new GameCollection<Pattern<Generator<EnemyProjectile>>>();
-            EnemyPatternCollection = new GameCollection<Pattern<Enemy>>();
+            SpriteCollection = new Dictionary<string, Sprite>();
+            ProjeciltePatternCollection = new Dictionary<string, Pattern<Projectile>>();
+            GeneratorPatternCollection = new Dictionary<string, Pattern<Generator<EnemyProjectile>>>();
+            EnemyPatternCollection = new Dictionary<string, Pattern<Enemy>>();
+            TextureCollection = new Dictionary<string, Texture2D>();
 
-            TextureCollection = new GameCollection<Texture2D>();
             tex = new Texture2D(@"content\projectileDirected.png");
             TextureCollection.Add("projectile", tex);
             TextureCollection.Add("item", new Texture2D(@"content\Item.png"));

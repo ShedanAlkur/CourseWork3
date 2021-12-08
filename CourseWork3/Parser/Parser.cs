@@ -48,8 +48,7 @@ namespace CourseWork3.Parser
             var internalParamName = Keywords.ProjParamName;
             var param = new ExpressionBuilder.NestedExpressionParameter(externalParam, internalParam, internalParamName);
             nestedParametersForProjectile = new ExpressionBuilder.NestedExpressionParameter[] { param };
-
-
+            //
         }
 
         public void ParseFile(string path)
@@ -194,13 +193,13 @@ namespace CourseWork3.Parser
         private void ParseLevel(string[] tokens, ref int pointer)
         {
             var iterators = new Dictionary<string, float>();
+            pointer++;
             ParseLevel(tokens, ref pointer, ref iterators);
+
         }
 
         private void ParseLevel(string[] tokens, ref int pointer, ref Dictionary<string, float> iterators)
         {
-            if (iterators == null) iterators = new Dictionary<string, float>();
-            pointer++;
             while (tokens[pointer] != Keywords.EndOfPattern)
             {
                 if (tokens[pointer] != Keywords.EOL)
@@ -210,9 +209,11 @@ namespace CourseWork3.Parser
                         pointer++;
                         var enemyPattern = GameMain.EnemyPatternCollection[ParseString(tokens, ref pointer)];
                         pointer++;
+                        ParseParameterSeparatorIfExist(tokens, ref pointer);
                         var x = ParseForLoopMathExpression(tokens, ref pointer, iterators);
                         pointer++;
                         var y = ParseForLoopMathExpression(tokens, ref pointer, iterators);
+                        Console.WriteLine($"x={x}, y={y}");
                         // создание команды спавна противника в заданных координатах
                     }
                 pointer++;
@@ -221,9 +222,8 @@ namespace CourseWork3.Parser
 
         private void ParseForLoop(string[] tokens, ref int pointer, ref Dictionary<string, float> iterators)
         {
-            if (iterators == null) iterators = new Dictionary<string, float>();
             string nameofIterator = tokens[++pointer];
-            iterators.TryAdd(nameofIterator, 0);
+            bool IsFirstAppearanceOfIterator = iterators.TryAdd(nameofIterator, 0);
 
             pointer++;
             float from = ParseFloatFromMathExpression(tokens, ref pointer)();
@@ -233,22 +233,29 @@ namespace CourseWork3.Parser
                 ParseFloatFromMathExpression(tokens, ref pointer)() : 1;
 
             int i;
+            int firstCommandPointer = ++pointer;
             for (iterators[nameofIterator] = from; iterators[nameofIterator] < to; iterators[nameofIterator] += incrementor)
             {
-                int firstCommandPointer = ++pointer;
-                while (tokens[pointer] != Keywords.EndOfPattern)
-                {
-                    pointer = firstCommandPointer;
-                    ParseLevel(tokens, ref pointer, ref iterators);
-                }
+                pointer = firstCommandPointer;
+                ParseLevel(tokens, ref pointer, ref iterators);
             }
 
-            iterators.Remove(nameofIterator);
+            if (IsFirstAppearanceOfIterator) iterators.Remove(nameofIterator);
         }
 
         #endregion
 
         #region Parse parameters
+        private bool ParseParameterSeparatorIfExist(string[] tokens, ref int pointer)
+        {
+            if (tokens[pointer] == Keywords.ParameterSeparator)
+            {
+                pointer++;
+                return true;
+            }
+            return false;
+        }
+
         private Func<float> ParseFloatFromMathExpression(string[] tokens, ref int pointer)
         {
             List<string> mathExpressionTokens = new List<string>();

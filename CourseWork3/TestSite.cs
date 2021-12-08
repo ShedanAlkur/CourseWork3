@@ -191,10 +191,10 @@ namespace CourseWork3
 
         internal static void ParserTest()
         {
-            GameMain.SpriteCollection = new GameCollection<Sprite>();
-            GameMain.ProjeciltePatternCollection = new GameCollection<Pattern<Projectile>>();
-            GameMain.GeneratorPatternCollection = new GameCollection<Pattern<Generator<EnemyProjectile>>>();
-            GameMain.EnemyPatternCollection = new GameCollection<Pattern<Enemy>>();
+            GameMain.SpriteCollection = new Dictionary<string, Sprite>();
+            GameMain.ProjeciltePatternCollection = new Dictionary<string, Pattern<Projectile>>();
+            GameMain.GeneratorPatternCollection = new Dictionary<string, Pattern<Generator<EnemyProjectile>>>();
+            GameMain.EnemyPatternCollection = new Dictionary<string, Pattern<Enemy>>();
             var parser = new Parser.Parser();
             parser.ParseFile(@"Content\fileForParser.txt");
             
