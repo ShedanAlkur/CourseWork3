@@ -18,9 +18,6 @@ namespace CourseWork3
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(args.Length);
-            foreach (var arg in args) Console.WriteLine(arg);
-
             using (GameWindow window = new GameWindow(800, 600))
             {
                 GameMain.Init(window, args);

@@ -13,7 +13,7 @@ namespace CourseWork3.Game
     {
         public static new Dictionary<string, Action<Enemy, object>> ActionsForParser;
 
-        private int hp;
+        private int life;
 
         private List<Generator> ownedGenerators = new List<Generator>();
 
@@ -29,9 +29,16 @@ namespace CourseWork3.Game
                 {
                     obj.RemoveOwnedGenerators();
                     obj.ownedGenerators.Add(new Generator((Pattern<Generator>)value, obj));
+                    GameMain.World.Add(obj.ownedGenerators.Last());
                 },
+                [Keywords.Set + Keywords.Life] = (Enemy obj, object value) => obj.life = (int)value,
 
-                [Keywords.Increase + Keywords.Angle] = (Enemy obj, object value) => obj.ownedGenerators.Add(new Generator((Pattern<Generator>)value, obj)),
+                [Keywords.Increase + Keywords.Generator] = (Enemy obj, object value) =>
+                {
+                    obj.ownedGenerators.Add(new Generator((Pattern<Generator>)value, obj));
+                    GameMain.World.Add(obj.ownedGenerators.Last());
+                },
+                [Keywords.Increase + Keywords.Life] = (Enemy obj, object value) => obj.life += (int)value,
 
                 [Keywords.Clear + Keywords.Sprite] = (Enemy obj, object value) => throw new NotImplementedException(),
                 [Keywords.Clear + Keywords.Generator] = (Enemy obj, object value) => obj.RemoveOwnedGenerators(),

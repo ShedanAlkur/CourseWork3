@@ -6,40 +6,39 @@ END
 
 PROJECTILE "Meilin Knifes Red"
 	set color "blue"
-	randomColor
 	set velocity 100
-	inc velocityAngle 175
-	set acceleration -genTime * 10 * random
-	inc accelerationAngle 175
-	velocityToPoint 0, 100
-	velocityToPlayer
-	pointRotation 0, 0
-	runtime 100
-	repeatStart
-	pause 200
+	set acceleration 0
+	runtime 1000
 END
 
 GENERATOR "Meilin Generator"
+	set angle 90
 	set sector 360
-	set spawnDelay 150
-	set spawnCount 24
-	set angle 360/24/2
-	set sprite "arrow"
-	repeatStart
+	set spawnDelay 1
+	set spawnCount 1
+	// set spawnCount 24
 	set projectile "Meilin Knifes Red"
-	runtime 500
+	repeatStart
+	runtime 100
 	pause 1000
 END
 
 ENEMY "awesome enemy"
-	set sprite "enemy"
-	set life 24
-	set generator "Meilin Generator" 
+	set life 12
+	set generator "Meilin Generator"
+	set velocity 10
+	set velocityAngle 0
 	runtime 10000
 END
 
 LEVEL
-	for i 0, 5
-		spawn "awesome enemy" 0 - 50 * (i - 2), -100
-	end
+	spawn "awesome enemy" 200, 200
+	// for i 0, 5
+		// spawn "awesome enemy" 0 - 50 * (i - 2), -100
+	// end
+	// pause 0,5
+	// for i -2, 2
+		// spawn "awesome enemy" i * 50, 200
+		// spawn "awesome enemy" -i * 50, -200
+	// end
 END

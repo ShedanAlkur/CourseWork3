@@ -8,7 +8,7 @@ namespace CourseWork3.Game
 {
     class World : IUpdateable
     {
-        List<GameObject> gameObjects;
+        public List<GameObject> gameObjects;
 
         private static World instance;
         public static World Instance

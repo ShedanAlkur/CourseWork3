@@ -31,17 +31,21 @@ namespace CourseWork3.Game
                 [Keywords.Set + Keywords.Sector] = (Generator obj, object value) => obj.Sector = (float)value,
                 [Keywords.Set + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
                 [Keywords.Set + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
-                [Keywords.Set + Keywords.Angle] = (Generator obj, object value) => obj.Angle = (float)value,
+                [Keywords.Set + Keywords.Angle] = (Generator obj, object value) => obj.Angle = (float)value - MathHelper.PiOver2,
                 [Keywords.Set + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
                 [Keywords.Set + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
+                [Keywords.Set + Keywords.RotationSpeed] = (Generator obj, object value) => obj.RotationSpeed = (float)value,
 
                 [Keywords.Increase + Keywords.Sector] = (Generator obj, object value) => obj.Sector = (float)value,
                 [Keywords.Increase + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
                 [Keywords.Increase + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
                 [Keywords.Increase + Keywords.Angle] = (Generator obj, object value) => obj.Angle = (float)value,
+                [Keywords.Set + Keywords.RotationSpeed] = (Generator obj, object value) => obj.RotationSpeed += (float)value,
 
                 [Keywords.Clear + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
                 [Keywords.Clear + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = null,
+
+                [Keywords.AimToPlayer] = (Generator obj, object value) => obj.Angle = (GameMain.World.Player.Position - obj.Position).GetAngle(),
             };
             ControlledObject<Generator>.ActionsForParser.ToList().ForEach(x =>
                 ActionsForParser.Add(x.Key, x.Value));
@@ -63,6 +67,8 @@ namespace CourseWork3.Game
 
             base.Update(elapsedTime);
             this.Position = Owner.Position;
+
+            Angle += RotationSpeed * elapsedTime;
 
             CurrentSpawnDelay += elapsedTime;
             while (CurrentSpawnDelay >= SpawnDelay)

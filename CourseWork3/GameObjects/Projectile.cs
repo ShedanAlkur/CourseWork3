@@ -1,4 +1,5 @@
-﻿using CourseWork3.Parser;
+﻿using CourseWork3.GraphicsOpenGL;
+using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using OpenTK;
 using System;
@@ -15,6 +16,9 @@ namespace CourseWork3.Game
         public Color Color { get => color; set => color = value; }
 
         private bool isEnemyProjectile;
+
+        Texture2D texture;
+        Vector2 size;
 
         public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
@@ -36,7 +40,19 @@ namespace CourseWork3.Game
         {
             this.VelocityAngle = angle;
             this.isEnemyProjectile = isEnemyProjectile;
+
+            texture = GameMain.TextureCollection["projectile"];
+            size = new Vector2(50, 50);
         }
 
+        public override void Update(float elapsedTime)
+        {
+            base.Update(elapsedTime);
+        }
+
+        public override void Draw()
+        {
+            GameMain.Graphics.Draw(texture, Position, size, 0, color, 1);
+        }
     }
 }

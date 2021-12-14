@@ -18,5 +18,10 @@ namespace CourseWork3.Patterns
             Game.GameMain.World.CurrentPausetime = 0;
             Game.GameMain.World.MaxPausetime = pauseTime;
         }
+
+        public override string ToString()
+        {
+            return $"Pause on {pauseTime} second";
+        }
     }
 }

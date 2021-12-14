@@ -45,11 +45,15 @@ namespace CourseWork3.Parser
         public static readonly string Sector = "sector".ToLower();
         public static readonly string SpawnDelay = "spawnDelay".ToLower();
         public static readonly string SpawnCount = "spawnCount".ToLower();
+        public static readonly string RotationSpeed = "RotationSpeed".ToLower();
+        public static readonly string AimToPlayer = "aimToPlayer".ToLower();
 
         public static readonly string velocityToPlayer = "velocityToPlayer".ToLower();
         public static readonly string VelocityToPoint = "velocitytopoint".ToLower();
         public static readonly string PointRotation = "pointRotation".ToLower();
         public static readonly string RandomColor = "randomColor".ToLower();
+
+        public static readonly string Life = "life";
 
         public static string ProjParamName = "genTime".ToLower();
 

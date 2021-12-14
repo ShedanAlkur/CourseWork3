@@ -25,13 +25,16 @@ namespace CourseWork3.Parser
             [Keywords.Angle] = typeof(float),
             [Keywords.Sector] = typeof(float),
             [Keywords.SpawnDelay] = typeof(float),
-            [Keywords.SpawnCount] = typeof(float),
+            [Keywords.SpawnCount] = typeof(int),
 
             [Keywords.Color] = typeof(System.Drawing.Color),
 
             [Keywords.Sprite] = null,
             [Keywords.Projectile] = typeof(Pattern<Projectile>),
             [Keywords.Generator] = typeof(Pattern<Generator>),
+
+            [Keywords.Life] = typeof(int),
+
         };
 
         private ExpressionBuilder.MathFExpressionBuilder MathExpressionBuilder = new ExpressionBuilder.MathFExpressionBuilder();
@@ -156,7 +159,8 @@ namespace CourseWork3.Parser
                             action = Generator.ActionsForParser[tokens[pointer]];
 
                         if (TypeOfCommandParam.TryGetValue(tokens[pointer++], out Type paramType))
-                            if (paramType == typeof(float)) param = ParseFloatFromMathExpression(tokens, ref pointer);
+                            if (paramType == typeof(float)) param = ParseFloatFromMathExpression(tokens, ref pointer)();
+                            else if (paramType == typeof(int)) param = (int)ParseFloatFromMathExpression(tokens, ref pointer)();
                             else if (paramType == typeof(Pattern<Projectile>)) param = GameMain.ProjeciltePatternCollection[ParseString(tokens, ref pointer)];
 
                         commands.Add(new PropertyChangerCommand<Generator>(action, param));
@@ -171,6 +175,8 @@ namespace CourseWork3.Parser
         private void ParseEnemy(string[] tokens, ref int pointer)
         {
             int? repeatIndex = null;
+            Action<Enemy, object> action;
+            object param;
             var commands = new List<ICommand<Enemy>>();
             pointer++;
             string patternName = ParseString(tokens, ref pointer);
@@ -181,6 +187,17 @@ namespace CourseWork3.Parser
                     if (tokens[pointer] == Keywords.RepeatStart) repeatIndex = commands.Count;
                     else
                     {
+                        param = null;
+                        action = (Keywords.IsPropMethod(tokens[pointer])) ?
+                            Enemy.ActionsForParser[tokens[pointer++] + tokens[pointer]] :
+                            action = Enemy.ActionsForParser[tokens[pointer]];
+
+                        if (TypeOfCommandParam.TryGetValue(tokens[pointer++], out Type paramType))
+                            if (paramType == typeof(float)) param = ParseFloatFromMathExpression(tokens, ref pointer)();
+                            else if (paramType == typeof(int)) param = (int)ParseFloatFromMathExpression(tokens, ref pointer)();
+                            else if (paramType == typeof(Pattern<Generator>)) param = GameMain.GeneratorPatternCollection[ParseString(tokens, ref pointer)];
+
+                        commands.Add(new PropertyChangerCommand<Enemy>(action, param));
                         // обработка команд врага
                     }
                 pointer++;
@@ -209,14 +226,14 @@ namespace CourseWork3.Parser
                     {
                         pointer++;
                         var enemyPattern = GameMain.EnemyPatternCollection[ParseString(tokens, ref pointer)];
-                        pointer++; 
+                        pointer++;
                         ParseParameterSeparatorIfExist(tokens, ref pointer);
                         var x = ParseForLoopMathExpression(tokens, ref pointer, iterators);
                         pointer++;
                         var y = ParseForLoopMathExpression(tokens, ref pointer, iterators);
                         levelCommands.Add(new SpawnCommand(enemyPattern, new OpenTK.Vector2(x, y)));
                     }
-                else if (tokens[pointer] == Keywords.Pause)
+                    else if (tokens[pointer] == Keywords.Pause)
                     {
                         pointer++;
                         levelCommands.Add(new PauseCommand(ParseFloatFromMathExpression(tokens, ref pointer)()));
@@ -239,11 +256,17 @@ namespace CourseWork3.Parser
 
             int i;
             int firstCommandPointer = ++pointer;
-            for (iterators[nameofIterator] = from; iterators[nameofIterator] < to; iterators[nameofIterator] += incrementor)
-            {
-                pointer = firstCommandPointer;
-                ParseLevel(tokens, ref pointer, ref iterators, ref levelCommands);
-            }
+            if (to >= from)
+                for (iterators[nameofIterator] = from; iterators[nameofIterator] <= to; iterators[nameofIterator] += incrementor)
+                {
+                    pointer = firstCommandPointer;
+                    ParseLevel(tokens, ref pointer, ref iterators, ref levelCommands);
+                }
+            else for (iterators[nameofIterator] = from; iterators[nameofIterator] >= to; iterators[nameofIterator] -= incrementor)
+                {
+                    pointer = firstCommandPointer;
+                    ParseLevel(tokens, ref pointer, ref iterators, ref levelCommands);
+                }
 
             if (IsFirstAppearanceOfIterator) iterators.Remove(nameofIterator);
         }
