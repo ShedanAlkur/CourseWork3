@@ -8,9 +8,11 @@ using System.Text;
 
 namespace CourseWork3.Game
 {
-    class Generator<T> : ControlledObject<Generator<T>> where T: Projectile
+    class Generator : ControlledObject<Generator>
     {
-        public static new Dictionary<string, Action<Generator<T>, object>> ActionsForParser;
+        public static new Dictionary<string, Action<Generator, object>> ActionsForParser;
+
+        private bool isEnemyGenerator;
 
         public GameObject Owner;
         public float Sector;
@@ -24,53 +26,55 @@ namespace CourseWork3.Game
 
         static Generator()
         {
-            ActionsForParser = new Dictionary<string, Action<Generator<T>, object>>
+            ActionsForParser = new Dictionary<string, Action<Generator, object>>
             {
-                [Keywords.Set + Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
-                [Keywords.Set + Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
-                [Keywords.Set + Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
-                [Keywords.Set + Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
-                [Keywords.Set + Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
-                [Keywords.Set + Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
+                [Keywords.Set + Keywords.Sector] = (Generator obj, object value) => obj.Sector = (float)value,
+                [Keywords.Set + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
+                [Keywords.Set + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
+                [Keywords.Set + Keywords.Angle] = (Generator obj, object value) => obj.Angle = (float)value,
+                [Keywords.Set + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
+                [Keywords.Set + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
 
-                [Keywords.Increase + Keywords.Sector] = (Generator<T> obj, object value) => obj.Sector = (float)value,
-                [Keywords.Increase + Keywords.SpawnDelay] = (Generator<T> obj, object value) => obj.SpawnDelay = (float)value,
-                [Keywords.Increase + Keywords.SpawnCount] = (Generator<T> obj, object value) => obj.SpawnCount = (int)value,
-                [Keywords.Increase + Keywords.Angle] = (Generator<T> obj, object value) => obj.Angle = (float)value,
+                [Keywords.Increase + Keywords.Sector] = (Generator obj, object value) => obj.Sector = (float)value,
+                [Keywords.Increase + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
+                [Keywords.Increase + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
+                [Keywords.Increase + Keywords.Angle] = (Generator obj, object value) => obj.Angle = (float)value,
 
-                [Keywords.Clear + Keywords.Sprite] = (Generator<T> obj, object value) => throw new NotImplementedException(),
-                [Keywords.Clear + Keywords.Projectile] = (Generator<T> obj, object value) => obj.ProjPattern = null,
+                [Keywords.Clear + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
+                [Keywords.Clear + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = null,
             };
-            ControlledObject<Generator<T>>.ActionsForParser.ToList().ForEach(x =>
+            ControlledObject<Generator>.ActionsForParser.ToList().ForEach(x =>
                 ActionsForParser.Add(x.Key, x.Value));
         }
 
-        public Generator(Pattern<Generator<T>> pattern, GameObject owner) : base(pattern)
+        public Generator(Pattern<Generator> pattern, GameObject owner) : base(pattern, owner.Position)
         {
             this.Owner = owner;
-            this.Position = owner.Position;
+            isEnemyGenerator = !(owner is Player);
         }
-        public Generator(Pattern<Generator<T>> pattern, Vector2 position) : base(pattern)
+        public Generator(Pattern<Generator> pattern, Vector2 position, bool isEnemyGenerator) : base(pattern, position)
         {
-            this.Position = position;
+            this.isEnemyGenerator = isEnemyGenerator;
         }
 
         public override void Update(float elapsedTime)
         {
-            if (Owner.Terminated) this.Terminated = true;
+            if (Owner != null && Owner.Terminated) this.Terminated = true;
+
             base.Update(elapsedTime);
             this.Position = Owner.Position;
 
             CurrentSpawnDelay += elapsedTime;
-
             while (CurrentSpawnDelay >= SpawnDelay)
             {
                 CurrentSpawnDelay -= SpawnDelay;
 
-                float angleDelay = Sector / SpawnCount;
-                for (float spawnAngle = Angle - Sector / 2; spawnAngle <= Angle + Sector / 2; spawnAngle+=angleDelay)
+                float sectorBetweenProj = Sector / SpawnCount;
+
+                for (float spawnAngle = Angle - Sector / 2 + (((SpawnCount & 1) == 0) ? sectorBetweenProj / 2f : 0);
+                    spawnAngle <= Angle + Sector / 2; spawnAngle += sectorBetweenProj)
                 {
-                    // TODO: spawn projectiles
+                    GameMain.World.Add(new Projectile(ProjPattern, Position, spawnAngle, isEnemyGenerator));
                 }
             }
         }

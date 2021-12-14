@@ -15,7 +15,7 @@ namespace CourseWork3.Game
         Vector2 size;
         const float velocityScalar = 100f;
 
-        public Player()
+        public Player(Vector2 position) : base(position)
         {
             texture = GameMain.TextureCollection["projectile"];
             size = new Vector2(50, 100);

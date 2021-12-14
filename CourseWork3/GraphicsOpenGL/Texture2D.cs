@@ -10,6 +10,9 @@ namespace CourseWork3.GraphicsOpenGL
 {
     class Texture2D : IDisposable
     {
+
+        public static List<int> AllCreatedTexturesId = new List<int>(); 
+
         public int ID { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -50,6 +53,7 @@ namespace CourseWork3.GraphicsOpenGL
 
 
             Texture2D.Unbind();
+            AllCreatedTexturesId.Add(ID);
         }
 
         public Texture2D(int width, int height)
@@ -68,8 +72,7 @@ namespace CourseWork3.GraphicsOpenGL
                 (int)TextureMagFilter.Linear);
 
             Texture2D.Unbind();
-
-            Console.WriteLine($"Сгенерирована текстура {ID}");
+            AllCreatedTexturesId.Add(ID);
         }
 
         public Texture2D(string path)
@@ -102,7 +105,7 @@ namespace CourseWork3.GraphicsOpenGL
 
                 Texture2D.Unbind();
             }
-            Console.WriteLine($"Сгенерирована текстура {ID}");
+            AllCreatedTexturesId.Add(ID);
         }
 
         public void Resize(int width, int height)
@@ -145,7 +148,6 @@ namespace CourseWork3.GraphicsOpenGL
         }
         ~Texture2D()
         {
-            GC.SuppressFinalize(this);
             Dispose();
         }
     }

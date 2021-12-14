@@ -92,11 +92,11 @@ namespace CourseWork3
             sw.Reset();
             sw.Start();
             var pattern = new Pattern<Projectile>(new ICommand<Projectile>[0]);
-            var proj = new Projectile(pattern);
+            //var proj = new Projectile(pattern);
             Action<Projectile, object> act1 = (Projectile obj, object value) => obj.Velocity = (Vector2)value;
             for (int i = 0; i < countOfTests; i++)
             {
-                act1(proj, Vector2.Zero);
+                //act1(proj, Vector2.Zero);
             };
             sw.Stop();
             System.Console.WriteLine($"set-position time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
@@ -107,7 +107,7 @@ namespace CourseWork3
             Action<Projectile, Vector2> act2 = ExpressionHelper.CreateSetter<Projectile, Vector2>("Velocity");
             for (int i = 0; i < countOfTests; i++)
             {
-                act2(proj, Vector2.Zero);
+                //act2(proj, Vector2.Zero);
             }
             sw.Stop();
             System.Console.WriteLine($"set-velocity time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
@@ -193,7 +193,7 @@ namespace CourseWork3
         {
             GameMain.SpriteCollection = new Dictionary<string, Sprite>();
             GameMain.ProjeciltePatternCollection = new Dictionary<string, Pattern<Projectile>>();
-            GameMain.GeneratorPatternCollection = new Dictionary<string, Pattern<Generator<EnemyProjectile>>>();
+            GameMain.GeneratorPatternCollection = new Dictionary<string, Pattern<Generator>>();
             GameMain.EnemyPatternCollection = new Dictionary<string, Pattern<Enemy>>();
             var parser = new Parser.Parser();
             parser.ParseFile(@"Content\fileForParser.txt");

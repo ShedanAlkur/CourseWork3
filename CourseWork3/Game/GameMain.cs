@@ -19,7 +19,7 @@ namespace CourseWork3.Game
         public static Dictionary<string, Sprite> SpriteCollection;
         public static Dictionary<string, Texture2D> TextureCollection;
         public static Dictionary<string, Pattern<Projectile>> ProjeciltePatternCollection;
-        public static Dictionary<string, Pattern<Generator<EnemyProjectile>>> GeneratorPatternCollection;
+        public static Dictionary<string, Pattern<Generator>> GeneratorPatternCollection;
         public static Dictionary<string, Pattern<Enemy>> EnemyPatternCollection;
 
         public static World World;
@@ -30,7 +30,7 @@ namespace CourseWork3.Game
 
         public static Random random;
 
-        static Texture2D tex;
+        public static Texture2D tex;
         static Vector2 projSize;
 
         static FrameBuffer worldFrameBuffer;
@@ -46,7 +46,9 @@ namespace CourseWork3.Game
 
         static bool isLoaded;
 
-        public static void Init(GameWindow window)
+        static string pathOfFileForParser;
+
+        public static void Init(GameWindow window, string[] args)
         { 
             GameMain.window = window;
             window.VSync = VSyncMode.On;
@@ -61,10 +63,13 @@ namespace CourseWork3.Game
             windowScale = 1.0f;
             defaultWidth = window.Width;
             defaultHeight = window.Height;
+
             int value = 480;
             worldSize = new Vector2(value, (int)(1.2f * value));
+
             defWorldXOffset = (int)(25);
             defWorldYOffset = (int)((defaultHeight - worldSize.Y) / 2);
+            if (args.Length > 0) pathOfFileForParser = args[0];
 
             window.Run(200, 60);
         }
@@ -72,32 +77,35 @@ namespace CourseWork3.Game
         private static void Window_Load(object sender, EventArgs e)
         {
             random = new Random();
+
             Graphics = GraphicsOpenGL.Graphics.Instance;
             Graphics.Init();
 
             SpriteCollection = new Dictionary<string, Sprite>();
             ProjeciltePatternCollection = new Dictionary<string, Pattern<Projectile>>();
-            GeneratorPatternCollection = new Dictionary<string, Pattern<Generator<EnemyProjectile>>>();
+            GeneratorPatternCollection = new Dictionary<string, Pattern<Generator>>();
             EnemyPatternCollection = new Dictionary<string, Pattern<Enemy>>();
             TextureCollection = new Dictionary<string, Texture2D>();
 
-            tex = new Texture2D(@"content\projectileDirected.png");
+            string currentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            tex = new Texture2D(currentDirectory + @"\content\projectileDirected.png");
             TextureCollection.Add("projectile", tex);
-            TextureCollection.Add("item", new Texture2D(@"content\Item.png"));
+            TextureCollection.Add("item", new Texture2D(currentDirectory + @"\content\Item.png"));
 
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
+            projSize = new Vector2(50, 50);
+
             World = World.Instance;
-            for (int i = -100; i <= 100; i+=20)
-            {
-            }
-                World.Add(new Item(new Vector2(0, 0)));
+
+            var parser = new Parser.Parser();
+            Console.WriteLine("путь:" + pathOfFileForParser);
+            parser.ParseFile(pathOfFileForParser ?? currentDirectory +  @"\Content\fileForParser.txt");
 
             Input = new GameInput(window);
             Camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);
             Stats = new GameStats();
             Time = new GameTime();
-
-            projSize = new Vector2(50, 50);
 
             isLoaded = true;
         }
@@ -117,55 +125,52 @@ namespace CourseWork3.Game
             if (!isLoaded) return;
             Time.DeltaTimeOfRender = (float)e.Time;
 
-            int width = window.Width;
-            int height = window.Height;
-
             #region отрисовка через framebuffer
-            //// Рисуем мини-сцену
-            //worldFrameBuffer.Bind();
-            //Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            //Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
-            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
-            //Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
-            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
-            //Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
-            //World.Render();
+            // Рисуем мини-сцену
+            worldFrameBuffer.Bind();
+            Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
+            Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
+            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
+            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
+            World.Render();
 
-            //// Рисуем большую сцену
-            //FrameBuffer.Unbind();
-            //Graphics.ApplyViewport(windowXOffset, windowYOffset,
-            //    (int)(defaultWidth * windowScale),
-            //    (int)(defaultHeight * windowScale));
-            //Graphics.ApplyProjection(defaultWidth, defaultHeight);
-            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
-            //Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
-            //Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
-            //    new Vector2(worldSize.X, worldSize.Y), 0, 0);
-            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
-            #endregion
-
-            #region отрисовка через viewport
             // Рисуем большую сцену
+            FrameBuffer.Unbind();
             Graphics.ApplyViewport(windowXOffset, windowYOffset,
                 (int)(defaultWidth * windowScale),
                 (int)(defaultHeight * windowScale));
             Graphics.ApplyProjection(defaultWidth, defaultHeight);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
+            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
+                new Vector2(worldSize.X, worldSize.Y), 0, 0);
             Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
+            #endregion
 
-            // Рисуем мини-сцену
-            Graphics.ApplyViewport(windowXOffset + (int)(defWorldXOffset * windowScale), (int)(windowYOffset + defWorldYOffset * windowScale), 
-                (int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            //GL.Clear(ClearBufferMask.ColorBufferBit);
-            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
-            Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, 1), 0);
-            GL.Color3(Color.White);
-            GL.Rect(0, 0, worldSize.X, worldSize.Y);
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
-            Graphics.Draw(tex, Vector2.Zero, worldSize, 0, Color.GreenYellow, 99);
-            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
-            World.Render();
+            #region отрисовка через viewport
+            //// Рисуем большую сцену
+            //Graphics.ApplyViewport(windowXOffset, windowYOffset,
+            //    (int)(defaultWidth * windowScale),
+            //    (int)(defaultHeight * windowScale));
+            //Graphics.ApplyProjection(defaultWidth, defaultHeight);
+            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
+            //Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
+            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
+
+            //// Рисуем мини-сцену
+            //Graphics.ApplyViewport(windowXOffset + (int)(defWorldXOffset * windowScale), (int)(windowYOffset + defWorldYOffset * windowScale),
+            //    (int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            ////GL.Clear(ClearBufferMask.ColorBufferBit);
+            //Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            //Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, 1), 0);
+            //GL.Color3(Color.White);
+            //GL.Rect(0, 0, worldSize.X, worldSize.Y);
+            //Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
+            //Graphics.Draw(tex, Vector2.Zero, worldSize, 0, Color.GreenYellow, 99);
+            //Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
+            //World.Render();
             #endregion
 
             window.SwapBuffers();

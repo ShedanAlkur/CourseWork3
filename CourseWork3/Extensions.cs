@@ -32,8 +32,18 @@ namespace CourseWork3
 
     public static class Vector2Ext
     {
+        /// <summary>
+        /// Создает радиус-вектор по заданному углу наклона.
+        /// </summary>
+        /// <param name="angle">Угол, измеряемый в радианах.</param>
         public static Vector2 ByAngle(float angle)
             => new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+
+        /// <summary>
+        /// Определяет угол тангенса, соответствующего координатам входного вектора.
+        /// </summary>
+        /// <param name="vector">Вектор, между координатами которого будет находится угол.</param>
+        /// <returns>Угол θ, измеряемый в радианах. Такой, что -π ≤ θ ≤ π и  tan(θ) = y / x</returns>
         public static float GetAngle(this Vector2 vector)
             => MathF.Atan2(vector.X, vector.Y);
     }

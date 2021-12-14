@@ -1,4 +1,5 @@
 ﻿using CourseWork3.Patterns;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,21 +21,21 @@ namespace CourseWork3.Game
             }
         }
 
-        protected World(LevelPattern pattern = null)
-        {           
-            if (pattern == null) this.pattern = new LevelPattern();
-            else this.pattern = pattern;
+        static readonly Vector2 DefaultPlayerPosition = new Vector2(0, 100);
 
+        public Player Player { get; protected set; }
+        public LevelPattern Pattern;
+        public int CurrentIndex;
+        public float CurrentPausetime;
+        public float MaxPausetime;
+
+        protected World()
+        {
             gameObjects = new List<GameObject>();
-            Player = new Player();
+            Player = new Player(DefaultPlayerPosition);
             this.Add(Player);
         }
 
-        public Player Player { get; protected set; }
-        LevelPattern pattern;
-        public int CurrentIndex;
-        public float CurrentDelaytime;
-        public float MaxDelaytime;
 
         public void Add(GameObject gameObject)
         {
@@ -43,9 +44,9 @@ namespace CourseWork3.Game
 
         public void Update(float elapsedTime)
         {
-            CurrentDelaytime += elapsedTime;
-            if (CurrentDelaytime >= MaxDelaytime)
-                pattern.Invoke(ref CurrentIndex);
+            CurrentPausetime += elapsedTime;
+            if (CurrentPausetime >= MaxPausetime)
+                Pattern.Invoke();
 
             DoCollision();
 

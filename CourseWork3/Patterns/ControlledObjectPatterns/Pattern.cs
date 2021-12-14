@@ -30,7 +30,7 @@ namespace CourseWork3.Patterns
                     else gameObject.CurrentIndex = (int)repeatIndex;
                 }
                 // Выполняем текущую команду
-                commands[gameObject.CurrentIndex].Invoke(gameObject);
+                commands[gameObject.CurrentIndex++].Invoke(gameObject);
             }
             while (!gameObject.IsSelectedRuntimeCommand);
 

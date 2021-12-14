@@ -12,9 +12,8 @@ namespace CourseWork3.Game
         const float ACCELERATION = 300;
 
         Vector2 size = new Vector2(30);
-        public Item(Vector2 position)
+        public Item(Vector2 position) : base(position)
         {
-            Position = position;
             Velocity = new Vector2(0, START_VELOCITY);
             AccelerationAngle = MathHelper.Pi;
             AccelerationScalar = ACCELERATION;

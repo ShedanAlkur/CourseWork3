@@ -114,24 +114,24 @@ namespace CourseWork3.GraphicsOpenGL
             GL.BindBuffer(BufferTarget.ArrayBuffer, quadVBO);
         }
 
-        public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, byte layer = 0)
+        public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, byte depth = 0)
         {
             GL.PushMatrix();
             texture.Bind();
 
-            GL.Translate(position.X, -position.Y, layer / -255f);
+            GL.Translate(position.X, -position.Y, depth / -255f);
             if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
             if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
 
             GL.DrawArrays(PrimitiveType.Quads, 0, 4);
             GL.PopMatrix();
         }
-        public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, Color color, byte layer = 0)
+        public void Draw(Texture2D texture, Vector2 position, Vector2 scale, float rotation, Color color, byte depth = 0)
         {
             GL.PushMatrix();
             texture.Bind();
 
-            GL.Translate(position.X, -position.Y, (layer + 0.5) / -255f);
+            GL.Translate(position.X, -position.Y, (depth + 0.5) / -255f);
             if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
             if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
 
@@ -147,6 +147,9 @@ namespace CourseWork3.GraphicsOpenGL
 
         ~Graphics()
         {
+            var textures = Texture2D.AllCreatedTexturesId.ToArray();
+            GL.DeleteTextures(textures.Length, textures);
+
             GL.DeleteBuffer(quadVBO);
         }
     }

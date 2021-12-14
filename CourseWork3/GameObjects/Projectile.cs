@@ -1,5 +1,6 @@
 ﻿using CourseWork3.Parser;
 using CourseWork3.Patterns;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,6 +13,8 @@ namespace CourseWork3.Game
     {
         private Color color;
         public Color Color { get => color; set => color = value; }
+
+        private bool isEnemyProjectile;
 
         public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
@@ -28,7 +31,12 @@ namespace CourseWork3.Game
                 ActionsForParser.Add(x.Key, x.Value));
         }
 
-        public Projectile(Pattern<Projectile> pattern) : base(pattern) { }
+        public Projectile(Pattern<Projectile> pattern, Vector2 position, float angle, bool isEnemyProjectile) 
+            : base(pattern, position) 
+        {
+            this.VelocityAngle = angle;
+            this.isEnemyProjectile = isEnemyProjectile;
+        }
 
     }
 }

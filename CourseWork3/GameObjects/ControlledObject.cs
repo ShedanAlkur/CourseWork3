@@ -26,9 +26,9 @@ namespace CourseWork3.Game
                 [Keywords.Set + Keywords.PositionX] = (T obj, object value) => obj.Position.X = (float)value,
                 [Keywords.Set + Keywords.PositionY] = (T obj, object value) => obj.Position.Y = (float)value,
                 [Keywords.Set + Keywords.VelocityScalar] = (T obj, object value) => obj.VelocityScalar = (float)value,
-                [Keywords.Set + Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle = (float)value,
+                [Keywords.Set + Keywords.VelocityAngle] = (T obj, object value) => obj.VelocityAngle = (float)value - MathHelper.PiOver2,
                 [Keywords.Set + Keywords.AccelerationScalar] = (T obj, object value) => obj.AccelerationScalar = (float)value,
-                [Keywords.Set + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle = (float)value,
+                [Keywords.Set + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle = (float)value - MathHelper.PiOver2,
 
                 [Keywords.Increase + Keywords.PositionX] = (T obj, object value) => obj.Position.X += (float)value,
                 [Keywords.Increase + Keywords.PositionY] = (T obj, object value) => obj.Position.Y += (float)value,
@@ -58,7 +58,7 @@ namespace CourseWork3.Game
             
         }
 
-        public ControlledObject(Pattern<T> pattern) : base()
+        public ControlledObject(Pattern<T> pattern, Vector2 position) : base(position)
         {
             CurrentIndex = 0;
             CurrentRuntime = 0;
