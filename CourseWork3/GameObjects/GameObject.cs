@@ -48,14 +48,13 @@ namespace CourseWork3.Game
             }
         }
 
-
         public float AccelerationScalar;
 
         private float accelerationAngle;
         public float AccelerationAngle
         {
             get => accelerationAngle;
-            set 
+            set
             {
                 accelerationAngle = value;
                 while (accelerationAngle < 0) accelerationAngle += MathHelper.TwoPi;
@@ -69,7 +68,7 @@ namespace CourseWork3.Game
         public bool Terminated;
 
         private float hitBoxSize;
-        public float HitBoxSize
+        public virtual float HitBoxSize
         {
             get => hitBoxSize;
             set
@@ -83,11 +82,6 @@ namespace CourseWork3.Game
         public float HalfHitBoxSize
         {
             get => halfHitBoxSize;
-            set
-            { 
-                halfHitBoxSize = value;
-                hitBoxSize = 2 * halfHitBoxSize;
-            } 
         }
 
         public GameObject(Vector2 position)
@@ -96,7 +90,7 @@ namespace CourseWork3.Game
         }
 
         public virtual void Update(float elapsedTime)
-        {     
+        {
             if (Velocity != Vector2.Zero)
             {
                 // Обновление позиции от скорости
@@ -118,7 +112,7 @@ namespace CourseWork3.Game
                     {
                         AccelerationAngle = 0;
                     }
-                  
+
                 }
                 else
                 {
@@ -127,7 +121,7 @@ namespace CourseWork3.Game
                     Position += acceleration * elapsedTime * elapsedTime / 2;
                     // Обновление скорости от ускорения
                     Velocity += acceleration * elapsedTime;
-        
+
                 }
 
             }
@@ -139,13 +133,6 @@ namespace CourseWork3.Game
 
         private static bool AnglesApproximatelyEqualCheck(float angle1, float angle2)
             => (MathF.Abs((angle1) - (angle2)) <= AngleAccuracy);
-
-        private static float AngleToPositive(float angle)
-        {
-            while (angle < 0) angle += MathHelper.Pi;
-            return angle;
-            //return angle % MathHelper.TwoPi + MathHelper.Pi;
-        }
 
         public bool SqrCollisionCheck(GameObject gameObject)
         {
@@ -159,7 +146,7 @@ namespace CourseWork3.Game
         {
 
             return (this.Position - gameObject.Position).LengthSquared <=
-                (this.halfHitBoxSize + gameObject.halfHitBoxSize).Sqr();            
+                (this.halfHitBoxSize + gameObject.halfHitBoxSize).Sqr();
         }
 
         public bool WorldCollisionCheck()

@@ -21,6 +21,10 @@ END
 PROJECTILE "Meilin Knifes Red"
 	randomcolor
 	set velocity 200
+	runtime 0,2
+	PointRotation 0, 0
+	runtime 100
+	set acceleration 0
 	runtime 1000
 END
 
@@ -29,10 +33,10 @@ GENERATOR "Meilin Generator"
 	set sector 360
 	set angle 0
 	set RotationSpeed 0
-	set spawnDelay 0,6
+	set spawnDelay 1
 	set spawnCount 15
-	set projectile "CirnoTest"
-	runtime 2
+	set projectile "Meilin Knifes Red"
+	runtime 1,5
 	pause 100
 END
 

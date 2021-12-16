@@ -53,6 +53,7 @@ namespace CourseWork3.Parser
         public static readonly string velocityToPlayer = "velocityToPlayer".ToLower();
         public static readonly string VelocityToPoint = "velocitytopoint".ToLower();
         public static readonly string PointRotation = "pointRotation".ToLower();
+        public static readonly string PointCounterRotation = "pointCounterRotation".ToLower();
         public static readonly string RandomColor = "randomColor".ToLower();
 
         public static readonly string Life = "life";

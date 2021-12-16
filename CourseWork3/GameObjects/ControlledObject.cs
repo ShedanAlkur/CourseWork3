@@ -51,13 +51,17 @@ namespace CourseWork3.Game
                 [Keywords.VelocityToPoint] = (T obj, object value) => obj.VelocityAngle = ((Vector2)value - obj.Position).GetAngle(),
                 [Keywords.velocityToPlayer] = (T obj, object value) =>
                     obj.VelocityAngle = (GameMain.World.Player.Position - obj.Position).GetAngle(),
-                [Keywords.PointRotation] = (T obj, object value) => obj.PointRotation((Vector2)value),
+                [Keywords.PointRotation] = (T obj, object value) => obj.PointRotation((Vector2)value, true),
+                [Keywords.PointCounterRotation] = (T obj, object value) => obj.PointRotation((Vector2)value, false),
             };
         }
 
-        public void PointRotation(Vector2 center)
+        public void PointRotation(Vector2 center, bool clockwise)
         {
-            
+            float radius = (Position - center).Length;
+            VelocityAngle = (center - Position).GetAngle() + ((clockwise) ? MathHelper.PiOver2 : -MathHelper.PiOver2);
+            AccelerationAngle = (clockwise) ? -MathHelper.PiOver2 : +MathHelper.PiOver2;
+            AccelerationScalar = VelocityScalar * VelocityScalar / radius;
         }
 
         public ControlledObject(Pattern<T> pattern, Vector2 position) : base(position)
