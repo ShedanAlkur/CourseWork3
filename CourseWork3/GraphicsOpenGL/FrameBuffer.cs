@@ -21,7 +21,6 @@ namespace CourseWork3.GraphicsOpenGL
             this.width = width;
             this.height = height;
 
-            Console.WriteLine("Создаем текстуру фреймбуфера");
             this.Texture = new Texture2D(width, height);
             FramebufferID = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FramebufferID);

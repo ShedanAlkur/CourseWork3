@@ -11,6 +11,7 @@ namespace CourseWork3.Game
 {
     class Enemy : ControlledObject<Enemy>
     {
+        const byte Depth = 20;
         public static new Dictionary<string, Action<Enemy, object>> ActionsForParser;
 
         private int life;
@@ -19,6 +20,8 @@ namespace CourseWork3.Game
 
         Texture2D texture;
         Vector2 size;
+
+        private bool wasInWorld;
 
         static Enemy()
         {
@@ -55,13 +58,28 @@ namespace CourseWork3.Game
 
         public Enemy(Pattern<Enemy> pattern, Vector2 position) : base(pattern, position)
         {
+            wasInWorld = false;
             texture = GameMain.TextureCollection["projectile"];
             size = new Vector2(50, 50);
         }
 
         public override void Draw()
         {
-            GameMain.Graphics.Draw(texture, Position, size, 0,System.Drawing.Color.Red, 2);
+            GameMain.Graphics.Draw(texture, Position, size, 0,System.Drawing.Color.Red, Depth);
+        }
+
+        public override void Update(float elapsedTime)
+        {
+            base.Update(elapsedTime);
+
+            if (life <= 0)
+            { 
+                Terminated = true; 
+                return;
+            }
+
+            if (WorldCollisionCheck()) { if (!wasInWorld) wasInWorld = true; }
+            else if (wasInWorld) Terminated = true;
         }
     }
 }

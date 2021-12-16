@@ -3,23 +3,36 @@ SPRITE "enemy"
 	size 1, 1
 END
 
+PROJECTILE "CirnoTest"
+	randomcolor
+	set velocity 100
+	inc velocityAngle -20 + random * 40
+	runtime 2 - genTime
+	set color "white"
+	set velocity 0
+	runtime 1,5
+	randomcolor
+	set velocityAngle random * 360
+	set velocity 10
+	set acceleration 30
+	runtime 1000
+END
+
 PROJECTILE "Meilin Knifes Red"
-	set color "purple"
+	randomcolor
 	set velocity 200
-	set accelerationAngle 180
-	set acceleration 150
 	runtime 1000
 END
 
 GENERATOR "Meilin Generator"
 	//set angle 90
 	set sector 360
-	set angle 45
+	set angle 0
 	set RotationSpeed 0
-	set spawnDelay 1
-	set spawnCount 36 * 3
-	set projectile "Meilin Knifes Red"	
-	runtime 1,5
+	set spawnDelay 0,6
+	set spawnCount 15
+	set projectile "CirnoTest"
+	runtime 2
 	pause 100
 END
 

@@ -102,7 +102,7 @@ namespace CourseWork3.Game
 
                 for (float spawnAngle = angle1; spawnAngle <= angle2; spawnAngle += sectorBetweenProj)
                 {
-                    GameMain.World.Add(new Projectile(ProjPattern, Position, spawnAngle, isEnemyGenerator));
+                    GameMain.World.Add(new Projectile(ProjPattern, Position, spawnAngle, CurrentRuntime, isEnemyGenerator));
                 }
             }
         }

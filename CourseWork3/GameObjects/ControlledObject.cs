@@ -48,9 +48,9 @@ namespace CourseWork3.Game
                     obj.IsSelectedRuntimeCommand = true;
                 },
 
-                [Keywords.VelocityToPoint] = (T obj, object value) => obj.VelocityAngle = (obj.Position - (Vector2)value).GetAngle(),
+                [Keywords.VelocityToPoint] = (T obj, object value) => obj.VelocityAngle = ((Vector2)value - obj.Position).GetAngle(),
                 [Keywords.velocityToPlayer] = (T obj, object value) =>
-                    obj.VelocityAngle = (obj.Position - GameMain.World.Player.Position).GetAngle(),
+                    obj.VelocityAngle = (GameMain.World.Player.Position - obj.Position).GetAngle(),
                 [Keywords.PointRotation] = (T obj, object value) => obj.PointRotation((Vector2)value),
             };
         }
@@ -89,9 +89,11 @@ namespace CourseWork3.Game
             IsPaused = false;
 
 
+
             CurrentRuntime += elapsedTime;
             if (CurrentRuntime >= MaxRuntime)
                 Pattern.Invoke((T)this);
+
 
             base.Update(elapsedTime);
         }

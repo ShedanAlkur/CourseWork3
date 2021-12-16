@@ -21,13 +21,18 @@ namespace CourseWork3.Game
             }
         }
 
-        static readonly Vector2 DefaultPlayerPosition = new Vector2(0, -200);
-
         public Player Player { get; protected set; }
         public LevelPattern Pattern;
         public int CurrentIndex;
         public float CurrentPausetime;
         public float MaxPausetime;
+
+        public static readonly Vector2 DefaultPlayerPosition = new Vector2(0, -200);
+        public static readonly Vector2 Size = new Vector2(480, 480 * 1.2f);
+        public static readonly Vector2 Center = new Vector2(0, 0);
+        public static readonly Vector2 TopLeftPoint = new Vector2(Center.X + -Size.X / 2f, Center.Y + Size.Y / 2);
+        public static readonly Vector2 BottomRightPoint = new Vector2(Center.X + Size.X / 2, Center.Y + -Size.Y / 2);
+
 
         protected World()
         {
@@ -66,7 +71,8 @@ namespace CourseWork3.Game
             while (i < gameObjects.Count)
             {
                 if (!gameObjects[i].Terminated)
-                    gameObjects[i++].Draw();
+                    gameObjects[i].Draw();
+                i++;
             }
         }
 

@@ -12,12 +12,18 @@ namespace CourseWork3.Game
 {
     class Projectile : ControlledObject<Projectile>
     {
-        const byte Depth = 2;
+        const byte Depth = 10;
+
+        public static readonly Type Type = typeof(Projectile);
 
         private Color color;
         public Color Color { get => color; set => color = value; }
 
-        private bool isEnemyProjectile;
+        public bool IsEnemyProjectile { get; private set; }
+        bool isGrazed;
+        bool wasInWorld;
+
+        public float GenTime { get; private set; }
 
         Sprite sprite;
 
@@ -36,11 +42,12 @@ namespace CourseWork3.Game
                 ActionsForParser.Add(x.Key, x.Value));
         }
 
-        public Projectile(Pattern<Projectile> pattern, Vector2 position, float angle, bool isEnemyProjectile) 
-            : base(pattern, position) 
+        public Projectile(Pattern<Projectile> pattern, Vector2 position, float angle, float time, bool isEnemyProjectile)
+            : base(pattern, position)
         {
             this.VelocityAngle = angle;
-            this.isEnemyProjectile = isEnemyProjectile;
+            this.GenTime = time;
+            this.IsEnemyProjectile = isEnemyProjectile;
 
             var texture = GameMain.TextureCollection["projectile"];
             sprite = new Sprite(texture, Vector2.One);
@@ -50,16 +57,39 @@ namespace CourseWork3.Game
         public override void Update(float elapsedTime)
         {
             base.Update(elapsedTime);
+
+            if (WorldCollisionCheck()) { if (!wasInWorld) wasInWorld = true; }
+            else if (wasInWorld) Terminated = true;
         }
 
         public override void Draw()
         {
+            //Console.WriteLine($"{Position}");
             GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, VelocityAngle - MathHelper.PiOver2, color, Depth);
         }
 
         public override void OnCollision(GameObject gameObject)
         {
-            base.OnCollision(gameObject);
+            switch (gameObject)
+            {
+                case Player player:
+                    if (!isGrazed && GrazeColllisionCheck(player)) OnGraze(); break;
+                default: return;
+            }
+        }
+
+        private void OnGraze()
+        {
+            isGrazed = true;
+        }
+
+        public bool GrazeColllisionCheck(Player player)
+        {
+            return
+                this.Position.Y - this.HalfHitBoxSize < player.Position.Y + player.HalfHitBoxSize &&
+                this.Position.Y + this.HalfHitBoxSize > player.Position.Y - player.HalfHitBoxSize &&
+                this.Position.X + this.HalfHitBoxSize > player.Position.X - player.HalfHitBoxSize &&
+                this.Position.X - this.HalfHitBoxSize < player.Position.X + player.HalfHitBoxSize;
         }
     }
 }

@@ -51,7 +51,7 @@ namespace CourseWork3.Parser
         {
             // Настройка информации о параметре, извлекаемом из класса-снаряда для мат. вычислений
             var externalParam = System.Linq.Expressions.Expression.Parameter(typeof(Projectile));
-            var internalParam = System.Linq.Expressions.Expression.PropertyOrField(externalParam, nameof(Projectile.CurrentRuntime));
+            var internalParam = System.Linq.Expressions.Expression.PropertyOrField(externalParam, nameof(Projectile.GenTime));
             var internalParamName = Keywords.ProjParamName;
             var param = new ExpressionBuilder.NestedExpressionParameter(externalParam, internalParam, internalParamName);
             nestedParametersForProjectile = new ExpressionBuilder.NestedExpressionParameter[] { param };

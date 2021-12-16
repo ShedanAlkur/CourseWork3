@@ -46,5 +46,14 @@ namespace CourseWork3
         /// <returns>Угол θ, измеряемый в радианах. Такой, что -π ≤ θ ≤ π и  tan(θ) = y / x</returns>
         public static float GetAngle(this Vector2 vector)
             => MathF.Atan2(vector.Y, vector.X);
+
+        public static Vector2 FastNormilize(this Vector2 vector)
+        {
+            float lenght = vector.LengthFast;
+            return new Vector2(vector.X / lenght, vector.Y / lenght);
+        }
+
+        public static float Sqr(this float value)
+            => value * value;
     }
 }

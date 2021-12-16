@@ -58,6 +58,8 @@ namespace CourseWork3.Game
             set 
             {
                 accelerationAngle = value;
+                while (accelerationAngle < 0) accelerationAngle += MathHelper.TwoPi;
+                while (accelerationAngle > MathHelper.TwoPi) accelerationAngle -= MathHelper.TwoPi;
                 accelerationAngleApproximatelyEqualPi = AnglesApproximatelyEqualCheck(accelerationAngle, MathHelper.Pi);
             }
         }
@@ -66,7 +68,27 @@ namespace CourseWork3.Game
 
         public bool Terminated;
 
-        public float HitBoxSize;
+        private float hitBoxSize;
+        public float HitBoxSize
+        {
+            get => hitBoxSize;
+            set
+            {
+                hitBoxSize = value;
+                halfHitBoxSize = hitBoxSize / 2f;
+            }
+        }
+
+        private float halfHitBoxSize;
+        public float HalfHitBoxSize
+        {
+            get => halfHitBoxSize;
+            set
+            { 
+                halfHitBoxSize = value;
+                hitBoxSize = 2 * halfHitBoxSize;
+            } 
+        }
 
         public GameObject(Vector2 position)
         {
@@ -74,7 +96,7 @@ namespace CourseWork3.Game
         }
 
         public virtual void Update(float elapsedTime)
-        {
+        {     
             if (Velocity != Vector2.Zero)
             {
                 // Обновление позиции от скорости
@@ -85,7 +107,7 @@ namespace CourseWork3.Game
                 if (accelerationAngleApproximatelyEqualPi)
                 {
                     // Обновление позиции от ускорения
-                    Vector2 acceleration = -AccelerationScalar * Velocity.Normalized();
+                    Vector2 acceleration = -AccelerationScalar * Velocity.FastNormilize(); // Использую свой нормализирующий метод, так как стандарный Vector2.Normilized() возвращает вектор (NaN, NaN), например, для вектора (0, -0).        
                     Position += acceleration * elapsedTime * elapsedTime / 2;
                     // Обновление скорости от ускорения
                     Vector2 temp = acceleration * elapsedTime;
@@ -96,6 +118,7 @@ namespace CourseWork3.Game
                     {
                         AccelerationAngle = 0;
                     }
+                  
                 }
                 else
                 {
@@ -104,6 +127,7 @@ namespace CourseWork3.Game
                     Position += acceleration * elapsedTime * elapsedTime / 2;
                     // Обновление скорости от ускорения
                     Velocity += acceleration * elapsedTime;
+        
                 }
 
             }
@@ -125,16 +149,26 @@ namespace CourseWork3.Game
 
         public bool SqrCollisionCheck(GameObject gameObject)
         {
-            throw new NotImplementedException();
+            return
+                this.Position.Y - this.HalfHitBoxSize < gameObject.Position.Y + gameObject.HalfHitBoxSize &&
+                this.Position.Y + this.HalfHitBoxSize > gameObject.Position.Y - gameObject.HalfHitBoxSize &&
+                this.Position.X + this.HalfHitBoxSize > gameObject.Position.X - gameObject.HalfHitBoxSize &&
+                this.Position.X - this.HalfHitBoxSize < gameObject.Position.X + gameObject.HalfHitBoxSize;
         }
         public bool RoundCollisionCheck(GameObject gameObject)
         {
-            throw new NotImplementedException();
+
+            return (this.Position - gameObject.Position).LengthSquared <=
+                (this.halfHitBoxSize + gameObject.halfHitBoxSize).Sqr();            
         }
 
         public bool WorldCollisionCheck()
         {
-            throw new NotImplementedException();
+            return
+                this.Position.Y - this.HalfHitBoxSize < World.TopLeftPoint.Y &&
+                this.Position.Y + this.HalfHitBoxSize > World.BottomRightPoint.Y &&
+                this.Position.X + this.HalfHitBoxSize > World.TopLeftPoint.X &&
+                this.Position.X - this.HalfHitBoxSize < World.BottomRightPoint.X;
         }
     }
 }
