@@ -38,6 +38,8 @@ namespace CourseWork3.Parser
         public static readonly string VelocityAngle = "velocityAngle".ToLower();
         public static readonly string AccelerationScalar = "acceleration";
         public static readonly string AccelerationAngle = "accelerationAngle".ToLower();
+        public static readonly string Hitbox = "hitbox".ToLower();
+        public static readonly string Size = "size".ToLower();
 
         public static readonly string Color = "color".ToLower();
 

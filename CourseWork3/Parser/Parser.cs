@@ -1,6 +1,7 @@
 ﻿using CourseWork3.Game;
 using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace CourseWork3.Parser
             [Keywords.Sector] = typeof(float),
             [Keywords.SpawnDelay] = typeof(float),
             [Keywords.SpawnCount] = typeof(int),
+            [Keywords.RotationSpeed] = typeof(float),
+            [Keywords.Hitbox] = typeof(float),
+            [Keywords.Size] = typeof(Vector2),
 
             [Keywords.Color] = typeof(System.Drawing.Color),
 
@@ -80,6 +84,7 @@ namespace CourseWork3.Parser
             string path = null;
             int columns = 1;
             int rows = 1;
+            Vector2 size = Vector2.Zero;
             pointer++;
             string name = ParseString(tokens, ref pointer);
             pointer++;
@@ -88,14 +93,12 @@ namespace CourseWork3.Parser
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.Path)
                     { pointer++; path = ParseString(tokens, ref pointer); }
-                    else if (tokens[pointer] == Keywords.Columns)
-                    { pointer++; columns = (int)ParseFloatFromMathExpression(tokens, ref pointer)(); }
-                    else if (tokens[pointer] == Keywords.Rows)
-                    { pointer++; rows = (int)ParseFloatFromMathExpression(tokens, ref pointer)(); }
+                    else if (tokens[pointer] == Keywords.Size) 
+                    { pointer++; size = ParseVector2(tokens, ref pointer); }
                     else throw new NotImplementedException();
                 pointer++;
             }
-            GameMain.SpriteCollection.Add(name, new Sprite(path, columns, rows));
+            GameMain.SpriteCollection.Add(name, new Sprite(path, size));
         }
 
         private void ParseProjectile(string[] tokens, ref int pointer)

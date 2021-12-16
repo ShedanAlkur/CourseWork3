@@ -132,8 +132,6 @@ namespace CourseWork3.Game
             Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
             Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(50), 0, 2);
-            Graphics.Draw(tex, new Vector2(0, -50), new Vector2(projSize.X, projSize.Y), 0, Color.Blue, 1);
             World.Render();
 
             // Рисуем большую сцену
@@ -146,7 +144,7 @@ namespace CourseWork3.Game
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
             Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
                 new Vector2(worldSize.X, worldSize.Y), 0, 0);
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds * 200, 100);
+            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds, 100);
             #endregion
 
             #region отрисовка через viewport

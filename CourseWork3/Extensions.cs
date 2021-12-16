@@ -45,6 +45,6 @@ namespace CourseWork3
         /// <param name="vector">Вектор, между координатами которого будет находится угол.</param>
         /// <returns>Угол θ, измеряемый в радианах. Такой, что -π ≤ θ ≤ π и  tan(θ) = y / x</returns>
         public static float GetAngle(this Vector2 vector)
-            => MathF.Atan2(vector.X, vector.Y);
+            => MathF.Atan2(vector.Y, vector.X);
     }
 }

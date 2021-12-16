@@ -1,44 +1,34 @@
 SPRITE "enemy" 
 	path "Content\Star.png"
-	rows 1
-	columns 1
+	size 1, 1
 END
 
 PROJECTILE "Meilin Knifes Red"
-	set color "blue"
-	set velocity 100
-	set acceleration 0
+	set color "purple"
+	set velocity 200
+	set accelerationAngle 180
+	set acceleration 150
 	runtime 1000
 END
 
 GENERATOR "Meilin Generator"
-	set angle 90
+	//set angle 90
 	set sector 360
+	set angle 45
+	set RotationSpeed 0
 	set spawnDelay 1
-	set spawnCount 1
-	// set spawnCount 24
-	set projectile "Meilin Knifes Red"
-	repeatStart
-	runtime 100
-	pause 1000
+	set spawnCount 36 * 3
+	set projectile "Meilin Knifes Red"	
+	runtime 1,5
+	pause 100
 END
 
 ENEMY "awesome enemy"
 	set life 12
 	set generator "Meilin Generator"
-	set velocity 10
-	set velocityAngle 0
 	runtime 10000
 END
 
 LEVEL
-	spawn "awesome enemy" 200, 200
-	// for i 0, 5
-		// spawn "awesome enemy" 0 - 50 * (i - 2), -100
-	// end
-	// pause 0,5
-	// for i -2, 2
-		// spawn "awesome enemy" i * 50, 200
-		// spawn "awesome enemy" -i * 50, -200
-	// end
+	spawn "awesome enemy" 0, 0
 END

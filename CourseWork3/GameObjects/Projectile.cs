@@ -12,13 +12,14 @@ namespace CourseWork3.Game
 {
     class Projectile : ControlledObject<Projectile>
     {
+        const byte Depth = 2;
+
         private Color color;
         public Color Color { get => color; set => color = value; }
 
         private bool isEnemyProjectile;
 
-        Texture2D texture;
-        Vector2 size;
+        Sprite sprite;
 
         public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
@@ -41,8 +42,9 @@ namespace CourseWork3.Game
             this.VelocityAngle = angle;
             this.isEnemyProjectile = isEnemyProjectile;
 
-            texture = GameMain.TextureCollection["projectile"];
-            size = new Vector2(50, 50);
+            var texture = GameMain.TextureCollection["projectile"];
+            sprite = new Sprite(texture, Vector2.One);
+            HitBoxSize = 50;
         }
 
         public override void Update(float elapsedTime)
@@ -52,7 +54,12 @@ namespace CourseWork3.Game
 
         public override void Draw()
         {
-            GameMain.Graphics.Draw(texture, Position, size, 0, color, 1);
+            GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, VelocityAngle - MathHelper.PiOver2, color, Depth);
+        }
+
+        public override void OnCollision(GameObject gameObject)
+        {
+            base.OnCollision(gameObject);
         }
     }
 }

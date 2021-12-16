@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,21 +7,33 @@ namespace CourseWork3.GraphicsOpenGL
 {
     class Sprite
     {
-        int columns;
-        int rows;
-        int singleTextureHeight;
-        int singleTextureWidth;
-        Texture2D texture;
+        public Texture2D Texture { get; private set; }
+        public Vector2 SizeRelativeToHitbox { get; private set; }
 
-        public Sprite(string texturePath, int columns = 1, int rows = 1)
+        public Sprite(Texture2D texture, Vector2 sizeRelativeToHitbox)
         {
-            return;
+            this.Texture = texture;
+            this.SizeRelativeToHitbox = sizeRelativeToHitbox;
+        }
+
+        public Sprite(Texture2D texture)
+        {
+            this.Texture = texture;
+            this.SizeRelativeToHitbox = Vector2.One;
+        }
+
+        public Sprite(string texturePath, Vector2 sizeRelativeToHitbox)
+        {
             if (string.IsNullOrEmpty(texturePath)) throw new ArgumentNullException(nameof(texturePath));
-            this.texture = new Texture2D(texturePath);
-            this.columns = (columns >= 1) ? columns : 1;
-            this.rows = (rows >= 1) ? rows : 1;
-            singleTextureHeight = texture.Height / rows;
-            singleTextureHeight = texture.Width / columns;
+            this.Texture = new Texture2D(texturePath);
+            this.SizeRelativeToHitbox = sizeRelativeToHitbox;
+        }
+
+        public Sprite(string texturePath)
+        {
+            if (string.IsNullOrEmpty(texturePath)) throw new ArgumentNullException(nameof(texturePath));
+            this.Texture = new Texture2D(texturePath);
+            this.SizeRelativeToHitbox = Vector2.One;
         }
     }
 }

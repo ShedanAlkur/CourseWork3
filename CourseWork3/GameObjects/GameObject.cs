@@ -9,7 +9,7 @@ namespace CourseWork3.Game
 {
     abstract class GameObject : IRenderable, IUpdateable
     {
-        const float AngleAccuracy = MathHelper.Pi / 180 * 3; // ~3 градуса
+        const float AngleAccuracy = MathHelper.Pi / 180 * 6;
 
         public Vector2 Position;
 
@@ -22,7 +22,7 @@ namespace CourseWork3.Game
             {
                 velocity = value;
                 velocityScalar = velocity.LengthFast;
-                velocityAngle = velocity.GetAngle() + MathHelper.PiOver2;
+                if (velocity != Vector2.Zero) velocityAngle = velocity.GetAngle();
             }
         }
 
@@ -66,6 +66,7 @@ namespace CourseWork3.Game
 
         public bool Terminated;
 
+        public float HitBoxSize;
 
         public GameObject(Vector2 position)
         {
@@ -91,7 +92,7 @@ namespace CourseWork3.Game
                     Velocity += temp;
 
                     // Если из-за ускорения скорость стала противоположно направлена, то сонаправить ускорение скорости
-                    if (AnglesApproximatelyEqualCheck((temp).GetAngle(), -Velocity.GetAngle()))
+                    if (AnglesApproximatelyEqualCheck((temp).GetAngle(), Velocity.GetAngle()))
                     {
                         AccelerationAngle = 0;
                     }
@@ -113,6 +114,27 @@ namespace CourseWork3.Game
         public virtual void OnCollision(GameObject gameObject) { }
 
         private static bool AnglesApproximatelyEqualCheck(float angle1, float angle2)
-            => (MathF.Abs(angle1 - angle2) <= AngleAccuracy);
+            => (MathF.Abs((angle1) - (angle2)) <= AngleAccuracy);
+
+        private static float AngleToPositive(float angle)
+        {
+            while (angle < 0) angle += MathHelper.Pi;
+            return angle;
+            //return angle % MathHelper.TwoPi + MathHelper.Pi;
+        }
+
+        public bool SqrCollisionCheck(GameObject gameObject)
+        {
+            throw new NotImplementedException();
+        }
+        public bool RoundCollisionCheck(GameObject gameObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool WorldCollisionCheck()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

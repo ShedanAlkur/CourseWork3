@@ -21,7 +21,7 @@ namespace CourseWork3.Game
             }
         }
 
-        static readonly Vector2 DefaultPlayerPosition = new Vector2(0, 100);
+        static readonly Vector2 DefaultPlayerPosition = new Vector2(0, -200);
 
         public Player Player { get; protected set; }
         public LevelPattern Pattern;

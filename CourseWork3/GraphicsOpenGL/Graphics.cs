@@ -121,7 +121,7 @@ namespace CourseWork3.GraphicsOpenGL
 
             GL.Translate(position.X, -position.Y, depth / -255f);
             if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
-            if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
+            if (rotation != 0) GL.Rotate(MathHelper.RadiansToDegrees(rotation), 0, 0, -1);
 
             GL.DrawArrays(PrimitiveType.Quads, 0, 4);
             GL.PopMatrix();
@@ -133,7 +133,7 @@ namespace CourseWork3.GraphicsOpenGL
 
             GL.Translate(position.X, -position.Y, (depth + 0.5) / -255f);
             if (scale != Vector2.Zero) GL.Scale(scale.X, scale.Y, 1);
-            if (rotation != 0) GL.Rotate(rotation, 0, 0, -1);
+            if (rotation != 0) GL.Rotate(MathHelper.RadiansToDegrees(rotation), 0, 0, -1);
 
             GL.BlendColor(color);
             GL.DrawArrays(PrimitiveType.Quads, 0, 4);
