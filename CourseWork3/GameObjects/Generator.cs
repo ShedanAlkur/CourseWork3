@@ -36,6 +36,8 @@ namespace CourseWork3.Game
 
         public float RotationSpeed;
 
+        public float RotationAcceleration;
+
         public Pattern<Projectile> ProjPattern;
 
 
@@ -52,13 +54,15 @@ namespace CourseWork3.Game
                 [Keywords.Set + Keywords.Angle] = (Generator obj, object value) => obj.Angle = MathHelper.DegreesToRadians((float)value) - MathHelper.PiOver2,
                 [Keywords.Set + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
                 [Keywords.Set + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,
-                [Keywords.Set + Keywords.RotationSpeed] = (Generator obj, object value) => obj.RotationSpeed = (float)value,
+                [Keywords.Set + Keywords.RotationSpeed] = (Generator obj, object value) => obj.RotationSpeed = MathHelper.DegreesToRadians((float)value),
+                [Keywords.Set + Keywords.RotationAcceleration] = (Generator obj, object value) => obj.RotationAcceleration = MathHelper.DegreesToRadians((float)value),
 
                 [Keywords.Increase + Keywords.Sector] = (Generator obj, object value) => obj.Sector = MathHelper.DegreesToRadians((float)value),
                 [Keywords.Increase + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
                 [Keywords.Increase + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
                 [Keywords.Increase + Keywords.Angle] = (Generator obj, object value) => obj.Angle = MathHelper.DegreesToRadians((float)value),
                 [Keywords.Set + Keywords.RotationSpeed] = (Generator obj, object value) => obj.RotationSpeed += MathHelper.DegreesToRadians((float)value),
+                [Keywords.Set + Keywords.RotationAcceleration] = (Generator obj, object value) => obj.RotationAcceleration += MathHelper.DegreesToRadians((float)value),
 
                 [Keywords.Clear + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
                 [Keywords.Clear + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = null,
@@ -89,6 +93,7 @@ namespace CourseWork3.Game
             this.Position = Owner.Position;
 
             Angle += RotationSpeed * elapsedTime;
+            RotationSpeed += RotationAcceleration * elapsedTime;
 
             CurrentSpawnDelay += elapsedTime;
             while (CurrentSpawnDelay >= SpawnDelay)

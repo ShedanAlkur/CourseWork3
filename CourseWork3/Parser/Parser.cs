@@ -28,6 +28,7 @@ namespace CourseWork3.Parser
             [Keywords.SpawnDelay] = typeof(float),
             [Keywords.SpawnCount] = typeof(int),
             [Keywords.RotationSpeed] = typeof(float),
+            [Keywords.RotationAcceleration] = typeof(float),
             [Keywords.Hitbox] = typeof(float),
 
             [Keywords.Color] = typeof(System.Drawing.Color),
@@ -37,6 +38,7 @@ namespace CourseWork3.Parser
             [Keywords.Generator] = typeof(Pattern<Generator>),
 
             [Keywords.Life] = typeof(int),
+            [Keywords.MoveTo] = typeof((Vector2, float?)),
 
         };
 
@@ -198,6 +200,14 @@ namespace CourseWork3.Parser
                             else if (paramType == typeof(int)) param = (int)ParseFloatFromMathExpression(tokens, ref pointer)();
                             else if (paramType == typeof(Pattern<Generator>)) param = GameMain.GeneratorPatternCollection[ParseString(tokens, ref pointer)];
                             else if (paramType == typeof(Sprite)) param = GameMain.SpriteCollection[ParseString(tokens, ref pointer)];
+                            else if (paramType == typeof(Vector2)) param = ParseVector2(tokens, ref pointer);
+                            else if (paramType == typeof((Vector2, float?))) 
+                            {
+                                Vector2 value1 = ParseVector2(tokens, ref pointer);
+                                float? value2 = null;
+                                if (ParseParameterSeparatorIfExist(tokens, ref pointer)) value2 = ParseFloatFromMathExpression(tokens, ref pointer)();
+                                param = (value1, value2);
+                            }
 
                         commands.Add(new PropertyChangerCommand<Enemy>(action, param));
                         // обработка команд врага

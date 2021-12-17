@@ -45,8 +45,13 @@ namespace CourseWork3.Game
                 },
                 [Keywords.Increase + Keywords.Life] = (Enemy obj, object value) => obj.life += (int)value,
 
-                [Keywords.Clear + Keywords.Sprite] = (Enemy obj, object value) => throw new NotImplementedException(),
                 [Keywords.Clear + Keywords.Generator] = (Enemy obj, object value) => obj.RemoveOwnedGenerators(),
+
+                [Keywords.MoveTo] = (Enemy obj, object value) => 
+                {
+                    (Vector2 point, float? time) = ((Vector2, float?))value;
+                    obj.MoveTo(point, time);
+                }
             };
             ControlledObject<Enemy>.ActionsForParser.ToList().ForEach(x =>
                 ActionsForParser.Add(x.Key, x.Value));
@@ -56,6 +61,15 @@ namespace CourseWork3.Game
         {
             foreach (var gen in ownedGenerators) gen.Terminated = true;
             ownedGenerators.Clear();
+        }
+
+        public void MoveTo(Vector2 point, float? time)
+        {
+            AccelerationScalar = 0;
+            var diff = point - Position;
+            VelocityAngle = diff.GetAngle();
+            if (!(time is null))
+                VelocityScalar = diff.LengthFast / (float)time;
         }
 
         public Enemy(Pattern<Enemy> pattern, Vector2 position) : base(pattern, position)
