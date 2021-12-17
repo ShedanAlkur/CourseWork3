@@ -1,19 +1,32 @@
-﻿using OpenTK;
+﻿using CourseWork3.GraphicsOpenGL;
+using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace CourseWork3.Game
 {
     class Item : GameObject
     {
+        const byte Depth = 15; 
+
         const float StartVelocity = 550f;
         const float EndVelocity = 300f;
         const float Acceleration = 400f;
 
-        Vector2 size = new Vector2(30);
+        const float defaultHitboxSize = 100f;
+
+        Sprite arrowSprite;
+        Sprite itemSprite;
+
+        protected virtual Color Color { get => Color.Gray; }
+
         public Item(Vector2 position) : base(position)
         {
+            HitBoxSize = defaultHitboxSize;
+            arrowSprite = GameMain.SpriteCollection["_arrow"];
+            itemSprite = GameMain.SpriteCollection["_item"];
             Velocity = new Vector2(0, StartVelocity);
             AccelerationAngle = MathHelper.Pi;
             AccelerationScalar = Acceleration;
@@ -28,11 +41,34 @@ namespace CourseWork3.Game
                 Velocity = new Vector2(0, -EndVelocity);
                 AccelerationScalar = 0;
             }
+
+            if (Position.Y + HitBoxSize < World.BottomRightPoint.Y) 
+                Terminated = true;
+
         }
 
         public override void Draw()
         {
-            GameMain.Graphics.Draw(GameMain.TextureCollection["item"], Position, size, 0, 0);
+            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
+
+            if (Position.Y > World.TopLeftPoint.Y)
+                GameMain.Graphics.Draw(arrowSprite.Texture, new Vector2(Position.X, World.TopLeftPoint.Y - arrowSprite.SizeRelativeToHitbox.Y * HitBoxSize), HitBoxSize * itemSprite.SizeRelativeToHitbox, 0, Color, Depth);
+            
+            GameMain.Graphics.Draw(itemSprite.Texture, Position, HitBoxSize * itemSprite.SizeRelativeToHitbox, 0, Color, Depth);
+        }
+
+        public override void OnCollision(GameObject gameObject)
+        {
+            switch (gameObject)
+            {
+                case Player player: if (SqrCollisionCheck(player)) Use(); break;
+                default: break;
+            }
+        }
+
+        protected virtual void Use()
+        {
+            Terminated = true;
         }
     }
 }

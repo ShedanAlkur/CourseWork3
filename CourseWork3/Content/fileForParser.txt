@@ -1,7 +1,12 @@
-SPRITE "enemy" 
-	path "Content\Star.png"
-	size 1, 1
+SPRITE "knife" 
+	path "Knife.png"
+	size 2, 2
 END
+
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
 
 PROJECTILE "CirnoTest"
 	randomcolor
@@ -18,6 +23,14 @@ PROJECTILE "CirnoTest"
 	runtime 1000
 END
 
+projectile "knife"
+	set sprite "knife"
+	set hitbox 25
+	set velocity 50
+	runtime 1000
+end
+
+
 PROJECTILE "Meilin Knifes Red"
 	randomcolor
 	set velocity 200
@@ -28,21 +41,22 @@ PROJECTILE "Meilin Knifes Red"
 	runtime 1000
 END
 
-GENERATOR "Meilin Generator"
+GENERATOR "test Generator"
 	//set angle 90
 	set sector 360
 	set angle 0
 	set RotationSpeed 0
 	set spawnDelay 1
 	set spawnCount 15
-	set projectile "Meilin Knifes Red"
+	set projectile "knife"
 	runtime 1,5
 	pause 100
 END
 
 ENEMY "awesome enemy"
 	set life 12
-	set generator "Meilin Generator"
+	set sprite "tako"
+	set generator "test Generator"
 	runtime 10000
 END
 

@@ -45,8 +45,12 @@ namespace CourseWork3.Game
         static int defWorldYOffset;
 
         static bool isLoaded;
+        static bool isPaused;
+        public static bool DrawHitboxes = false;
 
-        static string pathOfFileForParser;
+        public static string PathOfPatternFile;
+        public static string PathOfPatternFolder;
+        public static string PathOfExecuteFolder;
 
         public static void Init(GameWindow window, string[] args)
         { 
@@ -69,9 +73,36 @@ namespace CourseWork3.Game
 
             defWorldXOffset = (int)(25);
             defWorldYOffset = (int)((defaultHeight - worldSize.Y) / 2);
-            if (args.Length > 0) pathOfFileForParser = args[0];
+
+            PathOfExecuteFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (args.Length > 0)
+            {
+                PathOfPatternFile = args[0];
+                PathOfPatternFolder = Path.GetDirectoryName(PathOfPatternFile);
+            }
+            else
+                PathOfPatternFolder = PathOfExecuteFolder + @"\Content";
 
             window.Run(200, 60);
+        }
+
+        private static void LoadDefaultPatterns()
+        {
+            TextureCollection.Add("_item", new Texture2D(PathOfExecuteFolder + @"\content\Item.png"));
+            SpriteCollection.Add("_item", new Sprite(TextureCollection["_item"], new Vector2(0.25f, 0.25f)));
+
+            TextureCollection.Add("_arrow", new Texture2D(PathOfExecuteFolder + @"\content\Arrow.png"));
+            SpriteCollection.Add("_arrow", new Sprite(TextureCollection["_arrow"], new Vector2(0.25f, 0.25f)));
+
+            TextureCollection.Add("_player", new Texture2D(PathOfExecuteFolder + @"\content\Player.png"));
+            SpriteCollection.Add("_player", new Sprite(TextureCollection["_player"], new Vector2(2.5f, 4)));
+
+            TextureCollection.Add("_collision", new Texture2D(PathOfExecuteFolder + @"\content\Collision.png"));
+            SpriteCollection.Add("_collision", new Sprite(TextureCollection["_collision"], new Vector2(1, 1)));
+
+            TextureCollection.Add("_projectile", new Texture2D(PathOfExecuteFolder + @"\content\projectileDirected.png"));
+            SpriteCollection.Add("_projectile", new Sprite(TextureCollection["_projectile"], new Vector2(1, 1)));
+
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -87,20 +118,16 @@ namespace CourseWork3.Game
             EnemyPatternCollection = new Dictionary<string, Pattern<Enemy>>();
             TextureCollection = new Dictionary<string, Texture2D>();
 
-            string currentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            tex = new Texture2D(currentDirectory + @"\content\projectileDirected.png");
-            TextureCollection.Add("projectile", tex);
-            TextureCollection.Add("item", new Texture2D(currentDirectory + @"\content\Item.png"));
-
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
-            projSize = new Vector2(50, 50);
+            LoadDefaultPatterns();
+
 
             World = World.Instance;
 
+            var pattern = PathOfPatternFile ?? PathOfExecuteFolder + @"\Content\fileForParser.txt";
             var parser = new Parser.Parser();
-            Console.WriteLine("путь:" + pathOfFileForParser);
-            parser.ParseFile(pathOfFileForParser ?? currentDirectory +  @"\Content\fileForParser.txt");
+            Console.WriteLine($"Шаблон загружается из {pattern}");
+            parser.ParseFile(pattern);
 
             Input = new GameInput(window);
             Camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);
@@ -108,16 +135,21 @@ namespace CourseWork3.Game
             Time = new GameTime();
 
             isLoaded = true;
+            isPaused = true;
         }
 
         private static void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
             if (!isLoaded) return;
             Time.DeltaTimeOfUpdate = (float)e.Time;
-            Input.Update();
-            World.Update((float)e.Time);
+            if (Input.KeyPress(Key.Enter)) isPaused = !isPaused;
 
-            window.Title = "UPS: " + (1 / Time.DeltaTimeOfUpdate).ToString("0000") + " FPS: " + (1 / Time.DeltaTimeOfRender).ToString("0000");
+            if (!isPaused)
+                World.Update((float)e.Time);
+
+            Input.Update();
+
+            window.Title = "UPS: " + (1 / Time.DeltaTimeOfUpdate).ToString("0000") + " FPS: " + (1 / Time.DeltaTimeOfRender).ToString("0000") + " Gameobjects: " + World.gameObjects.Count;
         }
 
         private static void Window_RenderFrame(object sender, FrameEventArgs e)
@@ -131,7 +163,7 @@ namespace CourseWork3.Game
             Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
             Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
-            Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
+            Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
             World.Render();
 
             // Рисуем большую сцену
@@ -141,10 +173,10 @@ namespace CourseWork3.Game
                 (int)(defaultHeight * windowScale));
             Graphics.ApplyProjection(defaultWidth, defaultHeight);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
-            Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
+            Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
             Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
                 new Vector2(worldSize.X, worldSize.Y), 0, 0);
-            Graphics.Draw(tex, new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds, 100);
+            Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds, 100);
             #endregion
 
             #region отрисовка через viewport
@@ -176,7 +208,7 @@ namespace CourseWork3.Game
 
         private static void Window_Resize(object sender, EventArgs e)
         {
-            
+            isPaused = true;
             windowScale = MathF.Min((float)window.Width / defaultWidth, (float)window.Height / defaultHeight);
             windowXOffset = (int)(window.Width - defaultWidth * windowScale) / 2;
             windowYOffset = (int)(window.Height - defaultHeight * windowScale) / 2;
@@ -185,7 +217,7 @@ namespace CourseWork3.Game
 
         private static void Window_FocusedChanged(object sender, EventArgs e)
         {
-
+            isPaused = true;
         }
 
         private static void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

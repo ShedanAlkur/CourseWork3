@@ -29,11 +29,10 @@ namespace CourseWork3.Parser
             [Keywords.SpawnCount] = typeof(int),
             [Keywords.RotationSpeed] = typeof(float),
             [Keywords.Hitbox] = typeof(float),
-            [Keywords.Size] = typeof(Vector2),
 
             [Keywords.Color] = typeof(System.Drawing.Color),
 
-            [Keywords.Sprite] = null,
+            [Keywords.Sprite] = typeof(Sprite),
             [Keywords.Projectile] = typeof(Pattern<Projectile>),
             [Keywords.Generator] = typeof(Pattern<Generator>),
 
@@ -82,9 +81,7 @@ namespace CourseWork3.Parser
         private void ParseSprite(string[] tokens, ref int pointer)
         {
             string path = null;
-            int columns = 1;
-            int rows = 1;
-            Vector2 size = Vector2.Zero;
+            Vector2 size = Vector2.One;
             pointer++;
             string name = ParseString(tokens, ref pointer);
             pointer++;
@@ -92,8 +89,8 @@ namespace CourseWork3.Parser
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.Path)
-                    { pointer++; path = ParseString(tokens, ref pointer); }
-                    else if (tokens[pointer] == Keywords.Size) 
+                    { pointer++; path = GameMain.PathOfPatternFolder + @"\" + ParseString(tokens, ref pointer); }
+                    else if (tokens[pointer] == Keywords.SizeRelativeToHitbox) 
                     { pointer++; size = ParseVector2(tokens, ref pointer); }
                     else throw new NotImplementedException();
                 pointer++;
@@ -129,6 +126,7 @@ namespace CourseWork3.Parser
                             else if (paramType == typeof(System.Drawing.Color)) param = System.Drawing.Color.FromName(ParseString(tokens, ref pointer));
                             else if (paramType == typeof(OpenTK.Vector2))
                                 param = ParseVector2(tokens, ref pointer);
+                            else if (paramType == typeof(Sprite)) param = GameMain.SpriteCollection[ParseString(tokens, ref pointer)];
                         if (flagOfFloatParam)
                             commands.Add(new BasedOnProjectileChangerCommand(action, (Func<Projectile, float>)param));
                         else commands.Add(new PropertyChangerCommand<Projectile>(action, param));
@@ -199,6 +197,7 @@ namespace CourseWork3.Parser
                             if (paramType == typeof(float)) param = ParseFloatFromMathExpression(tokens, ref pointer)();
                             else if (paramType == typeof(int)) param = (int)ParseFloatFromMathExpression(tokens, ref pointer)();
                             else if (paramType == typeof(Pattern<Generator>)) param = GameMain.GeneratorPatternCollection[ParseString(tokens, ref pointer)];
+                            else if (paramType == typeof(Sprite)) param = GameMain.SpriteCollection[ParseString(tokens, ref pointer)];
 
                         commands.Add(new PropertyChangerCommand<Enemy>(action, param));
                         // обработка команд врага

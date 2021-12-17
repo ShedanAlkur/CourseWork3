@@ -16,6 +16,7 @@ namespace CourseWork3.Parser
         public static readonly string EndOfPattern = "end";
 
         public static readonly string Path = "path";
+        public static readonly string SizeRelativeToHitbox = "size";
         public static readonly string Rows = "rows";
         public static readonly string Columns = "columns";
 

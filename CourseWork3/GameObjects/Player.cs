@@ -1,4 +1,5 @@
-﻿using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.GameObjects;
+using CourseWork3.GraphicsOpenGL;
 using OpenTK;
 using OpenTK.Input;
 using System;
@@ -21,8 +22,10 @@ namespace CourseWork3.Game
 
         public Player(Vector2 position) : base(position)
         {
-            var texture = GameMain.TextureCollection["projectile"];
-            sprite = new Sprite(texture, new Vector2(2, 4));
+            sprite = GameMain.SpriteCollection["_player"];
+            //var texture = GameMain.TextureCollection["projectile"];
+            //sprite = new Sprite(texture, new Vector2(2, 4));
+
             HitBoxSize = 25;
             GrazeHitBoxSize = 2f * HitBoxSize;
             HalfGrazeHitBoxSize = GrazeHitBoxSize / 2f;
@@ -41,6 +44,11 @@ namespace CourseWork3.Game
             else if (GameMain.Input.KeyDown(Key.Up))
                 velocity.Y = velocityScalar;
 
+            if (GameMain.Input.KeyPress(Key.Z))
+                GameMain.World.Add(new Item(Position + new Vector2(0, 150)));
+            if (GameMain.Input.KeyPress(Key.X))
+                GameMain.World.Add(new ItemBomb(Position + new Vector2(0, 150)));
+
             this.Velocity = velocity;
 
             base.Update(elapsedTime);
@@ -53,6 +61,7 @@ namespace CourseWork3.Game
 
         public override void Draw()
         {
+            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
             GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, 0, Depth);
         }
 

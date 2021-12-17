@@ -13,13 +13,14 @@ namespace CourseWork3.Game
     class Projectile : ControlledObject<Projectile>
     {
         const byte Depth = 10;
+        public const float DefaultHitbox = 50;
 
-        public static readonly Type Type = typeof(Projectile);
+        public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
-        private Color color;
-        public Color Color { get => color; set => color = value; }
+        public Color Color;
 
         public bool IsEnemyProjectile { get; private set; }
+
         bool isGrazed;
         bool wasInWorld;
 
@@ -27,12 +28,12 @@ namespace CourseWork3.Game
 
         Sprite sprite;
 
-        public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
         static Projectile()
         {
             ActionsForParser = new Dictionary<string, Action<Projectile, object>>
             {
+                [Keywords.Set + Keywords.Sprite] = (Projectile obj, object value) => obj.sprite = (Sprite)value,
                 [Keywords.Set + Keywords.Color] = (Projectile obj, object value) => obj.Color = (Color)value,
                 [Keywords.RandomColor] = (Projectile obj, object value) =>
                 obj.Color = Color.FromArgb(GameMain.random.Next(0, 256), GameMain.random.Next(0, 256), GameMain.random.Next(0, 256)),
@@ -49,7 +50,7 @@ namespace CourseWork3.Game
             this.GenTime = time;
             this.IsEnemyProjectile = isEnemyProjectile;
 
-            var texture = GameMain.TextureCollection["projectile"];
+            var texture = GameMain.TextureCollection["_projectile"];
             sprite = new Sprite(texture, Vector2.One);
             HitBoxSize = 50;
         }
@@ -64,8 +65,8 @@ namespace CourseWork3.Game
 
         public override void Draw()
         {
-            //Console.WriteLine($"{Position}");
-            GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, VelocityAngle - MathHelper.PiOver2, color, Depth);
+            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
+            GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, VelocityAngle - MathHelper.PiOver2, Color, Depth);
         }
 
         public override void OnCollision(GameObject gameObject)

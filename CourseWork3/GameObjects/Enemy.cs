@@ -12,22 +12,24 @@ namespace CourseWork3.Game
     class Enemy : ControlledObject<Enemy>
     {
         const byte Depth = 20;
+        public const float DefaultHitbox = 50;
+
         public static new Dictionary<string, Action<Enemy, object>> ActionsForParser;
 
         private int life;
 
         private List<Generator> ownedGenerators = new List<Generator>();
 
-        Texture2D texture;
-        Vector2 size;
 
         private bool wasInWorld;
+
+        Sprite sprite;
 
         static Enemy()
         {
             ActionsForParser = new Dictionary<string, Action<Enemy, object>>
             {
-                [Keywords.Set + Keywords.Sprite] = (Enemy obj, object value) => throw new NotImplementedException(),
+                [Keywords.Set + Keywords.Sprite] = (Enemy obj, object value) => obj.sprite = (Sprite)value,
                 [Keywords.Set + Keywords.Generator] = (Enemy obj, object value) =>
                 {
                     obj.RemoveOwnedGenerators();
@@ -59,13 +61,14 @@ namespace CourseWork3.Game
         public Enemy(Pattern<Enemy> pattern, Vector2 position) : base(pattern, position)
         {
             wasInWorld = false;
-            texture = GameMain.TextureCollection["projectile"];
-            size = new Vector2(50, 50);
+            sprite = GameMain.SpriteCollection["_projectile"];
+            HitBoxSize = 50;
         }
 
         public override void Draw()
         {
-            GameMain.Graphics.Draw(texture, Position, size, 0,System.Drawing.Color.Red, Depth);
+            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
+            GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, 0, Depth);
         }
 
         public override void Update(float elapsedTime)
