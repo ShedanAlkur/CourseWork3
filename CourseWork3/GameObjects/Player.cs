@@ -51,6 +51,9 @@ namespace CourseWork3.GameObjects
             mainGenerator = new Generator(GameMain.GeneratorPatternCollection["_playermain"], this);
             supportGenerator1 = new Generator(GameMain.GeneratorPatternCollection["_playersup"], this, false);
             supportGenerator2 = new Generator(GameMain.GeneratorPatternCollection["_playersup"], this, false);
+            mainGenerator.CurrentPauseTime = float.PositiveInfinity;
+            supportGenerator1.CurrentPauseTime = float.PositiveInfinity;
+            supportGenerator2.CurrentPauseTime = float.PositiveInfinity;
             supportGenerator1.Position = Position + rightSupportStartPos * new Vector2(-1, 1);
             supportGenerator2.Position = Position + rightSupportStartPos;
             GameMain.World.Add(mainGenerator);
