@@ -10,7 +10,7 @@ namespace CourseWork3.Parser
     class Lexer
     {
         private static string splitToTokensPattern
-            = @"(?:\/\/.*$)|[A-Za-z](?:[A-Za-z0-9_])*|\d+(?:\,\d+)?|[*\/+-]|\," + "|\\\".*\\\"" + @"|\(|\)";
+            = @"(?:\/\/.*$)|(?:\#.*$)|[A-Za-z](?:[A-Za-z0-9_])*|\d+(?:\,\d+)?|[*\/+-]|\," + "|\\\".*\\\"" + @"|\(|\)";
 
 
         public static string[] SplitToTokens(string input)
@@ -19,7 +19,7 @@ namespace CourseWork3.Parser
                 .Cast<Match>()
                 .Select(match => match.Value)
                 .Select(x => (x.StartsWith("\"") && x.EndsWith("\"")) ? x : x.ToLower())
-                .Where(x => !x.StartsWith(@"//"))
+                .Where(x => !x.StartsWith(@"//") && !x.StartsWith(@"#"))
                 .ToArray();
 
             return tokens;

@@ -1,9 +1,8 @@
-﻿using CourseWork3.Patterns;
+﻿using CourseWork3.Parser;
+using CourseWork3.Patterns;
 using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using CourseWork3.Parser;
 
 namespace CourseWork3.Game
 {
@@ -39,7 +38,7 @@ namespace CourseWork3.Game
                 [Keywords.Increase + Keywords.AccelerationAngle] = (T obj, object value) => obj.AccelerationAngle += MathHelper.DegreesToRadians((float)value),
                 [Keywords.Increase + Keywords.Hitbox] = (T obj, object value) => obj.HitBoxSize += (float)value,
 
-                [Keywords.Pause] = (T obj, object value) => { obj.CurrentPauseTime = (float)value; },
+                [Keywords.Pause] = (T obj, object value) => { obj.CurrentPauseTime = (float)value; obj.IsPaused = true; },
                 [Keywords.Destroy] = (T obj, object value) => { obj.Terminated = true; },
                 [Keywords.Runtime] = (T obj, object value) =>
                 {
@@ -92,12 +91,9 @@ namespace CourseWork3.Game
             }
             IsPaused = false;
 
-
-
             CurrentRuntime += elapsedTime;
             if (CurrentRuntime >= MaxRuntime)
                 Pattern.Invoke((T)this);
-
 
             base.Update(elapsedTime);
         }

@@ -6,9 +6,11 @@ SPRITE "crystal"
 	path "Crystal.png"
 	size 2, 2
 END
+SPRITE "darkcircle" 
+	path "DarkCircle.png"
+END
 SPRITE "darkcrystal" 
 	path "DarkCrystal.png"
-	size 2, 2
 END
 SPRITE "doublecircle" 
 	path "DoubleCircle.png"
@@ -27,68 +29,141 @@ sprite "tako"
 	size 1, 1
 end
 
-PROJECTILE "CirnoTest"
+PROJECTILE "Cirno Perfect Freeze 1"
+	set sprite "doublecircle"
 	randomcolor
-	set velocity 100
-	inc velocityAngle -20 + random * 40
-	runtime 2 - genTime
+	set velocity 160
+	set acceleration -50
+	inc velocityAngle 45 * random
+	inc velocity 150 * random
+	runtime 3,5 - genTime
 	set color "white"
 	set velocity 0
-	runtime 1,5
-	randomcolor
-	set velocityAngle random * 360
-	set velocity 10
-	set acceleration 30
-	runtime 1000
-END
-
-projectile "ball"
-	set velocity 50
-	set color "blue"
-	runtime 1000
-end
-
-projectile "knife"
-	set sprite "knife"
-	set hitbox 12
-	set color "red"
-	set velocity 50
-	runtime 1000
-end
-
-PROJECTILE "Meilin Knifes Red"
-	randomcolor
-	set velocity 200
-	runtime 0,2
-	PointRotation 0, 0
-	runtime 100
 	set acceleration 0
-	runtime 1000
-END
+	runtime 2,5
+	randomcolor
+	set velocity 50
+	set acceleration 50
+	inc velocityAngle 45 * random
+	inc acceleration 50 * random	
+END #end
+PROJECTILE "Cirno Perfect Freeze 2"
+	set sprite "darkcircle"
+	set color "blue"
+	set velocity 300
+	set acceleration 50
+	inc velocityAngle 10 * random
+	inc acceleration 50 * random
+END #end
 
-GENERATOR "test Generator"
-	//set angle 90
-	set sector 360
+generator "Cirno Perfect Freeze"
+	repeatStart
+	set projectile "Cirno Perfect Freeze 1"
 	set angle 0
-	set RotationSpeed 0
-	set spawnDelay 1,5
-	set spawnCount 15
-	RepeatStart 
-	set projectile "knife"
-	runtime 1,5
-	set projectile "ball"
-	runtime 1,5
-END
+	set spawnDelay 0,2
+	set sector 300
+	set spawnCount 20
+	runtime 2,5
+	pause 2
+	set projectile "Cirno Perfect Freeze 2"
+	set spawnDelay 0,1
+	set sector 90
+	set spawnCount 4
+	aimToPlayer
+	runtime 1
+	pause 7
+end #end
+
+// Meilin knifes
+PROJECTILE "Meilin Knifes Red"
+	set sprite "knife"
+	set color "red"
+	set hitbox 12
+	set accelerationAngle 180	
+	set acceleration 80 + 6 * gentime / 0,15
+	set velocity 180 - 12 * gentime / 0,15
+	runtime 1,5 - gentime
+	set velocity 0
+	set acceleration 0
+	runtime 0,01
+	inc velocityAngle 165
+	set velocity 300
+	set accelerationAngle 0	
+	set acceleration 200
+END #end
+PROJECTILE "Meilin Knifes Blue"
+	set sprite "knife"
+	set color "blue"
+	set hitbox 12
+	set accelerationAngle 180	
+	set acceleration 80 + 6 * gentime / 0,15
+	set velocity 180 - 12 * gentime / 0,15
+	runtime 1,5 - gentime
+	set velocity 0
+	set acceleration 0
+	runtime 0,01
+	inc velocityAngle -165
+	set velocity 300
+	set accelerationAngle 0	
+	set acceleration 200
+END #end
+GENERATOR "Meilin Knifes"
+	set sector 360
+	set angle 360 / 24 / 2
+	set spawnDelay 0,15
+	set spawnCount 24
+	repeatStart
+	set projectile "Meilin Knifes Red"
+	runtime 0,15 * 4
+	pause 1
+	set projectile "Meilin Knifes Blue"
+	runtime 0,15 * 4
+	pause 1
+END #end #end
+
+// Flower
+PROJECTILE "Flower leaf"
+	set sprite "crystal"
+	set color "yellow"
+	set hitbox 12
+	set velocity 150
+END #end
+PROJECTILE "Flower circle"
+	set sprite "crystal"
+	set color "red"
+	set hitbox 12
+	set velocity 150 / 2
+END #end
+GENERATOR "Flower circle"
+	set projectile "Flower circle"
+	set sector 360
+	set spawnDelay 360 / 30 / 6
+	set spawnCount 24
+END #end
+GENERATOR "Flower leaf clockwise"
+	set projectile "Flower leaf"
+	set sector 360
+	set spawnDelay 0,17
+	set spawnCount 4
+	set angle -30
+	set rotationSpeed 40
+END #end
+GENERATOR "Flower leaf counterclockwise"
+	set projectile "Flower leaf"
+	set sector 360
+	set spawnDelay 0,17
+	set spawnCount 4
+	set angle -30
+	set rotationSpeed -40
+END #end
 
 ENEMY "awesome tako"
 	set life 12
 	set sprite "tako"
-	set generator "test Generator"
-	runtime 5
-	cleargenerator
+	set generator "Cirno Perfect Freeze"
 	runtime 10000
-END
+END #end #end #end #end #end
 
 LEVEL
-	spawn "awesome tako" 0, 0
+	spawn "awesome tako" 0, 200
 END

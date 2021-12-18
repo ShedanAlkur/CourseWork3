@@ -12,6 +12,7 @@ namespace CourseWork3.Game
             public int CurrentRecord;
             public int LifeCount = 10;
             public int BombCount = 10;
+            public int GrazeCount;
 
             public GameStats()
             {

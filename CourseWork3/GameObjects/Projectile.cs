@@ -75,7 +75,7 @@ namespace CourseWork3.Game
             switch (gameObject)
             {
                 case Player player:
-                    if (!isGrazed && GrazeColllisionCheck(player)) OnGraze(); break;
+                    if (IsEnemyProjectile && !isGrazed && GrazeColllisionCheck(player)) OnGraze(); break;
                 case Bomb bomb: 
                     if (SqrCollisionCheck(bomb) && RoundCollisionCheck(bomb)) Terminated = true; break;
                 default: return;
@@ -85,15 +85,16 @@ namespace CourseWork3.Game
         private void OnGraze()
         {
             isGrazed = true;
+            GameMain.Stats.GrazeCount++;
         }
 
         public bool GrazeColllisionCheck(Player player)
         {
             return
-                this.Position.Y - this.HalfHitBoxSize < player.Position.Y + player.HalfHitBoxSize &&
-                this.Position.Y + this.HalfHitBoxSize > player.Position.Y - player.HalfHitBoxSize &&
-                this.Position.X + this.HalfHitBoxSize > player.Position.X - player.HalfHitBoxSize &&
-                this.Position.X - this.HalfHitBoxSize < player.Position.X + player.HalfHitBoxSize;
+                this.Position.Y - this.HalfHitBoxSize < player.Position.Y + player.HalfGrazeHitBoxSize &&
+                this.Position.Y + this.HalfHitBoxSize > player.Position.Y - player.HalfGrazeHitBoxSize &&
+                this.Position.X + this.HalfHitBoxSize > player.Position.X - player.HalfGrazeHitBoxSize &&
+                this.Position.X - this.HalfHitBoxSize < player.Position.X + player.HalfGrazeHitBoxSize;
         }
     }
 }

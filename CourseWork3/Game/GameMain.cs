@@ -181,7 +181,8 @@ namespace CourseWork3.Game
 
             statsRenderer.Text = "Record:".PadRight(10 - 1) + Stats.CurrentRecord + 
                 "\nLife:".PadRight(10) + Stats.LifeCount + 
-                "\nBomb:".PadRight(10) + Stats.BombCount;
+                "\nBomb:".PadRight(10) + Stats.BombCount +
+                 "\nGraze:".PadRight(10) + Stats.GrazeCount;
             Graphics.Draw(statsRenderer.Texture, new Vector2(250, 0), statsRenderer.Size, 0, 0);
             #endregion
 

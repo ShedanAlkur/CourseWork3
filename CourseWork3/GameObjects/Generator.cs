@@ -23,7 +23,8 @@ namespace CourseWork3.Game
             set => sector = value;
         }
 
-        public float SpawnDelay;
+        private float spawnDelay;
+        public float SpawnDelay { get => spawnDelay; set { spawnDelay = value; CurrentSpawnDelay = value; } }
 
         private int spawnCount;
         public int SpawnCount 
@@ -88,9 +89,9 @@ namespace CourseWork3.Game
             if (Owner != null && Owner.Terminated) this.Terminated = true;
 
             base.Update(elapsedTime);
-            if (IsPaused) return;
 
             this.Position = Owner.Position;
+            if (IsPaused) return;
 
             Angle += RotationSpeed * elapsedTime;
             RotationSpeed += RotationAcceleration * elapsedTime;
@@ -100,6 +101,7 @@ namespace CourseWork3.Game
             {
                 CurrentSpawnDelay -= SpawnDelay;
 
+                if (ProjPattern == null || SpawnDelay == 0) continue;
                 float sectorBetweenProj = Sector / SpawnCount;
 
                 float angle1 = Angle - Sector / 2f + sectorBetweenProj / 2f;

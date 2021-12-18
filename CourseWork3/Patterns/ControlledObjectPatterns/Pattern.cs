@@ -26,13 +26,17 @@ namespace CourseWork3.Patterns
                 // Если индекс текущей команды превысил количество команд, то выходим или возвращаемся к точке повтора
                 if (gameObject.CurrentIndex >= commands.Length)
                 {
-                    if (repeatIndex == null) return;
+                    if (repeatIndex == null)
+                    {
+                        //gameObject.MaxRuntime = float.PositiveInfinity;
+                        return;
+                    }
                     else gameObject.CurrentIndex = (int)repeatIndex;
                 }
                 // Выполняем текущую команду
                 commands[gameObject.CurrentIndex++].Invoke(gameObject);
             }
-            while (!gameObject.IsSelectedRuntimeCommand);
+            while (!gameObject.IsSelectedRuntimeCommand && !gameObject.IsPaused);
 
         }
     }
