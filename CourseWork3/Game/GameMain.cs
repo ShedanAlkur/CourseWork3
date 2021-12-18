@@ -15,6 +15,8 @@ namespace CourseWork3.Game
 
         private static GameWindow window;
         public static GraphicsOpenGL.Graphics Graphics;
+        static float accumulatedTime;
+        static float targetUpdatePeriod;
 
         public static Dictionary<string, Sprite> SpriteCollection;
         public static Dictionary<string, Texture2D> TextureCollection;
@@ -78,7 +80,10 @@ namespace CourseWork3.Game
             else
                 PathOfPatternFolder = PathOfExecuteFolder + @"\Content";
 
-            window.Run(200, 60);
+            int updatesPerSecond = 120;
+            int framesPerSecond = 60;
+            targetUpdatePeriod = 1f / updatesPerSecond;
+            window.Run(updatesPerSecond, framesPerSecond);
         }
 
         private static void LoadDefaultPatterns()
@@ -95,7 +100,7 @@ namespace CourseWork3.Game
             TextureCollection.Add("_collision", new Texture2D(PathOfExecuteFolder + @"\content\Collision.png"));
             SpriteCollection.Add("_collision", new Sprite(TextureCollection["_collision"], Vector2.One));
 
-            TextureCollection.Add("_projectile", new Texture2D(PathOfExecuteFolder + @"\content\projectileDirected.png"));
+            TextureCollection.Add("_projectile", new Texture2D(PathOfExecuteFolder + @"\content\Projectile.png"));
             SpriteCollection.Add("_projectile", new Sprite(TextureCollection["_projectile"], new Vector2(20) / Projectile.DefaultHitboxSize));
 
             TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb2.png"));
@@ -125,7 +130,7 @@ namespace CourseWork3.Game
             LoadDefaultPatterns();
 
             var font = new Font("Consolas", 15f, FontStyle.Regular, GraphicsUnit.Point);
-            statsRenderer = new TextRenderer(300, 300, Color.Gray, Color.White, font);
+            statsRenderer = new TextRenderer(200, 200, Color.Gray, Color.White, font);
 
             World = World.Instance;
 
@@ -152,8 +157,16 @@ namespace CourseWork3.Game
             if (Input.KeyPress(Key.Enter)) isPaused = !isPaused;
             if (Input.KeyPress(Key.C)) DrawHitboxes = !DrawHitboxes;
 
+
             if (!isPaused)
-                World.Update((float)e.Time);
+            {
+                accumulatedTime += Time.DeltaTimeOfUpdate;
+                while (accumulatedTime >= targetUpdatePeriod)
+                {
+                    accumulatedTime -= targetUpdatePeriod;
+                    World.Update(targetUpdatePeriod);
+                }
+            }
 
             Input.Update();
 
@@ -186,7 +199,7 @@ namespace CourseWork3.Game
             Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight * (MathF.Sin(Time.TotalElapsedSeconds)/2+1)), Time.TotalElapsedSeconds, 100);
 
             statsRenderer.Text = "IsPaused " + isPaused + 
-                "\nRecord:".PadRight(10) + Stats.CurrentRecord + 
+                "\nRecord:".PadRight(10) + Stats.CurrentRecord.ToString("00000000") + 
                 "\nLife:".PadRight(10) + Stats.LifeCount + 
                 "\nBomb:".PadRight(10) + Stats.BombCount +
                  "\nGraze:".PadRight(10) + Stats.GrazeCount;

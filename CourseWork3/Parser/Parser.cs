@@ -14,6 +14,7 @@ namespace CourseWork3.Parser
         {
             [Keywords.VelocityToPoint] = typeof(OpenTK.Vector2),
             [Keywords.PointRotation] = typeof(OpenTK.Vector2),
+            [Keywords.PointCounterRotation] = typeof(OpenTK.Vector2),
 
             [Keywords.Runtime] = typeof(float),
             [Keywords.Pause] = typeof(float),
@@ -346,5 +347,13 @@ namespace CourseWork3.Parser
             return new OpenTK.Vector2(x, y);
         }
         #endregion
+
+        private int CountCurrentLine(string[] tokens, int pointer)
+        {
+            int counter = 0;
+            for (int i = 0; i < pointer; i++)
+                if (tokens[i] == Keywords.EOL) counter++;
+            return counter;
+        }
     }
 }

@@ -11,6 +11,7 @@ SPRITE "darkcircle"
 END
 SPRITE "darkcrystal" 
 	path "DarkCrystal.png"
+	size 2, 2
 END
 SPRITE "doublecircle" 
 	path "DoubleCircle.png"
@@ -29,6 +30,7 @@ sprite "tako"
 	size 1, 1
 end
 
+// Cirno perfect freeze
 PROJECTILE "Cirno Perfect Freeze 1"
 	set sprite "doublecircle"
 	randomcolor
@@ -55,7 +57,6 @@ PROJECTILE "Cirno Perfect Freeze 2"
 	inc velocityAngle 10 * random
 	inc acceleration 50 * random
 END #end
-
 generator "Cirno Perfect Freeze"
 	repeatStart
 	set projectile "Cirno Perfect Freeze 1"
@@ -72,7 +73,44 @@ generator "Cirno Perfect Freeze"
 	aimToPlayer
 	runtime 1
 	pause 7
+end #end #end
+
+// Cirno circle
+projectile "Cirno circle 1"
+	set sprite "doublecircle"
+	set color "blue"
+	set velocity 250 / 2
 end #end
+projectile  "Cirno circle 2"
+	set sprite "darkcrystal"
+	set color "white"
+	set hitbox 12
+	set velocity 200
+	runtime 0,3
+	set acceleration -600
+	runtime 0,3
+	set velocity 250
+	set acceleration 0
+	velocityToPlayer
+end#end
+generator "Cirno circle"
+	set spawnDelay 1
+	set sector 360
+	set spawnCount 18
+	repeatStart
+	set angle 0
+	set spawnDelay 1
+	set projectile "Cirno circle 1"
+	runtime 0,6
+	set spawnDelay 1
+	set projectile "Cirno circle 2"
+	runtime 0,3
+	set angle 360 / 18 / 2
+	set spawnDelay 1
+	set projectile "Cirno circle 1"
+	runtime 0,6
+	pause 2
+end #end #end #end
 
 // Meilin knifes
 PROJECTILE "Meilin Knifes Red"
@@ -157,10 +195,219 @@ GENERATOR "Flower leaf counterclockwise"
 	set rotationSpeed -40
 END #end
 
+// Rumia splash
+projectile "Rumia Splash"
+	set sprite "darkcircle"
+	set color "blue"
+	set velocity 500 / 2
+	set acceleration -1000 / 2
+	runtime 0,5
+	pause 0,2
+	set velocity 200 / 2
+	set acceleration 200 / 2
+	velocityToPlayer
+end #end
+generator "Rumia Splash"
+	set projectile "Rumia Splash"
+	set sector 170
+	set spawnCount 9
+	repeatstart
+	set angle -90 + 30
+	set spawnDelay 1
+	runtime 0,1
+	pause 0,5
+	set angle 90 + 30
+	set spawnDelay 1
+	runtime 0,1
+	pause 0,5
+end #end
+
+// Laser
+projectile "Laser ball"	
+	set color "purple"
+	set velocity 400
+	set hitbox 24 * 1,2
+end #end
+projectile "Laser"
+	set sprite "laser"
+	set color "purple"
+	set velocity 400
+end #end
+generator "Laser"
+	set sector 90
+	set spawnCount 1
+	set spawnDelay 0,05
+	repeatStart
+	set spawnDelay 0,05
+	set projectile "Laser ball"
+	runtime 0,02
+	set spawnDelay 0,05
+	set projectile "Laser"
+	runtime 2
+	set spawnDelay 0,05
+	set projectile "Laser ball"
+	runtime 0,02
+	pause 2
+end #end #end #end
+
+// Crow
+projectile "Crow purple"
+	set sprite "darkcircle"
+	set color "purple"
+	set velocity 100 / 2
+	set acceleration 10 + 50 * gentime / 0,05
+end #end #end #end
+projectile "Crow aquamarine"
+	set sprite "darkcircle"
+	set color "Aquamarine"
+	set velocity 100 / 2
+	set acceleration 10 + 50 * gentime / 0,05
+end #end #end #end
+generator "Crow"
+	set sector 1
+	set spawnCount 1
+	repeatStart
+	set projectile "Crow purple"
+	set angle 80
+	set rotationSpeed -180
+	set spawnDelay 0,05
+	runtime 1
+	pause 0,4
+	set projectile "Crow aquamarine"
+	set angle -80
+	set rotationSpeed 180
+	set spawnDelay 0,05
+	runtime 1
+	pause 0,4
+end #end #end #end
+
+// RumiaCircle
+projectile "Rumia Circle 1"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "aquamarine"
+	set velocity 400 / 2
+	set acceleration -400 / 2
+	runtime 1
+	set velocity 400 / 2
+	pointRotation 0, 100
+	runtime 0,7
+	inc velocityAngle 5
+	set acceleration 0
+end #end
+projectile "Rumia Circle 2"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "aquamarine"
+	set velocity 400 / 2
+	set acceleration -400 / 2
+	runtime 1
+	set velocity 400 / 2
+	pointCounterRotation 0, 100
+	runtime 0,7
+	inc velocityAngle -5
+	set acceleration 0
+end #end
+generator "Rumia Circle 1"
+	set sector 360
+	set spawnCount 16
+	set angle 50
+	set rotationSpeed 100
+	repeatStart
+	set spawnDelay 1
+	set projectile "Rumia Circle 1"
+	runtime 0,1
+	pause 1,6
+end #end #end
+generator "Rumia Circle 2"
+	set sector 360
+	set spawnCount 16
+	set angle 50
+	set rotationSpeed 100
+	repeatStart
+	set spawnDelay 1
+	set projectile "Rumia Circle 2"
+	runtime 0,1
+	pause 1,6
+end #end #end
+
+// Bamboozle
+projectile "Bamboozle 1"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "blue"
+	set velocity 400 / 2
+end #end
+projectile "Bamboozle 2"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "white"
+	set velocity 400 / 2
+	runtime 0,85
+	set velocity 500 / 2
+	velocityToPlayer
+end #end
+generator "Bamboozle 1"
+	set projectile "Bamboozle 1"
+	set sector 100
+	set spawnCount 3
+	repeatStart
+	set spawnDelay 0,3
+	runtime 3
+	pause 3
+end #end
+generator "Bamboozle 2"
+	set projectile "Bamboozle 2"
+	set sector 100
+	set spawnCount 3
+	repeatStart
+	set spawnDelay 0,3
+	runtime 3
+	pause 3
+end #end #end
+
+//Spiral
+projectile "Spiral clockwise 1"
+	set sprite "knife"
+	set color "green"
+	set hitbox 12
+	set velocity 60 + 1,5 * gentime / 0,03
+	set acceleration 10 + 4,5 * gentime / 0,03
+end #end
+projectile "Spiral clockwise 2"
+	set sprite "knife"
+	set color "green"
+	set hitbox 12
+	set velocity 60 + 1,5 * gentime / 0,03
+	set acceleration 10 + 2 * gentime / 0,03
+end #end
+generator "Spiral 1"
+	set projectile "Spiral clockwise 1"
+	set sector 1
+	set spawnCount 1
+	set rotationSpeed -360
+	repeatStart
+	set angle 0
+	set spawnDelay 0,03
+	runtime 1
+	pause 2
+end #end
+generator "Spiral 2"
+	set projectile "Spiral clockwise 2"
+	set sector 1
+	set spawnCount 1
+	set rotationSpeed -360
+	repeatStart
+	set angle 0
+	set spawnDelay 0,03
+	runtime 1
+	pause 2
+end #end
+
 ENEMY "awesome tako"
 	set life 12
 	set sprite "tako"
-	set generator "Cirno Perfect Freeze"
+	set generator "Crow"
 	runtime 10000
 END #end #end #end #end #end
 
