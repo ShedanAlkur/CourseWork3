@@ -1,11 +1,8 @@
-﻿using CourseWork3;
-using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.Game;
 using OpenTK;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CourseWork3.Game
+namespace CourseWork3.GameObjects
 {
     abstract class GameObject : IRenderable, IUpdateable
     {

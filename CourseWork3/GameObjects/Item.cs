@@ -1,11 +1,9 @@
-﻿using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.Game;
+using CourseWork3.GraphicsOpenGL;
 using OpenTK;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
-namespace CourseWork3.Game
+namespace CourseWork3.GameObjects
 {
     class Item : GameObject
     {

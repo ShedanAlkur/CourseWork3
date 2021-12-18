@@ -1,7 +1,7 @@
-﻿using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.GameObjects;
+using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;

@@ -1,12 +1,12 @@
-﻿using CourseWork3.Parser;
+﻿using CourseWork3.Game;
+using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace CourseWork3.Game
+namespace CourseWork3.GameObjects
 {
     class Generator : ControlledObject<Generator>
     {

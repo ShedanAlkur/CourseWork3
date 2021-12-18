@@ -1,10 +1,11 @@
-﻿using CourseWork3.Parser;
+﻿using CourseWork3.Game;
+using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using OpenTK;
 using System;
 using System.Collections.Generic;
 
-namespace CourseWork3.Game
+namespace CourseWork3.GameObjects
 {
     class ControlledObject<T> : GameObject where T : ControlledObject<T>
     {

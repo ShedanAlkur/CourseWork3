@@ -1,4 +1,5 @@
 ﻿using CourseWork3.Game;
+using CourseWork3.GameObjects;
 using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Parser;
 using CourseWork3.Patterns;

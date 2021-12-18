@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CourseWork3.Patterns
 {
-    class Pattern<T> : ICommand<T> where T : ControlledObject<T>
+    class Pattern<T> : ICommand<T> where T : GameObjects.ControlledObject<T>
     {
         private ICommand<T>[] commands;
 

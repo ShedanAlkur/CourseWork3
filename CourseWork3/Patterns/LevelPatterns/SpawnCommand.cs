@@ -1,8 +1,6 @@
 ﻿using CourseWork3.Game;
+using CourseWork3.GameObjects;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CourseWork3.Patterns
 {

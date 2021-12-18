@@ -1,11 +1,8 @@
-﻿using CourseWork3.Game;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace CourseWork3.Patterns
 {
-    class PropertyChangerCommand<T> : ICommand<T> where T : ControlledObject<T>
+    class PropertyChangerCommand<T> : ICommand<T> where T : GameObjects.ControlledObject<T>
     {
         Action<T, object> action;
         object value;

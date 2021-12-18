@@ -1,4 +1,5 @@
-﻿using CourseWork3.GameObjects;
+﻿using CourseWork3.Game;
+using CourseWork3.GameObjects;
 using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Parser;
 using CourseWork3.Patterns;
@@ -9,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace CourseWork3.Game
+namespace CourseWork3.GameObjects
 {
     class Projectile : ControlledObject<Projectile>
     {

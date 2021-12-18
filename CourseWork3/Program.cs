@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using CourseWork3.Game;
-using CourseWork3.GraphicsOpenGL;
-using CourseWork3.Patterns;
-using CourseWork3.Game;
+﻿using CourseWork3.Game;
 using OpenTK;
-using ExpressionBuilder;
-using CourseWork3.Parser;
 
 namespace CourseWork3
 {
@@ -23,8 +12,5 @@ namespace CourseWork3
                 GameMain.Init(window, args);
             }
         }
-
-
-
     }
 }

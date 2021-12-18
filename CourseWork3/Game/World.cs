@@ -1,8 +1,7 @@
-﻿using CourseWork3.Patterns;
+﻿using CourseWork3.GameObjects;
+using CourseWork3.Patterns;
 using OpenTK;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CourseWork3.Game
 {
@@ -33,12 +32,10 @@ namespace CourseWork3.Game
         public static readonly Vector2 TopLeftPoint = new Vector2(Center.X + -Size.X / 2f, Center.Y + Size.Y / 2);
         public static readonly Vector2 BottomRightPoint = new Vector2(Center.X + Size.X / 2, Center.Y + -Size.Y / 2);
 
-
         protected World()
         {
             gameObjects = new List<GameObject>();
         }
-
 
         public void InitPlayer()
         {
