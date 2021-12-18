@@ -1,12 +1,12 @@
-﻿using System;
-using System.Drawing;
+﻿using CourseWork3.GraphicsOpenGL;
+using CourseWork3.Patterns;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using CourseWork3.GraphicsOpenGL;
-using System.IO;
-using CourseWork3.Patterns;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 
 namespace CourseWork3.Game
 {
@@ -46,14 +46,14 @@ namespace CourseWork3.Game
 
         static bool isLoaded;
         static bool isPaused;
-        public static bool DrawHitboxes = false;
+        public static bool DrawHitboxes;
 
         public static string PathOfPatternFile;
         public static string PathOfPatternFolder;
         public static string PathOfExecuteFolder;
 
         public static void Init(GameWindow window, string[] args)
-        { 
+        {
             GameMain.window = window;
             window.VSync = VSyncMode.On;
 
@@ -89,20 +89,22 @@ namespace CourseWork3.Game
         private static void LoadDefaultPatterns()
         {
             TextureCollection.Add("_item", new Texture2D(PathOfExecuteFolder + @"\content\Item.png"));
-            SpriteCollection.Add("_item", new Sprite(TextureCollection["_item"], new Vector2(0.25f, 0.25f)));
+            SpriteCollection.Add("_item", new Sprite(TextureCollection["_item"], new Vector2(24) / Item.DefaultHitboxSize));
 
             TextureCollection.Add("_arrow", new Texture2D(PathOfExecuteFolder + @"\content\Arrow.png"));
-            SpriteCollection.Add("_arrow", new Sprite(TextureCollection["_arrow"], new Vector2(0.25f, 0.25f)));
+            SpriteCollection.Add("_arrow", new Sprite(TextureCollection["_arrow"], new Vector2(24) / Item.DefaultHitboxSize));
 
             TextureCollection.Add("_player", new Texture2D(PathOfExecuteFolder + @"\content\Player.png"));
-            SpriteCollection.Add("_player", new Sprite(TextureCollection["_player"], new Vector2(2.5f, 4)));
+            SpriteCollection.Add("_player", new Sprite(TextureCollection["_player"], new Vector2(40, 60) / Player.DefaultHitboxSize));
 
             TextureCollection.Add("_collision", new Texture2D(PathOfExecuteFolder + @"\content\Collision.png"));
-            SpriteCollection.Add("_collision", new Sprite(TextureCollection["_collision"], new Vector2(1, 1)));
+            SpriteCollection.Add("_collision", new Sprite(TextureCollection["_collision"], Vector2.One));
 
             TextureCollection.Add("_projectile", new Texture2D(PathOfExecuteFolder + @"\content\projectileDirected.png"));
-            SpriteCollection.Add("_projectile", new Sprite(TextureCollection["_projectile"], new Vector2(1, 1)));
+            SpriteCollection.Add("_projectile", new Sprite(TextureCollection["_projectile"], new Vector2(20) / Projectile.DefaultHitboxSize));
 
+            TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb.png"));
+            SpriteCollection.Add("_bomb", new Sprite(TextureCollection["_bomb"], new Vector2(150) / GameObjects.Bomb.DefaultHitboxSize));
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -136,13 +138,16 @@ namespace CourseWork3.Game
 
             isLoaded = true;
             isPaused = true;
+            DrawHitboxes = false;
         }
 
         private static void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
             if (!isLoaded) return;
             Time.DeltaTimeOfUpdate = (float)e.Time;
+
             if (Input.KeyPress(Key.Enter)) isPaused = !isPaused;
+            if (Input.KeyPress(Key.C)) DrawHitboxes = !DrawHitboxes;
 
             if (!isPaused)
                 World.Update((float)e.Time);
@@ -176,7 +181,7 @@ namespace CourseWork3.Game
             Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
             Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
                 new Vector2(worldSize.X, worldSize.Y), 0, 0);
-            Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight), Time.TotalElapsedSeconds, 100);
+            Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight * (MathF.Sin(Time.TotalElapsedSeconds)/2+1)), Time.TotalElapsedSeconds, 100);
             #endregion
 
             #region отрисовка через viewport

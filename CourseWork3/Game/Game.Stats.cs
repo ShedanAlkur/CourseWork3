@@ -10,8 +10,8 @@ namespace CourseWork3.Game
         {
             public int MaxRecord;
             public int CurrentRecord;
-            public int LifeCount;
-            public int BombCount;
+            public int LifeCount = 10;
+            public int BombCount = 10;
 
             public GameStats()
             {

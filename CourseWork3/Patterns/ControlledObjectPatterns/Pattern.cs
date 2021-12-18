@@ -26,6 +26,7 @@ namespace CourseWork3.Patterns
                 // Если индекс текущей команды превысил количество команд, то выходим или возвращаемся к точке повтора
                 if (gameObject.CurrentIndex >= commands.Length)
                 {
+
                     if (repeatIndex == null) return;
                     else gameObject.CurrentIndex = (int)repeatIndex;
                 }

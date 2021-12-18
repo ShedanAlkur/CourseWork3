@@ -11,6 +11,7 @@ namespace CourseWork3.Game
     class Player : GameObject
     {
         const byte Depth = 1;
+        public const float DefaultHitboxSize = 12;
 
         PlayerLevel Level;
 
@@ -22,11 +23,9 @@ namespace CourseWork3.Game
 
         public Player(Vector2 position) : base(position)
         {
+            HitBoxSize = DefaultHitboxSize;
             sprite = GameMain.SpriteCollection["_player"];
-            //var texture = GameMain.TextureCollection["projectile"];
-            //sprite = new Sprite(texture, new Vector2(2, 4));
 
-            HitBoxSize = 25;
             GrazeHitBoxSize = 2f * HitBoxSize;
             HalfGrazeHitBoxSize = GrazeHitBoxSize / 2f;
         }
@@ -46,8 +45,16 @@ namespace CourseWork3.Game
 
             if (GameMain.Input.KeyPress(Key.Z))
                 GameMain.World.Add(new Item(Position + new Vector2(0, 150)));
+
+
             if (GameMain.Input.KeyPress(Key.X))
-                GameMain.World.Add(new ItemBomb(Position + new Vector2(0, 150)));
+            {
+                if (GameMain.Stats.BombCount > 0)
+                {
+                    GameMain.World.Add(new Bomb(Position));
+                    GameMain.Stats.BombCount--;
+                }
+            }
 
             this.Velocity = velocity;
 

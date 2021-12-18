@@ -1,4 +1,5 @@
-﻿using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.GameObjects;
+using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using OpenTK;
@@ -13,7 +14,7 @@ namespace CourseWork3.Game
     class Projectile : ControlledObject<Projectile>
     {
         const byte Depth = 10;
-        public const float DefaultHitbox = 50;
+        public const float DefaultHitboxSize = 24;
 
         public static new Dictionary<string, Action<Projectile, object>> ActionsForParser;
 
@@ -52,7 +53,7 @@ namespace CourseWork3.Game
 
             var texture = GameMain.TextureCollection["_projectile"];
             sprite = new Sprite(texture, Vector2.One);
-            HitBoxSize = 50;
+            HitBoxSize = DefaultHitboxSize;
         }
 
         public override void Update(float elapsedTime)
@@ -75,6 +76,8 @@ namespace CourseWork3.Game
             {
                 case Player player:
                     if (!isGrazed && GrazeColllisionCheck(player)) OnGraze(); break;
+                case Bomb bomb: 
+                    if (SqrCollisionCheck(bomb) && RoundCollisionCheck(bomb)) Terminated = true; break;
                 default: return;
             }
         }

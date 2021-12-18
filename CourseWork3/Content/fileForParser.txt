@@ -1,8 +1,32 @@
+// Спрайты снарядов
+SPRITE "circle" 
+	path "Circle.png"
+END
+
+SPRITE "crystal" 
+	path "Crystal.png"
+	size 2, 2
+END
+
+SPRITE "darkcrystal" 
+	path "DarkCrystal.png"
+	size 2, 2
+END
+
+SPRITE "doublecircle" 
+	path "DoubleCircle.png"
+END
+
 SPRITE "knife" 
 	path "Knife.png"
 	size 2, 2
 END
 
+SPRITE "laser" 
+	path "Laser.png"
+END
+
+// Спрайты противников
 sprite "tako"
 	path "Tako.png"
 	size 1, 1
@@ -23,13 +47,19 @@ PROJECTILE "CirnoTest"
 	runtime 1000
 END
 
-projectile "knife"
-	set sprite "knife"
-	set hitbox 25
+projectile "ball"
 	set velocity 50
+	set color "blue"
 	runtime 1000
 end
 
+projectile "knife"
+	set sprite "knife"
+	set hitbox 12
+	set color "red"
+	set velocity 50
+	runtime 1000
+end
 
 PROJECTILE "Meilin Knifes Red"
 	randomcolor
@@ -46,17 +76,21 @@ GENERATOR "test Generator"
 	set sector 360
 	set angle 0
 	set RotationSpeed 0
-	set spawnDelay 1
+	set spawnDelay 1,5
 	set spawnCount 15
+	RepeatStart 
 	set projectile "knife"
 	runtime 1,5
-	pause 100
+	set projectile "ball"
+	runtime 1,5
 END
 
 ENEMY "awesome enemy"
 	set life 12
 	set sprite "tako"
 	set generator "test Generator"
+	runtime 5
+	cleargenerator
 	runtime 10000
 END
 

@@ -63,7 +63,7 @@ namespace CourseWork3.GraphicsOpenGL
             GL.Enable(EnableCap.DepthTest);
 
             GL.Enable(EnableCap.AlphaTest);
-            GL.AlphaFunc(AlphaFunction.Greater, 0.5f);
+            GL.AlphaFunc(AlphaFunction.Greater, 0.3f);
 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.Zero);

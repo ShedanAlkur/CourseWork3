@@ -12,7 +12,7 @@ namespace CourseWork3.Game
     class Enemy : ControlledObject<Enemy>
     {
         const byte Depth = 20;
-        public const float DefaultHitbox = 50;
+        public const float DefaultHitboxSize = 40;
 
         public static new Dictionary<string, Action<Enemy, object>> ActionsForParser;
 
@@ -74,9 +74,9 @@ namespace CourseWork3.Game
 
         public Enemy(Pattern<Enemy> pattern, Vector2 position) : base(pattern, position)
         {
+            HitBoxSize = DefaultHitboxSize;
             wasInWorld = false;
             sprite = GameMain.SpriteCollection["_projectile"];
-            HitBoxSize = 50;
         }
 
         public override void Draw()
