@@ -98,8 +98,14 @@ namespace CourseWork3.Game
             TextureCollection.Add("_projectile", new Texture2D(PathOfExecuteFolder + @"\content\projectileDirected.png"));
             SpriteCollection.Add("_projectile", new Sprite(TextureCollection["_projectile"], new Vector2(20) / Projectile.DefaultHitboxSize));
 
-            TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb.png"));
+            TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb2.png"));
             SpriteCollection.Add("_bomb", new Sprite(TextureCollection["_bomb"], new Vector2(150) / GameObjects.Bomb.DefaultHitboxSize));
+
+            TextureCollection.Add("_playerprojmain", new Texture2D(PathOfExecuteFolder + @"\content\PlayersProjectileMain.png"));
+            SpriteCollection.Add("_playerprojmain", new Sprite(TextureCollection["_playerprojmain"], new Vector2(24) / Item.DefaultHitboxSize));
+
+            TextureCollection.Add("_playerprojSup", new Texture2D(PathOfExecuteFolder + @"\content\PlayersProjectileSupport.png"));
+            SpriteCollection.Add("_playerprojSup", new Sprite(TextureCollection["_playerprojSup"], new Vector2(24) / Item.DefaultHitboxSize));
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -179,7 +185,8 @@ namespace CourseWork3.Game
             Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0), World.Size, 0, 10);
             Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight * (MathF.Sin(Time.TotalElapsedSeconds)/2+1)), Time.TotalElapsedSeconds, 100);
 
-            statsRenderer.Text = "Record:".PadRight(10 - 1) + Stats.CurrentRecord + 
+            statsRenderer.Text = "IsPaused " + isPaused + 
+                "\nRecord:".PadRight(10) + Stats.CurrentRecord + 
                 "\nLife:".PadRight(10) + Stats.LifeCount + 
                 "\nBomb:".PadRight(10) + Stats.BombCount +
                  "\nGraze:".PadRight(10) + Stats.GrazeCount;

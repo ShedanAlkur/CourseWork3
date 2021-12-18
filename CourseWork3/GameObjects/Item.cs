@@ -51,10 +51,10 @@ namespace CourseWork3.Game
         {
             if (Position.Y > World.TopLeftPoint.Y)
                 GameMain.Graphics.Draw(arrowSprite.Texture, new Vector2(Position.X, World.TopLeftPoint.Y - arrowSprite.SizeRelativeToHitbox.Y * HitBoxSize), HitBoxSize * itemSprite.SizeRelativeToHitbox, 0, Color, Depth);
-            
-            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
 
             GameMain.Graphics.Draw(itemSprite.Texture, Position, HitBoxSize * itemSprite.SizeRelativeToHitbox, 0, Color, Depth);
+            
+            if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
         }
 
         public override void OnCollision(GameObject gameObject)
