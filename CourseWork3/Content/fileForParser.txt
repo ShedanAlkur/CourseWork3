@@ -2,26 +2,21 @@
 SPRITE "circle" 
 	path "Circle.png"
 END
-
 SPRITE "crystal" 
 	path "Crystal.png"
 	size 2, 2
 END
-
 SPRITE "darkcrystal" 
 	path "DarkCrystal.png"
 	size 2, 2
 END
-
 SPRITE "doublecircle" 
 	path "DoubleCircle.png"
 END
-
 SPRITE "knife" 
 	path "Knife.png"
 	size 2, 2
 END
-
 SPRITE "laser" 
 	path "Laser.png"
 END
@@ -85,7 +80,7 @@ GENERATOR "test Generator"
 	runtime 1,5
 END
 
-ENEMY "awesome enemy"
+ENEMY "awesome tako"
 	set life 12
 	set sprite "tako"
 	set generator "test Generator"
@@ -95,5 +90,5 @@ ENEMY "awesome enemy"
 END
 
 LEVEL
-	spawn "awesome enemy" 0, 0
+	spawn "awesome tako" 0, 0
 END

@@ -30,11 +30,9 @@ namespace CourseWork3.Game
 
         public static Random random;
 
-        public static Texture2D tex;
-        static Vector2 projSize;
+        private static TextRenderer statsRenderer;
 
         static FrameBuffer worldFrameBuffer;
-        static Vector2 worldSize;
 
         static int defaultWidth;
         static int defaultHeight;
@@ -68,11 +66,8 @@ namespace CourseWork3.Game
             defaultWidth = window.Width;
             defaultHeight = window.Height;
 
-            int value = 480;
-            worldSize = new Vector2(value, (int)(1.2f * value));
-
             defWorldXOffset = (int)(25);
-            defWorldYOffset = (int)((defaultHeight - worldSize.Y) / 2);
+            defWorldYOffset = (int)((defaultHeight - World.Size.Y) / 2);
 
             PathOfExecuteFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (args.Length > 0)
@@ -123,6 +118,8 @@ namespace CourseWork3.Game
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
             LoadDefaultPatterns();
 
+            var font = new Font("Consolas", 15f, FontStyle.Regular, GraphicsUnit.Point);
+            statsRenderer = new TextRenderer(300, 300, Color.Gray, Color.White, font);
 
             World = World.Instance;
 
@@ -165,8 +162,8 @@ namespace CourseWork3.Game
             #region отрисовка через framebuffer
             // Рисуем мини-сцену
             worldFrameBuffer.Bind();
-            Graphics.ApplyViewport((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
-            Graphics.ApplyProjection((int)worldSize.X, (int)worldSize.Y);
+            Graphics.ApplyViewport((int)(World.Size.X * windowScale), (int)(World.Size.Y * windowScale));
+            Graphics.ApplyProjection((int)World.Size.X, (int)World.Size.Y);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), new Vector2(1, -1), 0);
             Graphics.BeginDraw(Color.FromArgb(40, 40, 40));
             World.Render();
@@ -179,9 +176,13 @@ namespace CourseWork3.Game
             Graphics.ApplyProjection(defaultWidth, defaultHeight);
             Graphics.ApplyViewTransofrm(new Vector2(0, 0), 1, 0);
             Graphics.BeginDraw(Color.FromArgb(50, 50, 128));
-            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0),
-                new Vector2(worldSize.X, worldSize.Y), 0, 0);
+            Graphics.Draw(worldFrameBuffer.Texture, new Vector2(-150, 0), World.Size, 0, 10);
             Graphics.Draw(TextureCollection["_projectile"], new Vector2(0, 0), new Vector2(defaultHeight * (MathF.Sin(Time.TotalElapsedSeconds)/2+1)), Time.TotalElapsedSeconds, 100);
+
+            statsRenderer.Text = "Record:".PadRight(10 - 1) + Stats.CurrentRecord + 
+                "\nLife:".PadRight(10) + Stats.LifeCount + 
+                "\nBomb:".PadRight(10) + Stats.BombCount;
+            Graphics.Draw(statsRenderer.Texture, new Vector2(250, 0), statsRenderer.Size, 0, 0);
             #endregion
 
             #region отрисовка через viewport
@@ -217,7 +218,7 @@ namespace CourseWork3.Game
             windowScale = MathF.Min((float)window.Width / defaultWidth, (float)window.Height / defaultHeight);
             windowXOffset = (int)(window.Width - defaultWidth * windowScale) / 2;
             windowYOffset = (int)(window.Height - defaultHeight * windowScale) / 2;
-            worldFrameBuffer.Resize((int)(worldSize.X * windowScale), (int)(worldSize.Y * windowScale));
+            worldFrameBuffer.Resize((int)(World.Size.X * windowScale), (int)(World.Size.Y * windowScale));
         }
 
         private static void Window_FocusedChanged(object sender, EventArgs e)

@@ -62,9 +62,9 @@ namespace CourseWork3.GraphicsOpenGL
             this.Height = height;
             this.ID = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, this.ID);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb,
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                 width, height,
-                0, OpenTK.Graphics.OpenGL.PixelFormat.Rgb, PixelType.UnsignedByte, new byte[0]);
+                0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, new byte[0]);
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
                 (int)TextureMinFilter.Linear);
