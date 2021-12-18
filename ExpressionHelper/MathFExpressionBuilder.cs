@@ -106,7 +106,7 @@ namespace ExpressionBuilder
         static MathFExpressionBuilder()
         {
             // Создание шаблона регулярного выражения для разбиения входного арифметического выражения на токены.
-            splitToTokensPattern += @"\d+(?:[\,]\d+)?";
+            splitToTokensPattern += @"\d+(?:[\.]\d+)?";
             splitToTokensPattern += @"|;";
             foreach (var op in operators.Keys) splitToTokensPattern += @"|\" + op;
             splitToTokensPattern += @"|\(";
@@ -244,6 +244,9 @@ namespace ExpressionBuilder
         /// <returns>Операционное дерево Expression</returns>
         public Expression BuildExpression(string[] tokens)
         {
+            System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
+
             Stack<Expression> stack = new Stack<Expression>();
 
             for (int i = 0; i < tokens.Length; i++) // Пока не все токены обработаны
@@ -258,7 +261,7 @@ namespace ExpressionBuilder
                   stack.Push(functions[tokens[i]](stack.Pop()));
                 else // Если токен - операнд, то он помещается на вершину стека.
                 {
-                    if (float.TryParse(tokens[i], out float value)) // Если операнд - число
+                    if (float.TryParse(tokens[i], System.Globalization.NumberStyles.Any, ci, out float value)) // Если операнд - число
                         stack.Push(ExpressionHelper.CreateConstant<float>(value));
                     else if (IsConst(tokens[i])) // Если операнд - математическая константа
                         stack.Push(constants[tokens[i]]);

@@ -26,10 +26,10 @@ generator "_playermain"
 	set angle 180
 	set projectile "_playerprojmain"
 	// repeatstart
-	set spawnDelay 0,15
-	// runtime 0,15 * 6
+	set spawnDelay 0.15
+	// runtime 0.15 * 6
 	// set spawnDelay 0
-	// runtime 0,15 * 2
+	// runtime 0.15 * 2
 	
 end
 
@@ -38,5 +38,5 @@ generator "_playersup"
 	set spawnCount 1
 	set angle 180
 	set projectile "_playerprojsup"
-	set spawnDelay 0,2
+	set spawnDelay 0.2
 end

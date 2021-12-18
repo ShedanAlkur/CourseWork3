@@ -10,7 +10,7 @@ namespace CourseWork3.Parser
     class Lexer
     {
         private static string splitToTokensPattern
-            = @"(?:\/\/.*$)|(?:\#.*$)|[A-Za-z](?:[A-Za-z0-9_])*|\d+(?:\,\d+)?|[*\/+-]|\," + "|\\\".*\\\"" + @"|\(|\)";
+            = @"(?:\/\/.*$)|(?:\#.*$)|[A-Za-z](?:[A-Za-z0-9_])*|\d+(?:\.\d+)?|[*\/+-]|\," + "|\\\".*\\\"" + @"|\(|\)";
 
 
         public static string[] SplitToTokens(string input)
