@@ -77,7 +77,8 @@ namespace CourseWork3.Game
                 case Player player:
                     if (IsEnemyProjectile && !isGrazed && GrazeColllisionCheck(player)) OnGraze(); break;
                 case Bomb bomb: 
-                    if (SqrCollisionCheck(bomb) && RoundCollisionCheck(bomb)) Terminated = true; break;
+                    if (IsEnemyProjectile && SqrCollisionCheck(bomb) && RoundCollisionCheck(bomb)) Terminated = true; break;
+                case Enemy enemy: if (!IsEnemyProjectile && !enemy.Terminated && SqrCollisionCheck(enemy) && RoundCollisionCheck(enemy)) Terminated = true; break;
                 default: return;
             }
         }

@@ -15,6 +15,7 @@ namespace CourseWork3.Game
         private bool isEnemyGenerator;
 
         public GameObject Owner;
+        public bool FollowOwner;
 
         private float sector;
         public float Sector 
@@ -40,7 +41,6 @@ namespace CourseWork3.Game
         public float RotationAcceleration;
 
         public Pattern<Projectile> ProjPattern;
-
 
         public float CurrentSpawnDelay;
 
@@ -74,10 +74,11 @@ namespace CourseWork3.Game
                 ActionsForParser.Add(x.Key, x.Value));
         }
 
-        public Generator(Pattern<Generator> pattern, GameObject owner) : base(pattern, owner.Position)
+        public Generator(Pattern<Generator> pattern, GameObject owner, bool followOwner = true) : base(pattern, owner.Position)
         {
             this.Owner = owner;
             isEnemyGenerator = !(owner is Player);
+            this.FollowOwner = followOwner;
         }
         public Generator(Pattern<Generator> pattern, Vector2 position, bool isEnemyGenerator) : base(pattern, position)
         {
@@ -86,22 +87,25 @@ namespace CourseWork3.Game
 
         public override void Update(float elapsedTime)
         {
-            if (Owner != null && Owner.Terminated) this.Terminated = true;
+            if (Owner == null)
+            { if (!WorldCollisionCheck()) Terminated = true; }
+            else if (Owner.Terminated) this.Terminated = true;
 
             base.Update(elapsedTime);
 
-            this.Position = Owner.Position;
+            if (FollowOwner) Position = Owner.Position;
             if (IsPaused) return;
 
             Angle += RotationSpeed * elapsedTime;
             RotationSpeed += RotationAcceleration * elapsedTime;
 
             CurrentSpawnDelay += elapsedTime;
+            if (SpawnDelay != 0)
             while (CurrentSpawnDelay >= SpawnDelay)
             {
                 CurrentSpawnDelay -= SpawnDelay;
 
-                if (ProjPattern == null || SpawnDelay == 0 || Sector == 0) continue;
+                if (ProjPattern == null || Sector == 0) continue;
                 float sectorBetweenProj = Sector / SpawnCount;
 
                 float angle1 = Angle - Sector / 2f + sectorBetweenProj / 2f;

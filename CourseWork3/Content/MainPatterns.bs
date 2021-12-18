@@ -1,0 +1,42 @@
+sprite "_playerprojmain"
+	path "PlayersProjectileMain.png"
+	size 24 / 100, 24 / 100
+end
+
+sprite "_playerprojsup"
+	path "PlayersProjectileSupport.png"
+	size 24 / 100, 24 / 100
+end
+
+projectile "_playerprojmain"
+	set sprite "_playerprojmain"
+	set hitbox 100
+	set velocity 400
+end
+
+projectile "_playerprojsup"
+	set sprite "_playerprojsup"
+	set hitbox 100
+	set velocity 500
+end
+
+generator "_playermain"
+	set sector 1
+	set spawnCount 1
+	set angle 180
+	set projectile "_playerprojmain"
+	// repeatstart
+	set spawnDelay 0,15
+	// runtime 0,15 * 6
+	// set spawnDelay 0
+	// runtime 0,15 * 2
+	
+end
+
+generator "_playersup"
+	set sector 1
+	set spawnCount 1
+	set angle 180
+	set projectile "_playerprojsup"
+	set spawnDelay 0,2
+end

@@ -62,15 +62,15 @@ namespace CourseWork3.Parser
 
         public void ParseFile(string path)
         {
-            Parse(Lexer.SplitToTokensFromFile(path));
+            Parse(Lexer.SplitToTokensFromFile(path), System.IO.Path.GetDirectoryName(path));
         }
-        public void Parse(string[] tokens)
+        private void Parse(string[] tokens, string patternFolder)
         {
             int pointer = 0;
             while (tokens[pointer] != Keywords.EOF)
             {
                 if (tokens[pointer] != Keywords.EOL)
-                    if (tokens[pointer] == Keywords.Sprite) ParseSprite(tokens, ref pointer);
+                    if (tokens[pointer] == Keywords.Sprite) ParseSprite(tokens, ref pointer, patternFolder);
                     else if (tokens[pointer] == Keywords.Projectile) ParseProjectile(tokens, ref pointer);
                     else if (tokens[pointer] == Keywords.Generator) ParseGenerator(tokens, ref pointer);
                     else if (tokens[pointer] == Keywords.Enemy) ParseEnemy(tokens, ref pointer);
@@ -81,7 +81,7 @@ namespace CourseWork3.Parser
         }
 
         #region Parse patterns
-        private void ParseSprite(string[] tokens, ref int pointer)
+        private void ParseSprite(string[] tokens, ref int pointer, string patternFolder)
         {
             string path = null;
             Vector2 size = Vector2.One;
@@ -92,7 +92,7 @@ namespace CourseWork3.Parser
             {
                 if ((tokens[pointer] != Keywords.EOL))
                     if (tokens[pointer] == Keywords.Path)
-                    { pointer++; path = GameMain.PathOfPatternFolder + @"\" + ParseString(tokens, ref pointer); }
+                    { pointer++; path = patternFolder + @"\" + ParseString(tokens, ref pointer); }
                     else if (tokens[pointer] == Keywords.SizeRelativeToHitbox) 
                     { pointer++; size = ParseVector2(tokens, ref pointer); }
                     else throw new NotImplementedException();

@@ -37,10 +37,15 @@ namespace CourseWork3.Game
         protected World()
         {
             gameObjects = new List<GameObject>();
+        }
+
+
+        public void InitPlayer()
+        {
+            if (Player != null) return;
             Player = new Player(DefaultPlayerPosition);
             this.Add(Player);
         }
-
 
         public void Add(GameObject gameObject)
         {

@@ -68,6 +68,7 @@ namespace CourseWork3.Game
 
         protected virtual void Use()
         {
+            GameMain.Stats.CurrentRecord += 100;
             Terminated = true;
         }
     }

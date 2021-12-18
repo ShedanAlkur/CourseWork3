@@ -80,7 +80,7 @@ namespace CourseWork3.Game
             else
                 PathOfPatternFolder = PathOfExecuteFolder + @"\Content";
 
-            int updatesPerSecond = 120;
+            int updatesPerSecond = 200;
             int framesPerSecond = 60;
             targetUpdatePeriod = 1f / updatesPerSecond;
             window.Run(updatesPerSecond, framesPerSecond);
@@ -96,6 +96,7 @@ namespace CourseWork3.Game
 
             TextureCollection.Add("_player", new Texture2D(PathOfExecuteFolder + @"\content\Player.png"));
             SpriteCollection.Add("_player", new Sprite(TextureCollection["_player"], new Vector2(40, 60) / Player.DefaultHitboxSize));
+            TextureCollection.Add("_supportBall", new Texture2D(PathOfExecuteFolder + @"\content\SupportBall.png"));
 
             TextureCollection.Add("_collision", new Texture2D(PathOfExecuteFolder + @"\content\Collision.png"));
             SpriteCollection.Add("_collision", new Sprite(TextureCollection["_collision"], Vector2.One));
@@ -106,11 +107,7 @@ namespace CourseWork3.Game
             TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb2.png"));
             SpriteCollection.Add("_bomb", new Sprite(TextureCollection["_bomb"], new Vector2(150) / GameObjects.Bomb.DefaultHitboxSize));
 
-            TextureCollection.Add("_playerprojmain", new Texture2D(PathOfExecuteFolder + @"\content\PlayersProjectileMain.png"));
-            SpriteCollection.Add("_playerprojmain", new Sprite(TextureCollection["_playerprojmain"], new Vector2(24) / Item.DefaultHitboxSize));
 
-            TextureCollection.Add("_playerprojSup", new Texture2D(PathOfExecuteFolder + @"\content\PlayersProjectileSupport.png"));
-            SpriteCollection.Add("_playerprojSup", new Sprite(TextureCollection["_playerprojSup"], new Vector2(24) / Item.DefaultHitboxSize));
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -133,11 +130,13 @@ namespace CourseWork3.Game
             statsRenderer = new TextRenderer(200, 200, Color.Gray, Color.White, font);
 
             World = World.Instance;
-
-            var pattern = PathOfPatternFile ?? PathOfExecuteFolder + @"\Content\fileForParser.txt";
             var parser = new Parser.Parser();
+            parser.ParseFile(PathOfExecuteFolder + @"\content\MainPatterns.bs");
+            var pattern = PathOfPatternFile ?? PathOfExecuteFolder + @"\Content\fileForParser.txt";
             Console.WriteLine($"Шаблон загружается из {pattern}");
             parser.ParseFile(pattern);
+
+            World.InitPlayer();
 
             Input = new GameInput(window);
             Camera = new GameCamera(new Vector2(0, 0), GameCamera.MovementType.Linear, 1f, 0f);

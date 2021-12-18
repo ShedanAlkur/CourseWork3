@@ -1,4 +1,5 @@
-﻿using CourseWork3.GraphicsOpenGL;
+﻿using CourseWork3.GameObjects;
+using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Parser;
 using CourseWork3.Patterns;
 using OpenTK;
@@ -91,12 +92,35 @@ namespace CourseWork3.Game
 
             if (life <= 0)
             { 
-                Terminated = true; 
+                Terminated = true;
                 return;
             }
 
             if (WorldCollisionCheck()) { if (!wasInWorld) wasInWorld = true; }
             else if (wasInWorld) Terminated = true;
+        }
+
+        public override void OnCollision(GameObject gameObject)
+        {
+            switch (gameObject)
+            {
+                case Projectile projectile: 
+                    if (!projectile.IsEnemyProjectile && !projectile.Terminated &&
+                        SqrCollisionCheck(projectile) && RoundCollisionCheck(projectile)) TakeDamage(1);
+                    break;
+                default: break;
+            }
+        }
+
+        private void TakeDamage(int damage)
+        {
+            GameMain.Stats.CurrentRecord += 1;
+            life -= damage;
+            if (life <= 0)
+            {
+                GameMain.World.Add(new ItemBomb(Position));
+            }
+
         }
     }
 }

@@ -67,6 +67,7 @@ namespace CourseWork3.Parser
         // Для Enemy
         public static readonly string Life = "life";
         public static readonly string MoveTo = "MoveTo".ToLower();
+        public static readonly string Drop = "drop";
 
         // Для Level
         public static readonly string For = "for";

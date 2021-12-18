@@ -14,5 +14,11 @@ namespace CourseWork3.GameObjects
         }
 
         protected override Color Color => Color.Green;
+
+        protected override void Use()
+        {
+            base.Use();
+            GameMain.Stats.BombCount++;
+        }
     }
 }
