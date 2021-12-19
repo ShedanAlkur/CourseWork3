@@ -407,10 +407,23 @@ end #end
 ENEMY "awesome tako"
 	set life 12
 	set sprite "tako"
+	set hitbox 30
 	set generator "Crow"
+	runtime 10000
+END #end #end #end #end #end
+
+ENEMY "laser tako"
+	set life 12
+	set sprite "tako"
+	set generator "Laser"
 	runtime 10000
 END #end #end #end #end #end
 
 LEVEL
 	spawn "awesome tako" 0, 200
+	for i 1, 3
+		spawn "laser tako" (100 + i * 40), 150 + i * 30
+		spawn "laser tako" -(100 + i * 40), 150 + i * 30
+		pause 0.3
+	end
 END

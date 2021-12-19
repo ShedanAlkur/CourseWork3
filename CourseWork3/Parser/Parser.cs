@@ -265,8 +265,12 @@ namespace CourseWork3.Parser
             float from = ParseFloatFromMathExpression(tokens, ref pointer)();
             pointer++;
             float to = ParseFloatFromMathExpression(tokens, ref pointer)();
-            float incrementor = (tokens[pointer] == Keywords.ParameterSeparator) ?
-                ParseFloatFromMathExpression(tokens, ref pointer)() : 1;
+            float incrementor = 1;
+            if (tokens[pointer] == Keywords.ParameterSeparator)
+            {
+                pointer++;
+                incrementor = ParseFloatFromMathExpression(tokens, ref pointer)();
+            }
 
             int i;
             int firstCommandPointer = ++pointer;

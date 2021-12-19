@@ -87,8 +87,9 @@ namespace CourseWork3.GameObjects
 
         public override void Update(float elapsedTime)
         {
+            bool inWorld = WorldCollisionCheck();
             if (Owner == null)
-            { if (!WorldCollisionCheck()) Terminated = true; }
+            { if (!inWorld) Terminated = true; }
             else if (Owner.Terminated) this.Terminated = true;
 
             base.Update(elapsedTime);
@@ -99,8 +100,8 @@ namespace CourseWork3.GameObjects
             Angle += RotationSpeed * elapsedTime;
             RotationSpeed += RotationAcceleration * elapsedTime;
 
+            if (SpawnDelay == 0 || !inWorld) return;
             CurrentSpawnDelay += elapsedTime;
-            if (SpawnDelay != 0)
             while (CurrentSpawnDelay >= SpawnDelay)
             {
                 CurrentSpawnDelay -= SpawnDelay;
