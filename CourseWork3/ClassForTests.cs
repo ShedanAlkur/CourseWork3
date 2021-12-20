@@ -20,12 +20,49 @@ namespace CourseWork3
         public float Field;
         public float Property { get; set; }                
     }
-    class TestSite
+    class ClassForTests
     {
+
+        public void DelegateAndActionsetterComprasion()
+        {
+            Stopwatch sw;
+            TestClass obj;
+            System.Action<TestClass, int> actionSetter;
+            System.Delegate delegateSetter;
+            int countOfTests;
+
+            sw = new Stopwatch();
+            obj = new TestClass();
+            actionSetter = ExpressionBuilder.ExpressionHelper.CreateSetter<TestClass, int>("Property");
+            delegateSetter = ExpressionBuilder.ExpressionHelper.CreateSetterByType("Property",
+                typeof(TestClass), typeof(int));
+            countOfTests = 1000000;
+
+            sw.Reset();
+            sw.Start();
+            for (int i = 0; i < countOfTests; i++)
+            {
+                actionSetter(obj, i);
+            }
+            sw.Stop();
+            System.Console.WriteLine($"{nameof(actionSetter)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests}ms");
+
+            sw.Reset();
+            sw.Start();
+            for (int i = 0; i < countOfTests; i++)
+            {
+                delegateSetter.DynamicInvoke(obj, i);
+            }
+            sw.Stop();
+            System.Console.WriteLine($"{nameof(actionSetter)} time of {countOfTests} counts = {sw.ElapsedMilliseconds} ms");
+            System.Console.WriteLine($"one set in {(float)sw.ElapsedMilliseconds / countOfTests}ms");
+        }
+
         #region like-expression methods
         public static Expression Like(Expression lhs, Expression rhs)
         {
-            MethodInfo? method = typeof(TestSite).GetMethod("Like123",
+            MethodInfo? method = typeof(ClassForTests).GetMethod("Like123",
                     BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             return Expression.Call(method, lhs, rhs);
         }
