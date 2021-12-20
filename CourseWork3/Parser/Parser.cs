@@ -48,8 +48,6 @@ namespace CourseWork3.Parser
 
         private static ExpressionBuilder.NestedExpressionParameter[] nestedParametersForProjectile;
 
-        private static string[] paramsName = { Keywords.ProjParamName };
-
         static Parser()
         {
             // Настройка информации о параметре, извлекаемом из класса-снаряда для мат. вычислений
@@ -132,8 +130,8 @@ namespace CourseWork3.Parser
                                 param = ParseVector2(tokens, ref pointer);
                             else if (paramType == typeof(Sprite)) param = GameMain.SpriteCollection[ParseString(tokens, ref pointer)];
                         if (flagOfFloatParam)
-                            commands.Add(new BasedOnProjectileChangerCommand(action, (Func<Projectile, float>)param));
-                        else commands.Add(new PropertyChangerCommand<Projectile>(action, param));
+                            commands.Add(new BasedOnProjectileCommand(action, (Func<Projectile, float>)param));
+                        else commands.Add(new ControlledObjectCommand<Projectile>(action, param));
                     }
                 pointer++;
             }
@@ -168,7 +166,7 @@ namespace CourseWork3.Parser
                             else if (paramType == typeof(int)) param = (int)ParseFloatFromMathExpression(tokens, ref pointer)();
                             else if (paramType == typeof(Pattern<Projectile>)) param = GameMain.ProjeciltePatternCollection[ParseString(tokens, ref pointer)];
 
-                        commands.Add(new PropertyChangerCommand<Generator>(action, param));
+                        commands.Add(new ControlledObjectCommand<Generator>(action, param));
                     }
                 pointer++;
             }
@@ -211,7 +209,7 @@ namespace CourseWork3.Parser
                                 param = (value1, value2);
                             }
 
-                        commands.Add(new PropertyChangerCommand<Enemy>(action, param));
+                        commands.Add(new ControlledObjectCommand<Enemy>(action, param));
                         // обработка команд врага
                     }
                 pointer++;

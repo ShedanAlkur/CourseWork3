@@ -23,13 +23,13 @@ namespace CourseWork3.GameObjects
 
         private bool wasInWorld;
 
-        Sprite sprite;
+        public Sprite Sprite;
 
         static Enemy()
         {
             ActionsForParser = new Dictionary<string, Action<Enemy, object>>
             {
-                [Keywords.Set + Keywords.Sprite] = (Enemy obj, object value) => obj.sprite = (Sprite)value,
+                [Keywords.Set + Keywords.Sprite] = (Enemy obj, object value) => obj.Sprite = (Sprite)value,
                 [Keywords.Set + Keywords.Generator] = (Enemy obj, object value) =>
                 {
                     obj.RemoveOwnedGenerators();
@@ -76,13 +76,13 @@ namespace CourseWork3.GameObjects
         {
             HitBoxSize = DefaultHitboxSize;
             wasInWorld = false;
-            sprite = GameMain.SpriteCollection["_projectile"];
+            Sprite = GameMain.SpriteCollection["_projectile"];
         }
 
         public override void Draw()
         {
             if (GameMain.DrawHitboxes) GameMain.Graphics.Draw(GameMain.SpriteCollection["_collision"].Texture, Position, HitBoxSize * Vector2.One, 0, Depth);
-            GameMain.Graphics.Draw(sprite.Texture, Position, HitBoxSize * sprite.SizeRelativeToHitbox, 0, Depth);
+            GameMain.Graphics.Draw(Sprite.Texture, Position, HitBoxSize * Sprite.SizeRelativeToHitbox, 0, Depth);
         }
 
         public override void Update(float elapsedTime)

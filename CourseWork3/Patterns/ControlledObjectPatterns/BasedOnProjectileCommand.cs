@@ -6,12 +6,12 @@ using System.Text;
 
 namespace CourseWork3.Patterns
 {
-    class BasedOnProjectileChangerCommand : ICommand<Projectile>
+    class BasedOnProjectileCommand : ICommand<Projectile>
     {
         Action<Projectile, object> action;
         Func<Projectile, float> value;
 
-        public BasedOnProjectileChangerCommand(Action<Projectile, object> command, Func<Projectile, float> value)
+        public BasedOnProjectileCommand(Action<Projectile, object> command, Func<Projectile, float> value)
         {
             this.action = command;
             this.value = value;

@@ -25,10 +25,6 @@ namespace CourseWork3.Game
             public float DeltaTimeOfRender;
             public float TotalElapsedSeconds { get; private set; }
 
-            public GameTime()
-            {
-
-            }
         }
     }
 

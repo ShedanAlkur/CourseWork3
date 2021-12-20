@@ -15,7 +15,7 @@ namespace CourseWork3.GameObjects
         private bool isEnemyGenerator;
 
         public GameObject Owner;
-        public bool FollowOwner;
+        public bool ShouldFollowOwner;
 
         private float sector;
         public float Sector 
@@ -78,7 +78,7 @@ namespace CourseWork3.GameObjects
         {
             this.Owner = owner;
             isEnemyGenerator = !(owner is Player);
-            this.FollowOwner = followOwner;
+            this.ShouldFollowOwner = followOwner;
         }
         public Generator(Pattern<Generator> pattern, Vector2 position, bool isEnemyGenerator) : base(pattern, position)
         {
@@ -94,7 +94,7 @@ namespace CourseWork3.GameObjects
 
             base.Update(elapsedTime);
 
-            if (FollowOwner) Position = Owner.Position;
+            if (ShouldFollowOwner) Position = Owner.Position;
             if (IsPaused) return;
 
             Angle += RotationSpeed * elapsedTime;

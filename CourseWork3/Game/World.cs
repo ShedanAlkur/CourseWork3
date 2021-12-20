@@ -52,7 +52,7 @@ namespace CourseWork3.Game
         public void Update(float elapsedTime)
         {
             CurrentPausetime += elapsedTime;
-            if (CurrentPausetime >= MaxPausetime)
+            if (Pattern != null && CurrentPausetime >= MaxPausetime)
                 Pattern.Invoke();
 
             DoCollision();

@@ -10,6 +10,12 @@ using System.IO;
 
 namespace CourseWork3.Game
 {
+    /// <summary>
+    /// Класс GameMain является основным классом программы. 
+    /// Является статическим для доступа к игровым данных из любой части системы. 
+    /// Этот класс выполняет хранение всех графических материалов и шаблонов, 
+    /// загруженных в игру; контролирует циклы обновления и отрисовки игровых объектов.
+    /// </summary>
     static partial class GameMain
     {
 
@@ -77,8 +83,9 @@ namespace CourseWork3.Game
                 PathOfPatternFile = args[0];
                 PathOfPatternFolder = Path.GetDirectoryName(PathOfPatternFile);
             }
-            else
-                PathOfPatternFolder = PathOfExecuteFolder + @"\Content";
+            else PathOfPatternFolder = PathOfExecuteFolder + @"\Content\fileForParser.txt";
+
+
 
             int updatesPerSecond = 200;
             int framesPerSecond = 60;
@@ -86,7 +93,7 @@ namespace CourseWork3.Game
             window.Run(updatesPerSecond, framesPerSecond);
         }
 
-        private static void LoadDefaultPatterns()
+        private static void LoadDefaultResources()
         {
             TextureCollection.Add("_item", new Texture2D(PathOfExecuteFolder + @"\content\Item.png"));
             SpriteCollection.Add("_item", new Sprite(TextureCollection["_item"], new Vector2(24) / Item.DefaultHitboxSize));
@@ -107,7 +114,8 @@ namespace CourseWork3.Game
             TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb2.png"));
             SpriteCollection.Add("_bomb", new Sprite(TextureCollection["_bomb"], new Vector2(150) / GameObjects.Bomb.DefaultHitboxSize));
 
-
+            var parser = new Parser.Parser();
+            parser.ParseFile(PathOfExecuteFolder + @"\content\MainPatterns.bs");
         }
 
         private static void Window_Load(object sender, EventArgs e)
@@ -124,17 +132,18 @@ namespace CourseWork3.Game
             TextureCollection = new Dictionary<string, Texture2D>();
 
             worldFrameBuffer = new FrameBuffer(window.Width / 2, window.Height / 2);
-            LoadDefaultPatterns();
 
             var font = new Font("Consolas", 15f, FontStyle.Regular, GraphicsUnit.Point);
             statsRenderer = new TextRenderer(200, 200, Color.Gray, Color.White, font);
 
             World = World.Instance;
-            var parser = new Parser.Parser();
-            parser.ParseFile(PathOfExecuteFolder + @"\content\MainPatterns.bs");
-            var pattern = PathOfPatternFile ?? PathOfExecuteFolder + @"\Content\fileForParser.txt";
-            Console.WriteLine($"Шаблон загружается из {pattern}");
-            parser.ParseFile(pattern);
+            LoadDefaultResources();
+            if (!string.IsNullOrEmpty(PathOfPatternFolder))
+            {
+                var parser = new Parser.Parser();
+                Console.WriteLine($"Шаблон загружается из {PathOfPatternFolder}");
+                parser.ParseFile(PathOfPatternFolder);
+            }
 
             World.InitPlayer();
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CourseWork3.GameObjects
 {
-    class ControlledObject<T> : GameObject where T : ControlledObject<T>
+    abstract class ControlledObject<T> : GameObject where T : ControlledObject<T>
     {
         public static Dictionary<string, Action<T, object>> ActionsForParser;
 
