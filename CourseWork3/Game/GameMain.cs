@@ -58,7 +58,7 @@ namespace CourseWork3.Game
         public static string PathOfPatternFolder;
         public static string PathOfExecuteFolder;
 
-        public static void Init(GameWindow window, string[] args)
+        public static void Init(GameWindow window, string pathOfPatternFile = null)
         {
             GameMain.window = window;
             window.VSync = VSyncMode.On;
@@ -78,12 +78,12 @@ namespace CourseWork3.Game
             defWorldYOffset = (int)((defaultHeight - World.Size.Y) / 2);
 
             PathOfExecuteFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            if (args.Length > 0)
+            if (!string.IsNullOrEmpty(pathOfPatternFile))
             {
-                PathOfPatternFile = args[0];
+                PathOfPatternFile = pathOfPatternFile;
                 PathOfPatternFolder = Path.GetDirectoryName(PathOfPatternFile);
             }
-            else PathOfPatternFolder = PathOfExecuteFolder + @"\Content\fileForParser.txt";
+            else PathOfPatternFile = PathOfExecuteFolder + @"\Content\fileForParser.txt";
 
 
 
@@ -138,11 +138,11 @@ namespace CourseWork3.Game
 
             World = World.Instance;
             LoadDefaultResources();
-            if (!string.IsNullOrEmpty(PathOfPatternFolder))
+            if (!string.IsNullOrEmpty(PathOfPatternFile))
             {
                 var parser = new Parser.Parser();
-                Console.WriteLine($"Шаблон загружается из {PathOfPatternFolder}");
-                parser.ParseFile(PathOfPatternFolder);
+                Console.WriteLine($"Загружается шаблон {PathOfPatternFile}");
+                parser.ParseFile(PathOfPatternFile);
             }
 
             World.InitPlayer();

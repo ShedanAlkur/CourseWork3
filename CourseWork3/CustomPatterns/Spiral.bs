@@ -1,0 +1,62 @@
+// Спрайты снарядов
+SPRITE "knife" 
+	path "Knife.png"
+	size 2, 2
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+//Spiral
+projectile "Spiral clockwise 1"
+	set sprite "knife"
+	set color "green"
+	set hitbox 12
+	set velocity 60 + 1.5 * gentime / 0.03
+	set acceleration 10 + 4.5 * gentime / 0.03
+end #end
+projectile "Spiral clockwise 2"
+	set sprite "knife"
+	set color "green"
+	set hitbox 12
+	set velocity 60 + 1.5 * gentime / 0.03
+	set acceleration 10 + 2 * gentime / 0.03
+end #end
+generator "Spiral 1"
+	set projectile "Spiral clockwise 1"
+	set sector 1
+	set spawnCount 1
+	set rotationSpeed -360
+	repeatStart
+	set angle 0
+	set spawnDelay 0.03
+	runtime 1
+	pause 2
+end #end
+generator "Spiral 2"
+	set projectile "Spiral clockwise 2"
+	set sector 1
+	set spawnCount 1
+	set rotationSpeed -360
+	repeatStart
+	set angle 0
+	set spawnDelay 0.03
+	runtime 1
+	pause 2
+end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Spiral clockwise 1"
+	inc generator "Spiral clockwise 2"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 100
+END

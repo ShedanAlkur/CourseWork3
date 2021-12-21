@@ -1,0 +1,71 @@
+// Спрайты снарядов
+SPRITE "darkcircle" 
+	path "DarkCircle.png"
+END
+
+SPRITE "doublecircle" 
+	path "DoubleCircle.png"
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Cirno perfect freeze
+PROJECTILE "Cirno Perfect Freeze 1"
+	set sprite "doublecircle"
+	randomcolor
+	set velocity 160
+	set acceleration -50
+	inc velocityAngle 45 * random
+	inc velocity 150 * random
+	runtime 3.5 - genTime
+	set color "white"
+	set velocity 0
+	set acceleration 0
+	runtime 2.5
+	randomcolor
+	set velocity 50
+	set acceleration 50
+	inc velocityAngle 45 * random
+	inc acceleration 50 * random	
+END #end
+PROJECTILE "Cirno Perfect Freeze 2"
+	set sprite "darkcircle"
+	set color "blue"
+	set velocity 300
+	set acceleration 50
+	inc velocityAngle 10 * random
+	inc acceleration 50 * random
+END #end
+generator "Cirno Perfect Freeze"
+	repeatStart
+	set projectile "Cirno Perfect Freeze 1"
+	set angle 0
+	set spawnDelay 0.2
+	set sector 300
+	set spawnCount 20
+	runtime 2.5
+	pause 2
+	set projectile "Cirno Perfect Freeze 2"
+	set spawnDelay 0.1
+	set sector 90
+	set spawnCount 4
+	aimToPlayer
+	runtime 1
+	pause 7
+end #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Cirno Perfect Freeze"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 200
+END

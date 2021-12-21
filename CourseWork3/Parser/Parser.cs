@@ -59,9 +59,9 @@ namespace CourseWork3.Parser
             //
         }
 
-        public void ParseFile(string path)
+        public void ParseFile(string PathOfPatternFile)
         {
-            Parse(Lexer.SplitToTokensFromFile(path), System.IO.Path.GetDirectoryName(path));
+            Parse(Lexer.SplitToTokensFromFile(PathOfPatternFile), System.IO.Path.GetDirectoryName(PathOfPatternFile));
         }
         private void Parse(string[] tokens, string patternFolder)
         {

@@ -1,0 +1,74 @@
+// Спрайты снарядов
+SPRITE "darkcrystal" 
+	path "DarkCrystal.png"
+	size 2, 2
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// RumiaCircle
+projectile "Rumia Circle 1"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "aquamarine"
+	set velocity 400 / 2
+	set acceleration -400 / 2
+	runtime 1
+	set velocity 400 / 2
+	pointRotation 0, 100
+	runtime 0.7
+	inc velocityAngle 5
+	set acceleration 0
+end #end
+projectile "Rumia Circle 2"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "aquamarine"
+	set velocity 400 / 2
+	set acceleration -400 / 2
+	runtime 1
+	set velocity 400 / 2
+	pointCounterRotation 0, 100
+	runtime 0.7
+	inc velocityAngle -5
+	set acceleration 0
+end #end
+generator "Rumia Circle 1"
+	set sector 360
+	set spawnCount 16
+	set angle 50
+	set rotationSpeed 100
+	repeatStart
+	set spawnDelay 1
+	set projectile "Rumia Circle 1"
+	runtime 0.1
+	pause 1.6
+end #end #end
+generator "Rumia Circle 2"
+	set sector 360
+	set spawnCount 16
+	set angle 50
+	set rotationSpeed 100
+	repeatStart
+	set spawnDelay 1
+	set projectile "Rumia Circle 2"
+	runtime 0.1
+	pause 1.6
+end #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Rumia Circle 1"
+	inc generator "Rumia Circle 2"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 100
+END

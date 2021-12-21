@@ -9,7 +9,7 @@ namespace CourseWork3
         {
             using (GameWindow window = new GameWindow(800, 600))
             {
-                GameMain.Init(window, args);
+                GameMain.Init(window, (args.Length > 0) ? args[0] : null);
             }
         }
     }

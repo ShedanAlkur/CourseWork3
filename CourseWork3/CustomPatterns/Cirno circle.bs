@@ -1,0 +1,64 @@
+// Спрайты снарядов
+SPRITE "darkcrystal" 
+	path "DarkCrystal.png"
+	size 2, 2
+END
+SPRITE "doublecircle" 
+	path "DoubleCircle.png"
+END
+
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Cirno circle
+projectile "Cirno circle 1"
+	set sprite "doublecircle"
+	set color "blue"
+	set velocity 250 / 2
+end #end
+projectile  "Cirno circle 2"
+	set sprite "darkcrystal"
+	set color "white"
+	set hitbox 12
+	set velocity 200
+	runtime 0.3
+	set acceleration -600
+	runtime 0.3
+	set velocity 250
+	set acceleration 0
+	velocityToPlayer
+end#end
+generator "Cirno circle"
+	set spawnDelay 1
+	set sector 360
+	set spawnCount 18
+	repeatStart
+	set angle 0
+	set spawnDelay 1
+	set projectile "Cirno circle 1"
+	runtime 0.6
+	set spawnDelay 1
+	set projectile "Cirno circle 2"
+	runtime 0.3
+	set angle 360 / 18 / 2
+	set spawnDelay 1
+	set projectile "Cirno circle 1"
+	runtime 0.6
+	pause 2
+end #end #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Cirno circle"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 100
+END

@@ -1,0 +1,70 @@
+// Спрайты снарядов
+SPRITE "knife" 
+	path "Knife.png"
+	size 2, 2
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+
+// Meilin knifes
+PROJECTILE "Meilin Knifes Red"
+	set sprite "knife"
+	set color "red"
+	set hitbox 12
+	set accelerationAngle 180	
+	set acceleration 80 + 6 * gentime / 0.15
+	set velocity 180 - 12 * gentime / 0.15
+	runtime 1.5 - gentime
+	set velocity 0
+	set acceleration 0
+	runtime 0.01
+	inc velocityAngle 165
+	set velocity 300
+	set accelerationAngle 0	
+	set acceleration 200
+END #end
+PROJECTILE "Meilin Knifes Blue"
+	set sprite "knife"
+	set color "blue"
+	set hitbox 12
+	set accelerationAngle 180	
+	set acceleration 80 + 6 * gentime / 0.15
+	set velocity 180 - 12 * gentime / 0.15
+	runtime 1.5 - gentime
+	set velocity 0
+	set acceleration 0
+	runtime 0.01
+	inc velocityAngle -165
+	set velocity 300
+	set accelerationAngle 0	
+	set acceleration 200
+END #end
+GENERATOR "Meilin Knifes"
+	set sector 360
+	set angle 360 / 24 / 2
+	set spawnDelay 0.15
+	set spawnCount 24
+	repeatStart
+	set projectile "Meilin Knifes Red"
+	runtime 0.15 * 4
+	pause 1
+	set projectile "Meilin Knifes Blue"
+	runtime 0.15 * 4
+	pause 1
+END #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set generator "Meilin Knifes"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 100
+END

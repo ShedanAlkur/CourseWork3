@@ -1,0 +1,61 @@
+// Спрайты снарядов
+SPRITE "darkcrystal" 
+	path "DarkCrystal.png"
+	size 2, 2
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Bamboozle
+projectile "Bamboozle 1"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "blue"
+	set velocity 400 / 2
+end #end
+projectile "Bamboozle 2"
+	set sprite "darkcrystal"
+	set hitbox 12
+	set color "white"
+	set velocity 400 / 2
+	runtime 0.85
+	set velocity 500 / 2
+	velocityToPlayer
+end #end
+generator "Bamboozle 1"
+	set projectile "Bamboozle 1"
+	set sector 100
+	set spawnCount 3
+	set angle 30
+	repeatStart
+	set spawnDelay 0.3
+	runtime 3
+	pause 3
+end #end
+generator "Bamboozle 2"
+	set projectile "Bamboozle 2"
+	set sector 100
+	set spawnCount 3
+	set angle 30
+	repeatStart
+	set spawnDelay 0.3
+	runtime 3
+	pause 3
+end #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Bamboozle 1"
+	inc generator "Bamboozle 2"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" -200, 220
+END

@@ -1,0 +1,49 @@
+// Спрайты снарядов
+SPRITE "darkcircle" 
+	path "DarkCircle.png"
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Rumia splash
+projectile "Rumia Splash"
+	set sprite "darkcircle"
+	set color "blue"
+	set velocity 500 / 2
+	set acceleration -1000 / 2
+	runtime 0.5
+	pause 0.2
+	set velocity 200 / 2
+	set acceleration 200 / 2
+	velocityToPlayer
+end #end
+generator "Rumia Splash"
+	set projectile "Rumia Splash"
+	set sector 170
+	set spawnCount 9
+	repeatstart
+	set angle -90 + 30
+	set spawnDelay 1
+	runtime 0.1
+	pause 0.5
+	set angle 90 + 30
+	set spawnDelay 1
+	runtime 0.1
+	pause 0.5
+end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Rumia Splash"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 100
+END

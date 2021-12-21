@@ -1,0 +1,61 @@
+// Спрайты снарядов
+SPRITE "crystal" 
+	path "Crystal.png"
+	size 2.0, 2.0
+END
+
+// Спрайты противников
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Flower
+PROJECTILE "Flower leaf"
+	set sprite "crystal"
+	set color "yellow"
+	set hitbox 12
+	set velocity 150
+END #end
+PROJECTILE "Flower circle"
+	set sprite "crystal"
+	set color "red"
+	set hitbox 12
+	set velocity 150 / 2
+END #end
+GENERATOR "Flower circle"
+	set projectile "Flower circle"
+	set sector 360
+	set spawnDelay 360 / 30 / 6
+	set spawnCount 24
+END #end
+GENERATOR "Flower leaf clockwise"
+	set projectile "Flower leaf"
+	set sector 360
+	set spawnDelay 0.17
+	set spawnCount 4
+	set angle -30
+	set rotationSpeed 40
+END #end
+GENERATOR "Flower leaf counterclockwise"
+	set projectile "Flower leaf"
+	set sector 360
+	set spawnDelay 0.17
+	set spawnCount 4
+	set angle -30
+	set rotationSpeed -40
+END #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Flower circle"
+	inc generator "Flower leaf clockwise"
+	inc generator "Flower leaf counterclockwise"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 50
+END

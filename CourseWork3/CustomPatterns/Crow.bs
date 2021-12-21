@@ -1,0 +1,95 @@
+SPRITE "laser" 
+	path "Laser.png"
+END
+
+SPRITE "darkcircle" 
+	path "DarkCircle.png"
+END
+
+sprite "tako"
+	path "Tako.png"
+	size 1, 1
+end
+
+// Crow
+projectile "Crow purple"
+	set sprite "darkcircle"
+	set color "purple"
+	set velocity 100 / 2
+	set acceleration 10 + 50 * gentime / 0.05
+end #end #end #end
+projectile "Crow aquamarine"
+	set sprite "darkcircle"
+	set color "Aquamarine"
+	set velocity 100 / 2
+	set acceleration 10 + 50 * gentime / 0.05
+end #end #end #end
+generator "Crow"
+	set sector 1
+	set spawnCount 1
+	repeatStart
+	set projectile "Crow purple"
+	set angle 80
+	set rotationSpeed -180
+	set spawnDelay 0.05
+	runtime 1
+	pause 0.4
+	set projectile "Crow aquamarine"
+	set angle -80
+	set rotationSpeed 180
+	set spawnDelay 0.05
+	runtime 1
+	pause 0.4
+end #end #end #end
+
+// Laser
+projectile "Laser ball"	
+	set color "purple"
+	set velocity 400
+	set hitbox 24 * 1.2
+end #end
+projectile "Laser"
+	set sprite "laser"
+	set color "purple"
+	set velocity 400
+end #end
+generator "Laser"
+	set sector 90
+	set spawnCount 1
+	set spawnDelay 0.05
+	repeatStart
+	set spawnDelay 0.05
+	set projectile "Laser ball"
+	runtime 0.02
+	set spawnDelay 0.05
+	set projectile "Laser"
+	runtime 2
+	set spawnDelay 0.05
+	set projectile "Laser ball"
+	runtime 0.02
+	pause 2
+end #end #end #end
+
+ENEMY "awesome tako"
+	set life 12
+	set sprite "tako"
+	set hitbox 30
+	set generator "Crow"
+	runtime 10000
+END #end #end #end #end #end
+
+ENEMY "laser tako"
+	set life 12
+	set sprite "tako"
+	set generator "Laser"
+	runtime 10000
+END #end #end #end #end #end
+
+LEVEL
+	spawn "awesome tako" 0, 200
+	for i 1, 3
+		spawn "laser tako" (100 + i * 40), 150 + i * 30
+		spawn "laser tako" -(100 + i * 40), 150 + i * 30
+		pause 0.3
+	end
+END
