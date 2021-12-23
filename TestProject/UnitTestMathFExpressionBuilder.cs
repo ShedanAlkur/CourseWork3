@@ -45,24 +45,24 @@ namespace TestProject
         }
 
         [TestMethod]
-        public void TestNestedParameters()
+        public void TestImplicitParameters()
         {
             var obj = new TestClass();
             obj.Field = 123.534f;
 
             var parser = new MathFExpressionBuilder();
 
-
             var externalParam = System.Linq.Expressions.Expression.Parameter(typeof(TestClass));
             var internalParam = System.Linq.Expressions.Expression.PropertyOrField(externalParam, nameof(TestClass.Field));
             string internalParamName = "field";
+            var intParam = new InternalImplicitParameter(internalParam, internalParamName);
+            var impParam = new ImplicitParameter(externalParam, intParam);
 
-            var nestedParam = new NestedExpressionParameter(externalParam, internalParam, internalParamName);
             string input = internalParamName;
 
             float expectedResult = obj.Field;
             Delegate del = parser.CompileTokens(
-                parser.SplitToTokens(input), new NestedExpressionParameter[] { nestedParam });
+                parser.SplitToTokens(input), new ImplicitParameter[] { impParam });
             float result = (float)(del.DynamicInvoke(obj));
 
             Assert.AreEqual(expectedResult, result);

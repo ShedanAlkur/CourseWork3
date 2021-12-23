@@ -2,10 +2,12 @@
 using CourseWork3.GameObjects;
 using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
+using ExpressionBuilder;
 using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CourseWork3.Parser
 {
@@ -44,19 +46,22 @@ namespace CourseWork3.Parser
 
         };
 
-        private ExpressionBuilder.MathFExpressionBuilder MathExpressionBuilder = new ExpressionBuilder.MathFExpressionBuilder();
+        private MathFExpressionBuilder MathExpressionBuilder = new MathFExpressionBuilder();
 
-        private static ExpressionBuilder.NestedExpressionParameter[] nestedParametersForProjectile;
+        private static ImplicitParameter[] implicitParametersForProjectile;
 
         static Parser()
         {
             // Настройка информации о параметре, извлекаемом из класса-снаряда для мат. вычислений
-            var externalParam = System.Linq.Expressions.Expression.Parameter(typeof(Projectile));
-            var internalParam = System.Linq.Expressions.Expression.PropertyOrField(externalParam, nameof(Projectile.GenTime));
+            var externalParam = Expression.Parameter(typeof(Projectile));
+
+            var internalParam = Expression.PropertyOrField(externalParam, nameof(Projectile.GenTime));
             var internalParamName = Keywords.ProjParamName;
-            var param = new ExpressionBuilder.NestedExpressionParameter(externalParam, internalParam, internalParamName);
-            nestedParametersForProjectile = new ExpressionBuilder.NestedExpressionParameter[] { param };
-            //
+
+            implicitParametersForProjectile = new ImplicitParameter[]
+            {
+                new ImplicitParameter(externalParam, new InternalImplicitParameter(internalParam, internalParamName)),
+            };
         }
 
         public void ParseFile(string PathOfPatternFile)
@@ -317,7 +322,7 @@ namespace CourseWork3.Parser
             {
                 mathExpressionTokens.Add(tokens[pointer++]);
             }
-            return (Func<Projectile, float>)MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray(), nestedParametersForProjectile);
+            return (Func<Projectile, float>)MathExpressionBuilder.CompileTokens(mathExpressionTokens.ToArray(), implicitParametersForProjectile);
         }
 
         private float ParseForLoopMathExpression(string[] tokens, ref int pointer, Dictionary<string, float> iterators)

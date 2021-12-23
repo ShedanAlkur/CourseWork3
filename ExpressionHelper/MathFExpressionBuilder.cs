@@ -82,6 +82,8 @@ namespace ExpressionBuilder
             => PriorityOfOperators[op1] < PriorityOfOperators[op2];
         #endregion
 
+        #region Функции
+
         /// <summary>
         /// Словарь поддерживаемых унарных функций.
         /// </summary>
@@ -137,7 +139,6 @@ namespace ExpressionBuilder
         /// </summary>
         static private bool IsTernaryFunction(string token) => ternaryFunctions.ContainsKey(token);
 
-
         /// <summary>
         /// Является ли токен функцией.
         /// </summary>
@@ -155,6 +156,8 @@ namespace ExpressionBuilder
                 ["true"] = ExpressionHelper.CreateConstant(true),
                 ["false"] = ExpressionHelper.CreateConstant(false),
             };
+
+        #endregion
 
         /// <summary>
         /// Является ли токен ключевым слоо, возвращающим числовое значение.
@@ -391,59 +394,26 @@ namespace ExpressionBuilder
             return stack.Pop();
         }
 
-        /// <summary>
-        /// Преобразует инфиксное арифметическое выражение в делегат.
-        /// </summary>
-        /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
-        /// <param name="paramsName">Имена параметров типа float, которые в заданной последовательности должен принимать делегат.</param>
-        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
-        public Delegate CompileString(string infixExpression, params string[] paramsName)
+        public Delegate CompileTokens(string[] infixTokens, ImplicitParameter[] implicitExpressionParameters, params string[] paramsName)
         {
             this.Clear();
-
-            if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
-
-            string[] infixTokens = SplitToTokens(infixExpression);
-            string[] postfixTokens = ConvertToRPN(infixTokens);
-            Expression resExpression = BuildExpression(postfixTokens);
-            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
-            return ResultDelegate;
-        }
-
-        /// <summary>
-        /// Преобразует набор токенов инфиксного арифметическое выражение в делегат.
-        /// </summary>
-        /// <param name="infixTokens">Набор токенов арифметического выражения в инфиксной форме.</param>
-        /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
-        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
-        public Delegate CompileTokens(string[] infixTokens, params string[] paramsName)
-        {
-            this.Clear();
-
-            if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
-
-            string[] postfixTokens = ConvertToRPN(infixTokens);
-            Expression resExpression = BuildExpression(postfixTokens);
-            ResultDelegate = Expression.Lambda(resExpression, parameters.Values).Compile();
-            return ResultDelegate;
-        }
-
-
-        public Delegate CompileTokens(string[] infixTokens, NestedExpressionParameter[] nestedExpressionParameter, params string[] paramsName)
-        {
-            this.Clear();
-
-            if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             var externalNestedParams = new List<ParameterExpression>();
-            foreach (var param in nestedExpressionParameter)
-            {
-                nestedParameters.Add(param.internalParamName.ToLower(), param.internalParam);
-                if (param.externalParam != null) externalNestedParams.Add(param.externalParam);
-            }
+            if (implicitExpressionParameters != null)
+                foreach (var implicitExpressionParameter in implicitExpressionParameters)
+                {
+                    if (implicitExpressionParameter.externalParameter != null)
+                        externalNestedParams.Add(implicitExpressionParameter.externalParameter);
+
+                    if (implicitExpressionParameter.internalParameters != null)
+                        foreach(var internalParam in implicitExpressionParameter.internalParameters)
+                        {
+                            nestedParameters.Add(internalParam.Name.ToLower(), internalParam.Value);
+                        }
+                }
+
+            if (paramsName != null) foreach (string param in paramsName)
+                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);
@@ -452,6 +422,27 @@ namespace ExpressionBuilder
             ResultDelegate = Expression.Lambda(resExpression, generalParams).Compile();
             return ResultDelegate;
         }
+
+        public Delegate CompileTokens(string infixExpression, ImplicitParameter[] implicitExpressionParameters, params string[] paramsName) =>
+            CompileTokens(SplitToTokens(infixExpression), implicitExpressionParameters, paramsName);
+
+        /// <summary>
+        /// Преобразует инфиксное арифметическое выражение в делегат.
+        /// </summary>
+        /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
+        /// <param name="paramsName">Имена параметров типа float, которые в заданной последовательности должен принимать делегат.</param>
+        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
+        public Delegate CompileString(string infixExpression, params string[] paramsName) =>
+            CompileTokens(SplitToTokens(infixExpression), paramsName);
+
+        /// <summary>
+        /// Преобразует набор токенов инфиксного арифметическое выражение в делегат.
+        /// </summary>
+        /// <param name="infixTokens">Набор токенов арифметического выражения в инфиксной форме.</param>
+        /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
+        /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
+        public Delegate CompileTokens(string[] infixTokens, params string[] paramsName) =>
+             CompileTokens(infixTokens, null, paramsName);
 
         /// <summary>
         /// Удаляет все результаты расчетов из экземпляра класса.

@@ -96,26 +96,6 @@ namespace CourseWork3
             Console.WriteLine($"{nameof(test.Property)} = {test.Property}");
         }
 
-        public static void TestTest()
-        {
-            var externalParam = Expression.Parameter(typeof(TestClass));
-            var internalParam = Expression.PropertyOrField(externalParam, nameof(TestClass.Field));
-            var internalParamName = "param";
-            var param = new ExpressionBuilder.NestedExpressionParameter(externalParam, internalParam, internalParamName);
-
-            var expBuilder = new ExpressionBuilder.MathFExpressionBuilder();
-            var del = expBuilder.CompileTokens(expBuilder.SplitToTokens("param * 2"),
-                new ExpressionBuilder.NestedExpressionParameter[] { param });
-            var foo = (Func<TestClass, float>)del;
-
-            var clas = new TestClass();
-            Console.WriteLine(foo(clas));
-            clas.Field = 1;
-            Console.WriteLine(foo(clas));
-            clas.Field = 69;
-            Console.WriteLine(foo(clas));
-        }
-
         public static void LexerTest()
         {
             Lexer.SplitToTokensFromFile(@"Content\fileForParser.txt");
