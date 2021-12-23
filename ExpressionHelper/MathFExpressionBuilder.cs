@@ -12,6 +12,7 @@ namespace ExpressionBuilder
     {
         #region Статические атрибуты
 
+        #region Бинарные операторы
         /// <summary>
         /// Словарь поддерживаемых бинарных операторов.
         /// </summary>
@@ -79,11 +80,12 @@ namespace ExpressionBuilder
         /// <returns></returns>
         static private bool IsLowerPriority(string op1, string op2)
             => PriorityOfOperators[op1] < PriorityOfOperators[op2];
+        #endregion
 
         /// <summary>
-        /// Словарь поддерживаемых функций одной переменной.
+        /// Словарь поддерживаемых унарных функций.
         /// </summary>
-        static private readonly Dictionary<string, Func<Expression, Expression>> functions
+        static private readonly Dictionary<string, Func<Expression, Expression>> unaryFunctions
             = new Dictionary<string, Func<Expression, Expression>>()
             {
                 ["sqrt"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), nameof(MathF.Sqrt)),
@@ -98,9 +100,45 @@ namespace ExpressionBuilder
             };
 
         /// <summary>
-        /// Является ли токен бинарным оператором.
+        /// Является ли токен унарной функцией.
         /// </summary>
-        static private bool IsFunction(string token) => functions.ContainsKey(token);
+        static private bool IsUnaryFunction(string token) => unaryFunctions.ContainsKey(token);
+
+        /// <summary>
+        /// Словарь поддерживаемых бинарных функций.
+        /// </summary>
+        static private readonly Dictionary<string, Func<Expression, Expression, Expression>> binaryFunctions
+            = new Dictionary<string, Func<Expression, Expression, Expression>>()
+            {
+
+            };
+
+        /// <summary>
+        /// Является ли токен бинарной функцией.
+        /// </summary>
+        static private bool IsBinaryFunction(string token) => binaryFunctions.ContainsKey(token);
+
+        /// <summary>
+        /// Словарь поддерживаемых тернарных функций.
+        /// </summary>
+        static private readonly Dictionary<string, Func<Expression, Expression, Expression, Expression>> ternaryFunctions
+            = new Dictionary<string, Func<Expression, Expression, Expression, Expression>>()
+            {
+                ["if"] = Expression.Condition,
+            };
+
+        /// <summary>
+        /// Является ли токен тернарной функцией.
+        /// </summary>
+        static private bool IsTernaryFunction(string token) => ternaryFunctions.ContainsKey(token);
+
+
+        /// <summary>
+        /// Является ли токен функцией.
+        /// </summary>
+        static private bool IsFunction(string token) => IsUnaryFunction(token) || IsBinaryFunction(token) || IsTernaryFunction(token);
+
+
 
         /// <summary>
         /// Словарь используемых ключевых слов, возвращающих числовое значение.
@@ -304,8 +342,21 @@ namespace ExpressionBuilder
                     var exp1 = stack.Pop();
                     stack.Push(operators[tokens[i]](exp1, exp2));
                 }
-                else if (IsFunction(tokens[i])) // Если токен - унарная функция, то соответствующая операция выполняется над одним значением, взятым из вершины стека. Результат операции помещается в стек. 
-                  stack.Push(functions[tokens[i]](stack.Pop()));
+                else if (IsUnaryFunction(tokens[i])) // Если токен - унарная функция, то соответствующая операция выполняется над одним значением, взятым из вершины стека. Результат операции помещается в стек. 
+                  stack.Push(unaryFunctions[tokens[i]](stack.Pop()));
+                else if (IsBinaryFunction(tokens[i])) // Если токен - бинарная функция, то соответствующая операция выполняется над двумя значениями, взятыми из вершины стека. Результат операции помещается в стек. 
+                {
+                    var exp2 = stack.Pop();
+                    var exp1 = stack.Pop();
+                    stack.Push(binaryFunctions[tokens[i]](exp1, exp2));
+                }
+                else if (IsTernaryFunction(tokens[i])) // Если токен - тернарная функция, то соответствующая операция выполняется над тремя значениями, взятыми из вершины стека. Результат операции помещается в стек. 
+                {
+                    var exp3 = stack.Pop();
+                    var exp2 = stack.Pop();
+                    var exp1 = stack.Pop();
+                    stack.Push(ternaryFunctions[tokens[i]](exp1, exp2, exp3));
+                }
                 else // Если токен - операнд, то он помещается на вершину стека.
                 {
                     if (float.TryParse(tokens[i], System.Globalization.NumberStyles.Any, ci, out float value)) // Если операнд - число

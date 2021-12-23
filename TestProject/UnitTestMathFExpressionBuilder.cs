@@ -85,6 +85,7 @@ namespace TestProject
             Assert.AreEqual(false || false && true, parser.CompileString("false || false && true").DynamicInvoke());
             Assert.AreEqual(1 > 2 || 1 >= 2 || 1 == 1 || 1 != 1 || 1 < 1 || 1 <= 1,
                 parser.CompileString("1 > 2 || 1 >= 2 || 1 == 1 || 1 != 1 || 1 < 1 || 1 <= 1").DynamicInvoke());
+            Assert.AreEqual((2 > 1) ? 69f : 4221f, parser.CompileString("if (2 > 1; 69; 4221)").DynamicInvoke());
         }
 
 
