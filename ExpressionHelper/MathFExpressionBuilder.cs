@@ -18,12 +18,30 @@ namespace ExpressionBuilder
         static private readonly Dictionary<string, Func<Expression, Expression, Expression>> operators
             = new Dictionary<string, Func<Expression, Expression, Expression>>()
             { 
+                // разбирать как сейчас: @"\" + op
                 ["+"] = Expression.Add,
                 ["-"] = Expression.Subtract,
                 ["*"] = Expression.Multiply,
                 ["/"] = Expression.Divide,
                 ["^"] = ExpressionHelper.CreateExpressionFromBinaryFunc(typeof(MathF), "Pow"),
+                // разюирать просто op
+                [">"] = Expression.GreaterThan,
+                [">="] = Expression.GreaterThanOrEqual,
+                ["<"] = Expression.LessThan,
+                ["<="] = Expression.LessThanOrEqual,
+                ["=="] = Expression.Equal,
+                ["!="] = Expression.NotEqual,
+                ["||"] = Expression.Or,
+                ["&&"] = Expression.And,
             };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static private readonly string[] operatorsNameForRegexPattern = { @"\+", "-", @"\*", @"\/", @"\^", 
+            ">=", ">", "<=", "<", "==", "!=",
+            @"&&", @"\|\|",
+        };
 
         /// <summary>
         /// Является ли токен бинарным оператором.
@@ -36,13 +54,21 @@ namespace ExpressionBuilder
         static private Dictionary<string, byte> PriorityOfOperators
             = new Dictionary<string, byte>()
             {
-                ["("] = 0,
-                [")"] = 0,
-                ["+"] = 1,
-                ["-"] = 1,
-                ["*"] = 2,
-                ["/"] = 2,
-                ["^"] = 3
+                {"(", 0},
+                {")", 0},
+                {"||", 1},
+                {"&&", 2},
+                {"==", 3},
+                {"!=", 3},
+                {">",  4},
+                {">=", 4},
+                {"<",  4},
+                {"<=", 4},
+                {"+", 5},
+                {"-", 5},
+                {"*", 6},
+                {"/", 6},
+                {"^", 7},
             };
 
         /// <summary>
@@ -68,6 +94,7 @@ namespace ExpressionBuilder
                 ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), nameof(MathF.Abs)),
                 ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.Minus)),
                 ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.Round)),
+                ["!"] = Expression.Not,
             };
 
         /// <summary>
@@ -78,40 +105,64 @@ namespace ExpressionBuilder
         /// <summary>
         /// Словарь используемых ключевых слов, возвращающих числовое значение.
         /// </summary>
-        static private  readonly Dictionary<string, Expression> constants
+        static private readonly Dictionary<string, Expression> constants
             = new Dictionary<string, Expression>()
             {
-                ["pi"] = ExpressionHelper.CreateConstant<float>(MathF.PI),
-                ["e"] = ExpressionHelper.CreateConstant<float>(MathF.E),
-                ["random"] = Expression.Call(
-                typeof(MathFExpressionBuilder).GetMethod(nameof(MathFExpressionBuilder.Random),
-                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)),
-    };
+                ["pi"] = ExpressionHelper.CreateConstant(MathF.PI),
+                ["e"] = ExpressionHelper.CreateConstant(MathF.E),
+                ["random"] = ExpressionHelper.CreateMethodCallExpression(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.RandomaMethod)),
+                ["true"] = ExpressionHelper.CreateConstant(true),
+                ["false"] = ExpressionHelper.CreateConstant(false),
+            };
         /// <summary>
         /// Является ли токен ключевым слоо, возвращающим числовое значение.
         /// </summary>
         static private bool IsConst(string token) => constants.ContainsKey(token);
 
+        static private Random random;
+        static public Random Random
+        {
+            get
+            {
+                if (random == null) random = new Random();
+                return random;
+            }
+            set
+            {
+                random = Random;
+            }
+        }
 
-        static private Random rnd = new Random();
-
+        #region Функции для извлечения MethodCallExpression
         static private float Abs(float value) => MathF.Abs(value);
         static private float Sqr(float value) => value * value;
         static private float Minus(float value) => -value;
         static private float Round(float value) => MathF.Round(value);
-        static private float Random() => (float)rnd.NextDouble();
+        static private float RandomaMethod() => (float)Random.NextDouble();
+        #endregion
 
         static private string splitToTokensPattern = @"";
 
+        static private readonly System.Globalization.CultureInfo ci;
+
+        static private readonly string separator = ";";
+
         static MathFExpressionBuilder()
         {
+            if (operatorsNameForRegexPattern.Length != operators.Count) 
+                throw new SystemException($"Количество бинарных операторов в {nameof(operators)} и операторов для Regex шаблона в {nameof(operatorsNameForRegexPattern)} не совпадает");
+
             // Создание шаблона регулярного выражения для разбиения входного арифметического выражения на токены.
             splitToTokensPattern += @"\d+(?:[\.]\d+)?";
-            splitToTokensPattern += @"|;";
-            foreach (var op in operators.Keys) splitToTokensPattern += @"|\" + op;
+            splitToTokensPattern += @"|" + separator;
+            foreach (var op in operatorsNameForRegexPattern) splitToTokensPattern += @"|" + op;
+            splitToTokensPattern += "|!";
             splitToTokensPattern += @"|\(";
             splitToTokensPattern += @"|\)";
             splitToTokensPattern += @"|[A-z1-9_]+";
+
+            ci = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
         }
 
         /// <summary>
@@ -182,10 +233,9 @@ namespace ExpressionBuilder
 
             for (int i = 0; i < tokens.Length; i++) // Пока не все токены обработаны
             {
-                
                 if (IsFunction(tokens[i])) // Если токен - функция, то поместить его в стек.
                 { stack.Push(tokens[i]); }
-                else if (tokens[i].Equals(";")) // Если токен - разделитель аргументов функции, то
+                else if (tokens[i].Equals(separator)) // Если токен - разделитель аргументов функции, то
                 {
                     while (!stack.Peek().Equals("(")) // Пока токен на вершине стека не открывающая скобка
                     {
@@ -198,7 +248,7 @@ namespace ExpressionBuilder
                 {
                     if (tokens[i].Equals("-") && (i == 0 || !ConditionForMinus(tokens[i - 1]))) // Если токен - оператор вычитания, и токен является первым входным токеном или предыдущий токен не был числом или переменной, то
                     { stack.Push("minus"); continue; } // Положить в стек функцию унарного минуса minus, установить флаг унарного минуса в True.
-                    while (stack.Count != 0 && !IsFunction(stack.Peek()) && !IsLowerPriority(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токер оператора op2, чей приоритет выше или равен приоритету op1
+                    while (stack.Count != 0 && !IsFunction(stack.Peek()) && !IsLowerPriority(stack.Peek(), tokens[i])) // Пока присутствует на вершине стека токен оператора op2, чей приоритет выше или равен приоритету op1
                     {
                         output.Add(stack.Pop()); // Переложить оператор op2 из стека в выходную очередь.
                     }
@@ -244,9 +294,6 @@ namespace ExpressionBuilder
         /// <returns>Операционное дерево Expression</returns>
         public Expression BuildExpression(string[] tokens)
         {
-            System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
-            ci.NumberFormat.CurrencyDecimalSeparator = ".";
-
             Stack<Expression> stack = new Stack<Expression>();
 
             for (int i = 0; i < tokens.Length; i++) // Пока не все токены обработаны
@@ -286,7 +333,7 @@ namespace ExpressionBuilder
         /// Преобразует инфиксное арифметическое выражение в делегат.
         /// </summary>
         /// <param name="infixExpression">Арифметическое выражение в инфиксной форме. Пример: (A + B).</param>
-        /// <param name="paramsName">Имена параметров, которые в заданной последовательности должен принимать делегат.</param>
+        /// <param name="paramsName">Имена параметров типа float, которые в заданной последовательности должен принимать делегат.</param>
         /// <returns>Делегат, соответствующий арифемтическому выражению.</returns>
         public Delegate CompileString(string infixExpression, params string[] paramsName)
         {
@@ -331,10 +378,10 @@ namespace ExpressionBuilder
 
             var externalNestedParams = new List<ParameterExpression>();
             foreach (var param in nestedExpressionParameter)
-                {
+            {
                 nestedParameters.Add(param.internalParamName.ToLower(), param.internalParam);
-                externalNestedParams.Add(param.externalParam);
-                }
+                if (param.externalParam != null) externalNestedParams.Add(param.externalParam);
+            }
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);

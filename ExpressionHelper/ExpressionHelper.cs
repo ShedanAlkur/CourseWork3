@@ -103,5 +103,13 @@ namespace ExpressionBuilder
                 BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
                 , arg1, arg2);
         }
+
+        public static MethodCallExpression CreateMethodCallExpression(Type containingClass, string methodName, params Expression[] args)
+        {
+            return Expression.Call(
+                containingClass.GetMethod(methodName,
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
+                , args);
+        }
     }
 }

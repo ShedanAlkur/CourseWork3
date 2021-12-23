@@ -63,5 +63,36 @@ namespace TestProject
 
             Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        public void TestRandom()
+        {
+            var parser = new MathFExpressionBuilder();
+            string input = "random";
+            float result = (float)parser.CompileString(input).DynamicInvoke();
+
+            Assert.IsTrue(result >= 0 && result <= 1);
+        }
+
+
+        [TestMethod]
+        public void TestLogicRPN()
+        {
+            var parser = new MathFExpressionBuilder();
+
+            Assert.AreEqual(true, parser.CompileString("true").DynamicInvoke());
+            Assert.AreEqual(!(1 > 2) && (1 < 8), parser.CompileString("!(1 > 2) && (1 < 8)").DynamicInvoke());
+            Assert.AreEqual(false || false && true, parser.CompileString("false || false && true").DynamicInvoke());
+            Assert.AreEqual(1 > 2 || 1 >= 2 || 1 == 1 || 1 != 1 || 1 < 1 || 1 <= 1,
+                parser.CompileString("1 > 2 || 1 >= 2 || 1 == 1 || 1 != 1 || 1 < 1 || 1 <= 1").DynamicInvoke());
+        }
+
+
+        [TestMethod]
+        public void TestDelegate()
+        {
+            Delegate test = (Func<int, int,int, int>)((int var1, int var2, int var3) => var1 + var2 + var3);
+            Console.WriteLine(test.DynamicInvoke(new int[]{ 1, 2, 3}.Cast<object?>().ToArray()));
+        }
     }
 }
