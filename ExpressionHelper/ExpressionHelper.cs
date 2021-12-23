@@ -101,7 +101,21 @@ namespace ExpressionBuilder
             return (Expression arg1, Expression arg2) => Expression.Call(
                 containingClass.GetMethod(methodName,
                 BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
-                , arg1, arg2);
+                , arg1, arg2); 
+        }
+
+        /// <summary>
+        /// Создает из функции трех переменных заданного класса делегат, который принимает и возвращает expression.
+        /// </summary>
+        /// <param name="containingClass">Класс, содержащий метод.</param>
+        /// <param name="methodName">Имя метода</param>
+        /// <returns>Полученный из метода делегат.</returns>
+        public static Func<Expression, Expression, Expression, Expression> CreateExpressionFromTernaryFunc(Type containingClass, string methodName)
+        {
+            return (Expression arg1, Expression arg2, Expression arg3) => Expression.Call(
+                containingClass.GetMethod(methodName,
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
+                , arg1, arg2, arg3); 
         }
 
         public static MethodCallExpression CreateMethodCallExpression(Type containingClass, string methodName, params Expression[] args)

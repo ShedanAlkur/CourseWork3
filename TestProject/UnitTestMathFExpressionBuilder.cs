@@ -18,6 +18,10 @@ namespace TestProject
             float result = (float)parser.CompileString(input).DynamicInvoke();
 
             Assert.AreEqual(expectedResult, result);
+
+            Assert.AreEqual(0f, parser.CompileString("clamp (-1; 0; 1)").DynamicInvoke());
+            Assert.AreEqual(-7f, parser.CompileString("min (12; -7)").DynamicInvoke());
+            Assert.AreEqual(MathF.Log(10, MathF.E), parser.CompileString("log (10; e)").DynamicInvoke());
         }
 
         [TestMethod]
@@ -76,7 +80,7 @@ namespace TestProject
 
 
         [TestMethod]
-        public void TestLogicRPN()
+        public void TestLogicParsing()
         {
             var parser = new MathFExpressionBuilder();
 

@@ -96,6 +96,8 @@ namespace ExpressionBuilder
                 ["abs"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), nameof(MathF.Abs)),
                 ["minus"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.Minus)),
                 ["round"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.Round)),
+                ["ceil"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), nameof(MathF.Ceiling)),
+                ["floor"] = ExpressionHelper.CreateExpressionFromUnaryFunc(typeof(MathF), nameof(MathF.Floor)),
                 ["!"] = Expression.Not,
             };
 
@@ -110,7 +112,9 @@ namespace ExpressionBuilder
         static private readonly Dictionary<string, Func<Expression, Expression, Expression>> binaryFunctions
             = new Dictionary<string, Func<Expression, Expression, Expression>>()
             {
-
+                ["min"] = ExpressionHelper.CreateExpressionFromBinaryFunc(typeof(MathF), nameof(MathF.Min)),
+                ["max"] = ExpressionHelper.CreateExpressionFromBinaryFunc(typeof(MathF), nameof(MathF.Max)),
+                ["log"] = ExpressionHelper.CreateExpressionFromBinaryFunc(typeof(MathFExpressionBuilder), nameof(MathFExpressionBuilder.Log)),
             };
 
         /// <summary>
@@ -124,6 +128,7 @@ namespace ExpressionBuilder
         static private readonly Dictionary<string, Func<Expression, Expression, Expression, Expression>> ternaryFunctions
             = new Dictionary<string, Func<Expression, Expression, Expression, Expression>>()
             {
+                ["clamp"] = ExpressionHelper.CreateExpressionFromTernaryFunc(typeof(MathFExpressionBuilder), nameof(Clamp)),
                 ["if"] = Expression.Condition,
             };
 
@@ -138,8 +143,6 @@ namespace ExpressionBuilder
         /// </summary>
         static private bool IsFunction(string token) => IsUnaryFunction(token) || IsBinaryFunction(token) || IsTernaryFunction(token);
 
-
-
         /// <summary>
         /// Словарь используемых ключевых слов, возвращающих числовое значение.
         /// </summary>
@@ -152,6 +155,7 @@ namespace ExpressionBuilder
                 ["true"] = ExpressionHelper.CreateConstant(true),
                 ["false"] = ExpressionHelper.CreateConstant(false),
             };
+
         /// <summary>
         /// Является ли токен ключевым слоо, возвращающим числовое значение.
         /// </summary>
@@ -176,6 +180,13 @@ namespace ExpressionBuilder
         static private float Sqr(float value) => value * value;
         static private float Minus(float value) => -value;
         static private float Round(float value) => MathF.Round(value);
+        static private float Clamp(float value, float minValue, float maxValue)// => MathF.Max(minValue, MathF.Min(value, maxValue));
+        {
+            if (value < minValue) return minValue;
+            else if (value > maxValue) return maxValue;
+            return value;
+        }
+        static private float Log(float x, float y) => MathF.Log(x, y);
         static private float RandomaMethod() => (float)Random.NextDouble();
         #endregion
 
@@ -209,7 +220,7 @@ namespace ExpressionBuilder
         /// <param name="value">Проверяемый токен.</param>
         /// <returns>Последующий токен вычитания должен быть унарным минусом.</returns>
         static private bool ConditionForMinus(string value)
-            => !(IsOperator(value) || IsFunction(value) || value.Equals(",") || value.Equals("("));
+            => !(IsOperator(value) || IsFunction(value) || value.Equals(separator) || value.Equals("("));
         #endregion
 
         /// <summary>
