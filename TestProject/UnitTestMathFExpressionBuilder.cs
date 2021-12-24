@@ -28,6 +28,7 @@ namespace TestProject
         public void TestParameters()
         {
             var parser = new MathFExpressionBuilder();
+            parser.AllowAutomaticAddingParameters = true;
 
             string input = "var1 + var2 * var3";
             float[] vars = { 12, 52, 26 };

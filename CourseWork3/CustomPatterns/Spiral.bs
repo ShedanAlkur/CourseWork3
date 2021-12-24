@@ -52,8 +52,8 @@ ENEMY "awesome tako"
 	set life 12
 	set sprite "tako"
 	set hitbox 30
-	set generator "Spiral clockwise 1"
-	inc generator "Spiral clockwise 2"
+	set generator "Spiral 1"
+	inc generator "Spiral 2"
 	runtime 10000
 END #end #end #end #end #end
 

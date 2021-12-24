@@ -227,13 +227,13 @@ namespace ExpressionBuilder
         #endregion
 
         /// <summary>
-        /// Словарь используемых в арифметическом выражении параметров.
+        /// Словарь используемых в арифметическом выражении параметров float типа, которые явным образом извлекаются из входного выражения.
         /// </summary>
-        private Dictionary<string, ParameterExpression> parameters =
+        private Dictionary<string, ParameterExpression> realParameters =
             new Dictionary<string, ParameterExpression>();
 
         /// <summary>
-        /// Словарь используемых в арифметическом выражении параметров, которые особым образом извлекаются из входных параметров итогового делегата.
+        /// Словарь используемых в арифметическом выражении параметров, которые неявным образом извлекаются из входных параметров итогового делегата.
         /// </summary>
         private Dictionary<string, Expression> nestedParameters =
             new Dictionary<string, Expression>();
@@ -243,7 +243,14 @@ namespace ExpressionBuilder
         /// <summary>
         /// Массив имен используемых параметров в арифметическом выражении.
         /// </summary>
-        public string[] Parameters { get => nestedParameters.Keys.Concat(parameters.Keys).ToArray(); }
+        public string[] Parameters { get => nestedParameters.Keys.Concat(realParameters.Keys).ToArray(); }
+
+        /// <summary>
+        /// Флаг, позволяющий добавлять новые явные параметры в ходе париснга.
+        /// Если установлено true, то при нахождении нового параметра при парсинге параметр будет добавлен с конец списка требуемых параметров выходного делегата.
+        /// Если установлено false, то при нахождении нового параметра при парсинге будет вызвано исключение ArgumentException.
+        /// </summary>
+        public bool AllowAutomaticAddingParameters = false;
 
         /// <summary>
         /// Является ли токен числом, константой или параметром.
@@ -379,12 +386,14 @@ namespace ExpressionBuilder
                         stack.Push(constants[tokens[i]]);
                     else if (nestedParameters.ContainsKey(tokens[i])) // если операнд - вложенный параметр
                         stack.Push(nestedParameters[tokens[i]]);
-                    else if (parameters.ContainsKey(tokens[i])) // Если операнд - сохраненный параметр (нормальный)
-                        stack.Push(parameters[tokens[i]]);
+                    else if (realParameters.ContainsKey(tokens[i])) // Если операнд - сохраненный явный параметр
+                        stack.Push(realParameters[tokens[i]]);
                     else // Если операнд - несохраненный параметр (нормальный)
                     {
-                        parameters.Add(tokens[i], ExpressionHelper.CreateParameter<float>(tokens[i]));
-                        stack.Push(parameters[tokens[i]]);
+                        if (!AllowAutomaticAddingParameters)
+                            throw new ArgumentException($"Встречен новый явный параметр {tokens[i]}");
+                        realParameters.Add(tokens[i], ExpressionHelper.CreateParameter<float>(tokens[i]));
+                        stack.Push(realParameters[tokens[i]]);
                     }
                 }
             }
@@ -413,12 +422,12 @@ namespace ExpressionBuilder
                 }
 
             if (paramsName != null) foreach (string param in paramsName)
-                    parameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
+                    realParameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
             Expression resExpression = BuildExpression(postfixTokens);
             List<ParameterExpression> generalParams = new List<ParameterExpression>(externalNestedParams);
-            generalParams.AddRange(parameters.Values);
+            generalParams.AddRange(realParameters.Values);
             ResultDelegate = Expression.Lambda(resExpression, generalParams).Compile();
             return ResultDelegate;
         }
@@ -449,7 +458,7 @@ namespace ExpressionBuilder
         /// </summary>
         public void Clear()
         {
-            parameters.Clear();
+            realParameters.Clear();
             nestedParameters.Clear();
             ResultDelegate = null;
         }
