@@ -36,7 +36,7 @@ namespace CourseWork3.GameObjects
                     obj.ownedGenerators.Add(new Generator((Pattern<Generator>)value, obj));
                     GameMain.World.Add(obj.ownedGenerators.Last());
                 },
-                [Keywords.Set + Keywords.Life] = (Enemy obj, object value) => obj.life = (int)value,
+                [Keywords.Set + Keywords.Life] = (Enemy obj, object value) => obj.life = Convert.ToInt32(value),
 
                 [Keywords.Increase + Keywords.Generator] = (Enemy obj, object value) =>
                 {

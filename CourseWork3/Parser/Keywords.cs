@@ -48,6 +48,7 @@ namespace CourseWork3.Parser
         public static readonly string Size = "size".ToLower();
 
         // Для Projectile
+        public static string ProjParamName = "genTime".ToLower();
         public static readonly string Color = "color".ToLower();
         public static readonly string RandomColor = "randomColor".ToLower();
         public static readonly string velocityToPlayer = "velocityToPlayer".ToLower();
@@ -76,6 +77,6 @@ namespace CourseWork3.Parser
         public static readonly string Incrementor = "inc";
         public static readonly string Spawn = "spawn";
 
-        public static string ProjParamName = "genTime".ToLower();
+        public static readonly string Variable = "var";
     }
 }

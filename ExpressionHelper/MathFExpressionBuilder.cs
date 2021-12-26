@@ -239,6 +239,8 @@ namespace ExpressionBuilder
             new Dictionary<string, Expression>();
 
         public Delegate ResultDelegate { private set; get; }
+        public Expression ResultExpression { private set; get; }
+        public IEnumerable<ParameterExpression> ResultDelegateParameters { private set; get; }
 
         /// <summary>
         /// Массив имен используемых параметров в арифметическом выражении.
@@ -411,6 +413,7 @@ namespace ExpressionBuilder
             if (implicitExpressionParameters != null)
                 foreach (var implicitExpressionParameter in implicitExpressionParameters)
                 {
+                    if (implicitExpressionParameter == null) continue;
                     if (implicitExpressionParameter.externalParameter != null)
                         externalNestedParams.Add(implicitExpressionParameter.externalParameter);
 
@@ -425,10 +428,11 @@ namespace ExpressionBuilder
                     realParameters.Add(param.ToLower(), ExpressionHelper.CreateParameter<float>(param.ToLower()));
 
             string[] postfixTokens = ConvertToRPN(infixTokens);
-            Expression resExpression = BuildExpression(postfixTokens);
+            ResultExpression = BuildExpression(postfixTokens);
             List<ParameterExpression> generalParams = new List<ParameterExpression>(externalNestedParams);
             generalParams.AddRange(realParameters.Values);
-            ResultDelegate = Expression.Lambda(resExpression, generalParams).Compile();
+            ResultDelegateParameters = generalParams;
+            ResultDelegate = Expression.Lambda(ResultExpression, ResultDelegateParameters).Compile();
             return ResultDelegate;
         }
 
@@ -461,6 +465,8 @@ namespace ExpressionBuilder
             realParameters.Clear();
             nestedParameters.Clear();
             ResultDelegate = null;
+            ResultExpression = null;
+            ResultDelegateParameters = null;
         }
     }
 }

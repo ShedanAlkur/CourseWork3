@@ -51,7 +51,7 @@ namespace CourseWork3.GameObjects
             {
                 [Keywords.Set + Keywords.Sector] = (Generator obj, object value) => obj.Sector = MathHelper.DegreesToRadians((float)value),
                 [Keywords.Set + Keywords.SpawnDelay] = (Generator obj, object value) => obj.SpawnDelay = (float)value,
-                [Keywords.Set + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = (int)value,
+                [Keywords.Set + Keywords.SpawnCount] = (Generator obj, object value) => obj.SpawnCount = Convert.ToInt32(value),
                 [Keywords.Set + Keywords.Angle] = (Generator obj, object value) => obj.Angle = MathHelper.DegreesToRadians((float)value) - MathHelper.PiOver2,
                 [Keywords.Set + Keywords.Sprite] = (Generator obj, object value) => throw new NotImplementedException(),
                 [Keywords.Set + Keywords.Projectile] = (Generator obj, object value) => obj.ProjPattern = (Pattern<Projectile>)value,

@@ -273,9 +273,10 @@ namespace CourseWork3.Parser
             {
                 pointer++;
                 incrementor = ParseFloatFromMathExpression(tokens, ref pointer)();
+                if (incrementor == 0) throw new NotImplementedException();
             }
 
-            int i;
+            if ((from < to && incrementor < 0) || (from > to && incrementor > 0)) incrementor = -incrementor;
             int firstCommandPointer = ++pointer;
             if (to >= from)
                 for (iterators[nameofIterator] = from; iterators[nameofIterator] <= to; iterators[nameofIterator] += incrementor)
@@ -283,7 +284,7 @@ namespace CourseWork3.Parser
                     pointer = firstCommandPointer;
                     ParseLevel(tokens, ref pointer, ref iterators, ref levelCommands);
                 }
-            else for (iterators[nameofIterator] = from; iterators[nameofIterator] >= to; iterators[nameofIterator] -= incrementor)
+            else for (iterators[nameofIterator] = from; iterators[nameofIterator] >= to; iterators[nameofIterator] += incrementor)
                 {
                     pointer = firstCommandPointer;
                     ParseLevel(tokens, ref pointer, ref iterators, ref levelCommands);
