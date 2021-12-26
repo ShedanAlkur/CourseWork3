@@ -114,7 +114,7 @@ namespace CourseWork3.Game
             TextureCollection.Add("_bomb", new Texture2D(PathOfExecuteFolder + @"\content\Bomb2.png"));
             SpriteCollection.Add("_bomb", new Sprite(TextureCollection["_bomb"], new Vector2(150) / GameObjects.Bomb.DefaultHitboxSize));
 
-            var parser = new Parser.Parser();
+            var parser = new Parser.BetterParser();
             parser.ParseFile(PathOfExecuteFolder + @"\content\MainPatterns.bs");
         }
 
@@ -140,7 +140,7 @@ namespace CourseWork3.Game
             LoadDefaultResources();
             if (!string.IsNullOrEmpty(PathOfPatternFile))
             {
-                var parser = new Parser.Parser();
+                var parser = new Parser.BetterParser();
                 Console.WriteLine($"Загружается шаблон {PathOfPatternFile}");
                 parser.ParseFile(PathOfPatternFile);
             }
