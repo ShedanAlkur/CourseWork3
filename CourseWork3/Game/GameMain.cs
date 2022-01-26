@@ -1,4 +1,5 @@
-﻿using CourseWork3.GameObjects;
+﻿using CourseWork3.AudioOpenAL;
+using CourseWork3.GameObjects;
 using CourseWork3.GraphicsOpenGL;
 using CourseWork3.Patterns;
 using OpenTK;
@@ -21,11 +22,14 @@ namespace CourseWork3.Game
 
         private static GameWindow window;
         public static GraphicsOpenGL.Graphics Graphics;
+        public static AudioOpenAL.Audio Audio;
         static float accumulatedTime;
         static float targetUpdatePeriod;
 
         public static Dictionary<string, Sprite> SpriteCollection;
+        public static Dictionary<string, AnimatedSprite> AnimatedSpriteCollection;
         public static Dictionary<string, Texture2D> TextureCollection;
+        public static Dictionary<string, Audiotrack> AudioCollection;
         public static Dictionary<string, Pattern<Projectile>> ProjeciltePatternCollection;
         public static Dictionary<string, Pattern<Generator>> GeneratorPatternCollection;
         public static Dictionary<string, Pattern<Enemy>> EnemyPatternCollection;
